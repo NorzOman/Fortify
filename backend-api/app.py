@@ -1,5 +1,5 @@
 # Imports for handling Flask-related stuff
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template , redirect , url_for
 
 # Imports for handling AES encryption and decryption
 from Crypto.Cipher import AES
@@ -16,12 +16,10 @@ import datetime
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'arshad_number_1_also_this_is_uncrackable_secret_key_try_any_wordlists_idc'
 
-
 # Root route leads to API documentation
 @app.route('/', methods=['GET'])
 def home():
     return render_template('docs.html')
-
 
 # Route returns client IP with 200 OK message to note API is active
 @app.route('/check_health', methods=['GET'])
