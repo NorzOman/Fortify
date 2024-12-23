@@ -1,165 +1,198 @@
+#Importing required libraries for mobile simulation
 import requests
 import hashlib
 from Crypto.Cipher import AES
-from Crypto.Util.Padding import pad, unpad
+from Crypto.Util.Padding import pad
 import base64
 import json
+import os
+import time
 
-def fetch_health_data(url):
-    """Fetches the health check data from the given URL."""
-    print("\n[Fetching Health Check Data]")
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        # Check if the response is valid JSON
-        try:
-            response_json = response.json()
-            client_ip = response_json.get("client_ip", "IP not found")
-            print(f"Server Detected IP: {client_ip}")
-            return client_ip
-        except ValueError:
-            print("Response is not in valid JSON format.")
-            return None
-    except requests.RequestException as e:
-        print(f"Error fetching health check data: {e}")
-        return None
+# BASE_URL = 'https://vault-7.vercel.app'
+BASE_URL ='http://127.0.0.1:5000/'
+TOKEN_MESSAGE = ''
+TOKEN_FILE = ''
 
-def generate_device_guid(ip):
-    """Generates a GUID from the device's IP using AES encryption."""
-    key = hashlib.sha256(ip.encode()).digest()[:16]
+def simulate_health_check():
+    url = f"{BASE_URL}/check_health"
+    print("\n [-] Sending GET request to /check_health endpoint")
+    response = requests.get(url)
+    print(f"\n {response.text}")
+    buffer = input(" [-] Press enter to continue....")
+
+def simulate_get_token_for_message(condition):
+    global TOKEN_MESSAGE
+    # First send a get request and get the client_ip from the server
+    url = f"{BASE_URL}/check_health"
+    print("\n [-] First sending GET request to /check_health endpoint")
+    response = requests.get(url)
+    print(f"\n {response.text}")
+    #Extract the client ip from the response
+    print("\n [-] Extrcting client_ip from the response")
+    response_data = response.json()
+    client_ip = response_data.get("client_ip")
+    time.sleep(2)
+    print(f"\n [-] Setting the client ip as : {client_ip} ")
+    time.sleep(1)
+    print(f"\n\n [-] Now creating GUID using {client_ip} using client_ip as secret key with AES encryption")
+    key = hashlib.sha256(client_ip.encode()).digest()[:16]
     cipher = AES.new(key, AES.MODE_ECB)
-    padded_ip = pad(ip.encode(), AES.block_size)
+    padded_ip = pad(client_ip.encode(), AES.block_size)
     encrypted_ip = cipher.encrypt(padded_ip)
-    encoded_ip = base64.b64encode(encrypted_ip).decode('utf-8')
-    print(f"\n[GUID Generation]\nIP Address: {ip}\nGenerated GUID: {encoded_ip}")
-    return encoded_ip
-
-def send_guid(url, guid):
-    """Sends a POST request to the given URL with the device GUID."""
-    print("\n[Sending Device GUID]")
+    device_guid = base64.b64encode(encrypted_ip).decode('utf-8')
+    time.sleep(2)
+    print(f"\n [-] GUID generated as :  {device_guid}")
+    time.sleep(1)
+    print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_message")
+    url =  f"{BASE_URL}/get_token_for_message"
     headers = {'Content-Type': 'application/json'}
-    json_data = json.dumps({"device_guid": guid})
-    try:
-        response = requests.post(url, headers=headers, data=json_data)
-        response.raise_for_status()
-        # Handle response JSON properly
-        try:
-            print(f"Response: {response.json()}")
-        except ValueError:
-            print(f"Response is not in valid JSON format.")
-    except requests.RequestException as e:
-        print(f"Error sending GUID: {e}")
+    json_data = json.dumps({"device_guid": device_guid})
+    response = requests.post(url, headers=headers, data=json_data)
+    response.raise_for_status()
+    time.sleep(2)
+    print(f"\n\n [-] POST request returned with response: ")
+    print(f"\n {response.json()}\n")
+    response_data = response.json()
+    token = response_data.get("token")
+    TOKEN_MESSAGE = token
+    time.sleep(2)
+    print(f"\n [-] Setting global TOKEN_MESSAGE with token {token} \n\n")
+    if condition == 0:
+        buffer = input(" [-] Press enter to continue....")
 
-def simulate_getting_token(check_health_url, get_token_url):
-    """Simulates the process of getting a token based on the detected IP and GUID."""
-    device_ip = fetch_health_data(check_health_url)
-    if device_ip:
-        device_guid = generate_device_guid(device_ip)
-        send_guid(get_token_url, device_guid)
 
-def simulate_getting_token_with_custom_guid(check_health_url, get_token_url):
-    """Simulates getting a token with a custom GUID (user provides IP)."""
-    ip = input("Enter a custom IP address to generate GUID: ")
-    print(f"\n[Generating Custom GUID for IP: {ip}]")
-    custom_guid = generate_device_guid(ip)
-    send_guid(get_token_url, custom_guid)
-
-def simulate_getting_token_for_files(check_health_url, get_token_url):
-    """Simulates the process of getting a token for file detection."""
-    device_ip = fetch_health_data(check_health_url)
-    if device_ip:
-        device_guid = generate_device_guid(device_ip)
-        send_guid(get_token_url, device_guid)
-
-def send_message_to_detect(url, token):
-    """Sends a POST request with a user-defined message to be detected along with the token."""
-    print("\n[Sending Message to Detect]")
-    message = input("Enter your message: ")
-    
+def simulate_get_token_for_file(condition):
+    global TOKEN_FILE
+    # First send a get request and get the client_ip from the server
+    url = f"{BASE_URL}/check_health"
+    print("\n [-] First sending GET request to /check_health endpoint")
+    response = requests.get(url)
+    print(f"\n {response.text}")
+    #Extract the client ip from the response
+    print("\n [-] Extrcting client_ip from the response")
+    response_data = response.json()
+    client_ip = response_data.get("client_ip")
+    time.sleep(2)
+    print(f"\n [-] Setting the client ip as : {client_ip} ")
+    time.sleep(1)
+    print(f"\n\n [-] Now creating GUID using {client_ip} using client_ip as secret key with AES encryption")
+    key = hashlib.sha256(client_ip.encode()).digest()[:16]
+    cipher = AES.new(key, AES.MODE_ECB)
+    padded_ip = pad(client_ip.encode(), AES.block_size)
+    encrypted_ip = cipher.encrypt(padded_ip)
+    device_guid = base64.b64encode(encrypted_ip).decode('utf-8')
+    time.sleep(2)
+    print(f"\n [-] GUID generated as :  {device_guid}")
+    time.sleep(1)
+    print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_file")
+    url =  f"{BASE_URL}/get_token_for_files"
     headers = {'Content-Type': 'application/json'}
-    message_data = {"message": message, "token": token}
-    
-    try:
-        response = requests.post(url, headers=headers, data=json.dumps(message_data))
-        response.raise_for_status()
-        # Handle response JSON properly
-        try:
-            print(f"Response: {response.json()}")
-        except ValueError:
-            print(f"Response is not in valid JSON format.")
-    except requests.RequestException as e:
-        print(f"Error sending message: {e}")
+    json_data = json.dumps({"device_guid": device_guid})
+    response = requests.post(url, headers=headers, data=json_data)
+    response.raise_for_status()
+    time.sleep(2)
+    print(f"\n\n [-] POST request returned with response: ")
+    print(f"\n {response.json()}\n")
+    response_data = response.json()
+    token = response_data.get("token")
+    TOKEN_FILE = token
+    time.sleep(2)
+    print(f"\n [-] Setting global TOKEN_FILE with token : {TOKEN_FILE} \n\n")
+    if condition == 0:
+        buffer = input(" [-] Press enter to continue....")
 
-def send_signatures_to_detect(url, token):
-    """Sends a POST request with signatures to be detected along with the token."""
-    print("\n[Sending Signatures to Detect]")
-    
-    # Input: Expecting a comma-separated list of signatures
-    signatures_input = input("Enter your signatures (separated by commas): ")
-    
-    # Split the input into a list of signatures
+def simulate_get_token_fake_guid():
+    url = f"{BASE_URL}/check_health"
+    print("\n [!] Not sending /check_health endpoint\n")
+    client_ip = input (" [-] Enter IP to make GUID with : ")
+    time.sleep(2)
+    print(f"\n [-] Setting the client ip as : {client_ip} ")
+    time.sleep(1)
+    print(f"\n\n [-] Now creating GUID using {client_ip} using client_ip as secret key with AES encryption")
+    key = hashlib.sha256(client_ip.encode()).digest()[:16]
+    cipher = AES.new(key, AES.MODE_ECB)
+    padded_ip = pad(client_ip.encode(), AES.block_size)
+    encrypted_ip = cipher.encrypt(padded_ip)
+    device_guid = base64.b64encode(encrypted_ip).decode('utf-8')
+    time.sleep(2)
+    print(f"\n [-] GUID generated as :  {device_guid}")
+    time.sleep(1)
+    print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_message")
+    url =  f"{BASE_URL}/get_token_for_message"
+    headers = {'Content-Type': 'application/json'}
+    json_data = json.dumps({"device_guid": device_guid})
+    response = requests.post(url, headers=headers, data=json_data)
+    response.raise_for_status()
+    time.sleep(2)
+    print(f"\n\n [-] POST request returned with response: ")
+    print(f"\n {response.json()}\n")
+    buffer = input(" [-] Press enter to continue....")
+
+def simulate_sending_message_detect():
+    url = f"{BASE_URL}/message_detection"    
+    print("\n\n [-] First running get_token_for_message function to get token")
+    simulate_get_token_for_message(1)
+    time.sleep(2)
+    print(" [-] Token initialization completed")
+    time.sleep(2)
+    print("\n\n")
+    message = input(" [-] Enter your message: ")
+    headers = {'Content-Type': 'application/json'}
+    message_data = {"message": message, "token": TOKEN_MESSAGE}
+    response = requests.post(url, headers=headers, data=json.dumps(message_data))
+    time.sleep(1)
+    print(f"\n\n [-] Sending POST request to /message_detection with token : {TOKEN_MESSAGE}")
+    time.sleep(2)
+    print(f"\n\n [-] Response: {response.json()}\n")
+    buffer = input(" [-] Press enter to continue....")
+
+def simulate_send_signature_detect():
+    url = f"{BASE_URL}/malware_detection"
+    print("\n\n [-] First running get_token_for_files function to get token")
+    simulate_get_token_for_file(1)
+    time.sleep(2)
+    print(" [-] Token initialization completed")
+    time.sleep(2)
+    print("\n\n")
+    signatures_input = input(" [-] Enter signatures to detect: ")
     signatures_list = [sig.strip() for sig in signatures_input.split(",")]
-
-    # Create the JSON payload
-    message_data = {"signatures": signatures_list, "token": token}
-
-    # Set headers for the request
     headers = {'Content-Type': 'application/json'}
-    
-    try:
-        # Make the POST request
-        response = requests.post(url, headers=headers, data=json.dumps(message_data))
-        response.raise_for_status()  # Raise an exception for HTTP errors
-        # Handle response JSON properly
-        try:
-            print(f"Response: {response.json()}")
-        except ValueError:
-            print(f"Response is not in valid JSON format.")
-    except requests.RequestException as e:
-        print(f"Error sending signatures: {e}")
+    data = {"signatures": signatures_list, "token": TOKEN_FILE}
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    time.sleep(1)
+    print(f"\n\n [-] Sending POST request to /message_detection with token : {TOKEN_MESSAGE}")
+    time.sleep(2)
+    print(f"\n\n [-] Response: {response.json()}\n")
+    buffer = input(" [-] Press enter to continue....")
 
 def main():
-    """Main loop for the interactive program."""
-    while True:
-        print("\n[Menu]")
-        print("1. Simulate Getting Token for Message (Use server-detected IP)")
-        print("2. Simulate Getting Token with Custom GUID (Enter your own IP)")
-        print("3. Simulate Getting Token for File Detection (Use server-detected IP)")
-        print("4. Simulate Sending Message to Detect")
-        print("5. Simulate Sending Signatures to Detect")
-        print("6. Exit")
-        choice = input("Enter your choice: ")
+    choice = 0
+    while(choice != 7):
+        os.system("clear")
+        print("\n ~~Main Menu~~\n")
+        print(" 1. Simulate heatlh check \n ")
+        print(" 2. Simulate getting token for message with GUID \n")
+        print(" 3. Simulate getting token for file with GUID \n")
+        print(" 4. Simulate attempting to get token with fake GUID \n")
+        print(' 5. Simulate sending a message to detect \n')
+        print(" 6. Simulate sending signature to detect \n")
+        print(" 7. Exit \n")
+        choice = input(" Enter your choice : ")
+        match choice:
+            case "1":
+                simulate_health_check()
+            case "2":
+                simulate_get_token_for_message(0)
+            case "3":
+                simulate_get_token_for_file(0)
+            case "4":
+                simulate_get_token_fake_guid()
+            case "5":
+                simulate_sending_message_detect()
+            case "6":
+                simulate_send_signature_detect()
+            case _:
+                print(" Invalid Choice!")
 
-        if choice == '1':
-            url = input("Enter the base URL (e.g., https://yourvercelwebsite.com): ")
-            check_health_url = url + '/check_health'
-            get_token_url = url + '/get_token_for_message'
-            simulate_getting_token(check_health_url, get_token_url)
-        elif choice == '2':
-            url = input("Enter the base URL (e.g., https://yourvercelwebsite.com): ")
-            check_health_url = url + '/check_health'
-            get_token_url = url + '/get_token_for_message'
-            simulate_getting_token_with_custom_guid(check_health_url, get_token_url)
-        elif choice == '3':
-            url = input("Enter the base URL (e.g., https://yourvercelwebsite.com): ")
-            check_health_url = url + '/check_health'
-            get_token_url = url + '/get_token_for_files'
-            simulate_getting_token_for_files(check_health_url, get_token_url)
-        elif choice == '4':
-            token = input("Enter the token for your request: ")
-            url = input("Enter the base URL (e.g., https://yourvercelwebsite.com): ")
-            message_detection_url = url + '/message_detection' 
-            send_message_to_detect(message_detection_url, token)
-        elif choice == '5':
-            token = input("Enter the token for your request: ")
-            url = input("Enter the base URL (e.g., https://yourvercelwebsite.com): ")
-            signature_detection_url = url + '/malware_detection' 
-            send_signatures_to_detect(signature_detection_url, token)
-        elif choice == '6':
-            print("Exiting program. Goodbye!")
-            break
-        else:
-            print("Invalid choice. Please try again.")
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
