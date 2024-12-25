@@ -30,12 +30,12 @@ def validate_token(token):
         if 'exp' in decoded_token:
             exp_time = datetime.datetime.fromtimestamp(decoded_token['exp'], tz=datetime.timezone.utc)
             if exp_time < datetime.datetime.now(datetime.timezone.utc):
-                return False  # Token is expired
-        return True  # Token is valid
+                return False
+        return True
     except jwt.ExpiredSignatureError:
-        return False  # Token is expired
+        return False
     except jwt.InvalidTokenError:
-        return False  # Token is invalid
+        return False
 
 
 # Function searches through database with MD5 signatures
@@ -107,12 +107,12 @@ def get_token_for_message():
             token = jwt.encode(
                 {
                     'client_ip': client_ip,
-                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=1)).timestamp()  # Returns JWT token that lasts 1 minute
+                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=1)).timestamp()
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
             )
-            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200  # Returns the client the valid token
+            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
         else:
             return jsonify({"message": "Malicious attempt to get token"}), 400
     except Exception as e:
