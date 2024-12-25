@@ -8,8 +8,8 @@ import json
 import os
 import time
 
-# BASE_URL = 'https://vault-7.vercel.app'
-BASE_URL ='http://127.0.0.1:5000/'
+BASE_URL = 'https://vault-7.vercel.app'
+#BASE_URL ='http://127.0.0.1:5000'
 TOKEN_MESSAGE = ''
 TOKEN_FILE = ''
 
@@ -183,8 +183,10 @@ def simulate_send_signature_detect():
     response = requests.post(url, headers=headers, data=json.dumps(data))
     time.sleep(1)
     
-    print(f"\n[-] Response from API: {response.json()}\n")
-    input("[-] Press Enter to continue...")
+    print(response.text)
+
+    buffer = input(" [-] Press enter to continue....")
+
 
 def main():
     choice = 0
