@@ -146,24 +146,45 @@ def simulate_sending_message_detect():
     print(f"\n\n [-] Response: {response.json()}\n")
     buffer = input(" [-] Press enter to continue....")
 
+
+# Sending signature along with the filename for detection
 def simulate_send_signature_detect():
     url = f"{BASE_URL}/malware_detection"
-    print("\n\n [-] First running get_token_for_files function to get token")
+    print("\n\n[-] First running get_token_for_files function to get token")
     simulate_get_token_for_file(1)
     time.sleep(2)
-    print(" [-] Token initialization completed")
+    print("[-] Token initialization completed")
     time.sleep(2)
     print("\n\n")
-    signatures_input = input(" [-] Enter signatures to detect: ")
-    signatures_list = [sig.strip() for sig in signatures_input.split(",")]
+
+    signatures = []
+    
+    while True:
+        file_name = input("[-] Enter file name (or type 'asdone' to stop): ").strip()
+        if file_name.lower() == 'asdone':
+            break
+        signature = input(f"[-] Enter the signature for file '{file_name}': ").strip()
+        signatures.append((file_name, signature))  # Append name and signature as a tuple
+    
+    # Print the collected signatures for review
+    print("\n[-] Collected Signatures:")
+    for name, sig in signatures:
+        print(f"File Name: {name}, Signature: {sig}")
+    
+    # Prepare the data for the POST request
     headers = {'Content-Type': 'application/json'}
-    data = {"signatures": signatures_list, "token": TOKEN_FILE}
+    data = {
+        "signatures": signatures,  # List of tuples (name, signature)
+        "token": TOKEN_FILE
+    }
+    
+    # Sending the POST request
+    print(f"\n\n[-] Sending POST request to {url} with token: {TOKEN_FILE}")
     response = requests.post(url, headers=headers, data=json.dumps(data))
     time.sleep(1)
-    print(f"\n\n [-] Sending POST request to /message_detection with token : {TOKEN_MESSAGE}")
-    time.sleep(2)
-    print(f"\n\n [-] Response: {response.json()}\n")
-    buffer = input(" [-] Press enter to continue....")
+    
+    print(f"\n[-] Response from API: {response.json()}\n")
+    input("[-] Press Enter to continue...")
 
 def main():
     choice = 0

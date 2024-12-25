@@ -12,14 +12,63 @@ import jwt
 import json
 import datetime
 
+# Imports for reading the signatures from the database of hashes
+import sqlite3
+
 # Initializing the app and setting the secret key
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'arshad_number_1_also_this_is_uncrackable_secret_key_try_any_wordlists_idc'
+
+
+# Token validation function
+def validate_token(token):
+    try:
+        # Decode and validate the token
+        decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+
+        # Check if the token is expired
+        if 'exp' in decoded_token:
+            exp_time = datetime.datetime.fromtimestamp(decoded_token['exp'], tz=datetime.timezone.utc)
+            if exp_time < datetime.datetime.now(datetime.timezone.utc):
+                return False  # Token is expired
+        return True  # Token is valid
+    except jwt.ExpiredSignatureError:
+        return False  # Token is expired
+    except jwt.InvalidTokenError:
+        return False  # Token is invalid
+
+
+# Function searches through database with MD5 signatures
+def check_malicious_signatures(signatures):
+    db_path = 'signaturesdb.sqlite'
+    
+    # Connect to the SQLite database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    hashes = [signature[1] for signature in signatures]
+    placeholders = ', '.join(['?'] * len(hashes))
+    query = f"SELECT hash, name FROM HashDB WHERE hash IN ({placeholders})"
+
+    cursor.execute(query, hashes)
+    result = cursor.fetchall()
+    conn.close()
+
+    malicious_hashes = []
+
+    for row in result:
+        hash_value, name = row
+        file_name = next(file_name for file_name, file_hash in signatures if file_hash == hash_value)
+        malicious_hashes.append({"file_name": file_name, "hash": hash_value, "name": name})
+
+    return json.dumps(malicious_hashes, indent=4)
+
 
 # Root route leads to API documentation
 @app.route('/', methods=['GET'])
 def home():
     return render_template('docs.html')
+
 
 # Route returns client IP with 200 OK message to note API is active
 @app.route('/check_health', methods=['GET'])
@@ -96,34 +145,17 @@ def get_token_for_files():
             token = jwt.encode(
                 {
                     'client_ip': client_ip,
-                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp()  # Returns JWT token that lasts 5 minutes
+                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp()
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
             )
-            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200  # Returns the client the valid token
+            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
         else:
             return jsonify({"message": "Malicious attempt to get token"}), 400
     except Exception as e:
         return jsonify({"error": "Server Side Issue | Report to admin"}), 400
 
-
-# Token validation function
-def validate_token(token):
-    try:
-        # Decode and validate the token
-        decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-
-        # Check if the token is expired
-        if 'exp' in decoded_token:
-            exp_time = datetime.datetime.fromtimestamp(decoded_token['exp'], tz=datetime.timezone.utc)
-            if exp_time < datetime.datetime.now(datetime.timezone.utc):
-                return False  # Token is expired
-        return True  # Token is valid
-    except jwt.ExpiredSignatureError:
-        return False  # Token is expired
-    except jwt.InvalidTokenError:
-        return False  # Token is invalid
 
 
 # Message detection route
@@ -133,17 +165,17 @@ def message_detection():
     token = data.get('token')
 
     if not token:
-        return jsonify({"error": "Token is missing"}), 400  # Return error if token is missing
+        return jsonify({"error": "Token is missing"}), 400
 
-    if validate_token(token):
-        message = data.get('message', '')
-        ''' Sample of message detection for testing purpose'''
-        if 'free' in message.lower():
-            return jsonify({"Report": "Phishing attempt detected"}), 200
-        else:
-            return jsonify({"message": "Safe SMS | No Phishing attempt detected"}), 200
+    if not validate_token(token):
+        return jsonify({"error": "Invalid token"}), 403
+
+    message = data.get('message', '')
+    if 'free' in message.lower():
+        return jsonify({"Report": "Phishing attempt detected"}), 200
     else:
-        return jsonify({"error": "Invalid or expired token"}), 401
+        return jsonify({"message": "Safe SMS | No Phishing attempt detected"}), 200
+    
 
 
 # Malware detection route
@@ -153,42 +185,19 @@ def malware_detection():
     token = data.get('token')
 
     if not token:
-        return jsonify({"error": "Token is missing"}), 400  # Return error if token is missing
+        return jsonify({"error": "Token is missing"}), 400
 
-    if validate_token(token):
-        signatures = data.get('signatures', [])
-        if not signatures:
-            return jsonify({"error": "No signatures provided"}), 400  # If no signatures are provided
+    if not validate_token(token):
+        return jsonify({"error": "Invalid token"}), 403
 
-        try:
-            # Loading the signature database
-            with open('signatures.json', 'r') as f:
-                signature_db = json.load(f).get("signatures", [])
-        except Exception as e:
-            return jsonify({"error": f"Failed to open signature database {e}"}), 500  # Handle file errors
+    signatures = data.get('signatures', [])
+    
+    if not signatures:
+        return jsonify({"error": "No signatures provided"}), 400
 
-        # Map signature hashes from the database for fast lookup
-        signature_map = {sig['signature']: sig for sig in signature_db}
+    malicious_signatures_json = check_malicious_signatures(signatures)
 
-        results = []
-        for input_signature in signatures:
-            match = signature_map.get(input_signature)
-            if match:
-                results.append({
-                    "input_signature": input_signature,
-                    "generic_name": match['generic_name'],
-                    "generic_detection": match['generic_detection']
-                })
-            else:
-                results.append({
-                    "input_signature": input_signature,
-                    "result": "No match found"
-                })
-
-        return jsonify({"status": "completed", "results": results}), 200  # Return matching results
-
-    else:
-        return jsonify({"error": "Invalid or expired token"}), 401  # If token is invalid or expired
+    return jsonify(json.loads(malicious_signatures_json))
 
 
 if __name__ == '__main__':
