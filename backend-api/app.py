@@ -43,23 +43,10 @@ def validate_token(token):
 
 # Function searches through database with MD5 signatures
 def check_malicious_signatures(signatures):
-    # Resolve the absolute path for the SQLite database
-    # Check if the environment is production or development
-    if os.environ.get('VERCEL'):  # In production (Vercel)
-        db_path = Path('/tmp/signaturesdb.sqlite')  # Use Vercel's writable /tmp directory
-    else:  # In development (local)
-        # Resolve relative path to absolute path
-        db_path = Path(__file__).parent / 'static' / 'signaturesdb.sqlite'
+    db_path = 'signaturesdb.sqlite'
     
-    # Resolve to the absolute path to make sure we are using the correct path
-    db_path = db_path.resolve()
-
-    # Check if the database file exists before attempting to connect
-    if not db_path.exists():
-        raise FileNotFoundError(f"Database file not found at {db_path}")
-
     # Connect to the SQLite database
-    conn = sqlite3.connect(str(db_path))
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     hashes = [signature[1] for signature in signatures]
