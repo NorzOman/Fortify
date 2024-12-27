@@ -249,9 +249,9 @@
     <div class="container">
         <div class="sidebar">
             <ul class="menu">
-                <li><a href="#dashboard" class="active">Dashboard</a></li>
-                <li><a href="#message-detection">Message Detection</a></li>
-                <li><a href="#malware-detection">Malware Detection</a></li>
+                <li><a href="/dashboard/home" class="active">Dashboard</a></li>
+                <li><a href="/dashboard/firewall">Firewall</a></li>
+                <li><a href="/dashboard/manage-token">Manage Token</a></li>
                 <li><a href="/dashboard/logs">System Logs</a></li>
                 <li><a href="/logout">Logout</a></li>
             </ul>
@@ -341,13 +341,14 @@
                     
                     if (data.alerts && data.alerts.length > 0) {
                         alertsCard.className = 'card error';
-                        data.alerts.forEach(alert => {
+                        // Reverse the alerts array to show newest first
+                        data.alerts.reverse().forEach(alert => {
                             const li = document.createElement('li');
                             if (alert.toLowerCase().includes('unauthorized') ||
                                 alert.toLowerCase().includes('suspicious')) {
                                 li.setAttribute('data-severity', 'high');
                             } else if (alert.toLowerCase().includes('failed') || 
-                                     alert.toLowerCase().includes('unusual')) {
+                                     alert.toLowerCase().includes('blocked')) {
                                 li.setAttribute('data-severity', 'medium');
                             } else {
                                 li.setAttribute('data-severity', 'low');

@@ -175,13 +175,16 @@
         .logs-list li:hover {
             background: #f0f0f1;
         }
-
         .status-200 {
-            background-color: #d4edda !important;
+            background-color: #c8e6c9 !important;
         }
 
-        .status-404 {
-            background-color: #f8d7da !important;
+        .status-400 {
+            background-color: #ffcdd2 !important;
+        }
+
+        .status-other {
+            background-color: #ffe0b2 !important;
         }
     </style>
 </head>
@@ -195,8 +198,8 @@
         <div class="sidebar">
             <ul class="menu">
                 <li><a href="/dashboard/home">Dashboard</a></li>
-                <li><a href="#message-detection">Message Detection</a></li>
-                <li><a href="#malware-detection">Malware Detection</a></li>
+                <li><a href="/dashboard/firewall">Firewall</a></li>
+                <li><a href="/dashboard/manage-token">Manage Token</a></li>
                 <li><a href="/dashboard/logs" class="active">System Logs</a></li>
                 <li><a href="/logout">Logout</a></li>
             </ul>
@@ -256,16 +259,21 @@
                     if (data.logs && data.logs.length > 0) {
                         // Reverse the logs array to show newest first
                         data.logs.reverse().forEach(log => {
+                            // Skip logs containing /api/v1/dev/logs
+                            if (log.includes('/api/v1/dev/logs')) {
+                                return;
+                            }
+                            
                             const li = document.createElement('li');
                             li.textContent = log;
                             
-                            // Check if log contains response status
-                            if (log.includes('Response Status:')) {
-                                if (log.includes('200')) {
-                                    li.classList.add('status-200');
-                                } else if (log.includes('404')) {
-                                    li.classList.add('status-404');
-                                }
+                            // Check status code in the log
+                            if (log.includes('status 200')) {
+                                li.classList.add('status-200');
+                            } else if (log.includes('status 404')) {
+                                li.classList.add('status-400');
+                            } else {
+                                li.classList.add('status-other');
                             }
                             
                             logsList.appendChild(li);
@@ -283,8 +291,6 @@
         // Initial load of logs
         fetchLogs();
         
-        // Refresh logs every 30 seconds
-        setInterval(fetchLogs, 30000);
     </script>
 </body>
 </html>

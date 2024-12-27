@@ -1,5 +1,5 @@
 # Imports for handling Flask-related stuff
-from flask import Flask, request, jsonify, render_template , session , redirect , url_for
+from flask import Flask, request, jsonify, render_template , session , redirect , url_for , g
 # Initializing the app and setting the secret key
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'arshad_number_1_also_this_is_uncrackable_secret_key_try_any_wordlists_idc'
@@ -17,6 +17,7 @@ import jwt
 import json
 import datetime
 import os
+import time
 
 
 # Imports for reading the signatures from the database of hashes
@@ -26,26 +27,53 @@ import sqlite3
 # Setting up logging
 import logging
 logs_file_path = os.path.join(app.root_path, 'static', 'logs.txt')
-logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(message)s - %(asctime)s ')
+logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(message)s - %(asctime)s')
 
 
 #Setting up alerts
 alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
 
+# Setting up allowlist and blocklist
+allowlist_file_path = os.path.join(app.root_path, 'static', 'allowlist.txt')
+blocklist_file_path = os.path.join(app.root_path, 'static', 'blocklist.txt')
 
 # BEFORE AND AFTER REQUEST FOR LOGGING RELATED STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
 
 @app.before_request
 def log_request_info():
-    pass
+    g.client_ip = request.remote_addr
+    g.request_path = request.path  # Log the full requested URL
+    g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # Log the timestamp
+
+    # Check if the IP is in the blocklist
+    with open(blocklist_file_path, 'r') as f:
+        blocklist = [ip.strip() for ip in f.readlines()]  # Read and clean the blocklist
+
+    if g.client_ip in blocklist:
+        with open(alerts_file_path, 'a') as f:
+            f.write(f"[ blocked ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
+        return jsonify({"error": "[Access denied] Your IP is blocked |  We are sending our combat forces to your location"}), 403
+
+    # Log suspicious access attempts
+    if '/login' in g.request_path or '/dashboard' in g.request_path:
+        with open(alerts_file_path, 'a') as f:
+            f.write(f"[ suspicious ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
+
 
 @app.after_request
 def after_request(response):
+    app.logger.info(f"[LOG] [{g.timestamp}] IP {g.client_ip}"
+                    f" tried to access {g.request_path} and received status {response.status_code} ")
     response.headers['X-Processed-By'] = 'Vault - 7'
     response.headers['X-Endpoint'] = request.endpoint
-    app.logger.info(f"Response Status: {response.status} | Response Length: {len(response.data)} | Endpoint: {request.endpoint} | IP: {request.remote_addr}")
     return response
+
+    # @app.errorhandler(404)
+    # def page_not_found(e):
+    #     app.logger.error(f"[LOG] [{g.timestamp}] IP {g.client_ip} "
+    #                     f"tried to access nonexistent endpoint {g.request_path} and received 404ERROR.")
+    #     return "Page not found", 404
 
 # ---------------------------------------------------------------------------------------------------------------------------
 
@@ -235,17 +263,28 @@ def malware_detection():
 
 @app.route('/api/v1/dev/alerts', methods=['GET','DELETE'])
 def alerts():
-    if not session.get('logged_in'):
-        return jsonify({"error": "Unauthorized access. Please log in."}), 403
-    if session.get('username') != 'admin':
+    if not session.get('logged_in') or session.get('username') != 'admin':
         return jsonify({"error": "Unauthorized access. Admin privileges required."}), 403
  
     if request.method == 'GET':
+        # Get allowlist IPs
+        with open(allowlist_file_path, 'r') as f:
+            allowed_ips = [ip.strip() for ip in f.readlines()]
+
         with open(alerts_file_path, 'r') as file:
             alerts_data = file.readlines()
-            alerts_data = [alert.strip() for alert in alerts_data if alert.strip()]
+            filtered_alerts = []
+            for alert in alerts_data:
+                alert = alert.strip()
+                if alert:
+                    ip_start = alert.find(']') + 2
+                    ip_end = alert.find('tried') - 1
+                    if ip_start > 0 and ip_end > 0:
+                        ip = alert[ip_start:ip_end]
+                        if ip not in allowed_ips:
+                            filtered_alerts.append(alert)
 
-        return jsonify({"alerts": alerts_data}), 200
+        return jsonify({"alerts": filtered_alerts}), 200
     
     elif request.method == 'DELETE':
         with open(alerts_file_path, 'w') as file:
@@ -253,16 +292,14 @@ def alerts():
 
 @app.route('/api/v1/dev/logs', methods=['GET', 'DELETE'])
 def logs():
-    if not session.get('logged_in'):
+    if not session.get('logged_in') or session.get('username') != 'admin':
         return jsonify({"error": "Unauthorized access. Please log in."}), 403
-    if session.get('username') != 'admin':
-        return jsonify({"error": "Unauthorized access. Admin privileges required."}), 403
 
     if request.method == 'GET':
         try:
             with open(logs_file_path, 'r') as file:
                 logs_data = file.readlines()
-            filtered_logs = [log.strip() for log in logs_data if log.startswith(('IP', 'Response'))]
+            filtered_logs = [log.strip() for log in logs_data if log.startswith('[LOG]')]
             return jsonify({"logs": filtered_logs}), 200
 
         except Exception as e:
@@ -278,7 +315,69 @@ def logs():
             return jsonify({"error": f"An error occurred while clearing the logs: {str(e)}"}), 500
 
 
-@app.route('/api/v1/dev/blocklist', methods=['GET'])
+@app.route('/api/v1/dev/allowlist', methods=['GET','POST','DELETE'])
+def allowlist():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+
+    if request.method == 'GET':
+        with open(allowlist_file_path, 'r') as file:
+            allowlist_data = file.readlines()
+        return jsonify({"allowlist": allowlist_data}), 200
+    
+    elif request.method == 'POST':
+        data = request.get_json()
+        ip_address = data.get('ip_address')
+        with open(allowlist_file_path, 'a') as file:
+            file.write(ip_address + '\n')
+        return jsonify({"message": "IP address added successfully"}), 200
+
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        ip_address = data.get('ip_address').strip()  # Strip whitespace/newlines
+
+        with open(allowlist_file_path, 'r') as file:
+            allowlist_data = file.readlines()        
+
+        updated_allowlist = [ip.strip() for ip in allowlist_data if ip.strip() != ip_address]
+ 
+        with open(allowlist_file_path, 'w') as file:
+            file.write('\n'.join(updated_allowlist) + '\n')
+
+        return jsonify({"message": f"IP address removed successfully"}), 200
+
+
+
+@app.route('/api/v1/dev/blocklist', methods=['GET','POST','DELETE'])
+def blocklist():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+
+    if request.method == 'GET':
+        with open(blocklist_file_path, 'r') as file:
+            blocklist_data = file.readlines()
+        return jsonify({"blocklist": blocklist_data}), 200
+
+    elif request.method == 'POST':
+        data = request.get_json()
+        ip_address = data.get('ip_address')
+        with open(blocklist_file_path, 'a') as file:
+            file.write(ip_address + '\n')
+        return jsonify({"message": "IP address added successfully"}), 200
+
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        ip_address = data.get('ip_address').strip() 
+        with open(blocklist_file_path, 'r') as file:
+            blocklist_data = file.readlines()
+
+        updated_blocklist = [ip.strip() for ip in blocklist_data if ip.strip() != ip_address]
+
+        with open(blocklist_file_path, 'w') as file:
+            file.write('\n'.join(updated_blocklist) + '\n')
+
+        return jsonify({"message": f"IP address {ip_address} removed successfully"}), 200
+
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -317,6 +416,12 @@ def dashboard_logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
     return render_template('dashboard_logs.html')
+
+@app.route('/dashboard/firewall',methods=['GET'])
+def dashboard_firewall():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return redirect(url_for('login'))
+    return render_template('dashboard_firewall.html')
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
