@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault-7 Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f0f0f1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.4;
+        }
+
+        #adminbar {
+            background: #1d2327;
+            color: #fff;
+            height: 32px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+        }
+
+        #adminbar .logo {
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 20px;
+        }
+
+        .container {
+            height: 100%;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            padding-top: 32px;
+        }
+
+        .sidebar {
+            float: left;
+            width: 240px;
+            background: linear-gradient(180deg, #1d2327 0%, #23282d 100%);
+            height: calc(100vh - 32px);
+            position: fixed;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .menu {
+            list-style: none;
+            margin: 24px 0;
+        }
+
+        .menu li {
+            margin: 4px 8px;
+        }
+
+        .menu a {
+            color: #f0f0f1;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            font-size: 14px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            border-left: 4px solid transparent;
+        }
+
+        .menu a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #2271b1;
+            transform: translateX(4px);
+        }
+
+        .menu a.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left: 4px solid #2271b1;
+            color: #fff;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 25px 40px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            color: #1d2327;
+            font-size: 23px;
+            font-weight: 400;
+            margin: 0 0 1rem;
+            padding: 0;
+            line-height: 1.3;
+        }
+
+        .welcome-panel {
+            background: #fff;
+            border: 1px solid #c3c4c7;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .welcome-panel h2 {
+            font-size: 18px;
+            margin: 0 0 1rem;
+        }
+
+        .dashboard-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #c3c4c7;
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .card h2 {
+            font-size: 14px;
+            padding: 12px 16px;
+            margin: 0;
+            border-bottom: 1px solid #c3c4c7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-content {
+            padding: 16px;
+            color: #3c434a;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #2271b1;
+            font-size: 14px;
+            margin-left: 8px;
+        }
+
+        .refresh-btn:hover {
+            color: #135e96;
+        }
+
+        .logs-list {
+            list-style: none;
+        }
+
+        .logs-list li {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f1;
+        }
+
+        .logs-list li:hover {
+            background: #f0f0f1;
+        }
+
+        .status-200 {
+            background-color: #d4edda !important;
+        }
+
+        .status-404 {
+            background-color: #f8d7da !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="adminbar">
+        <div class="logo">Vault-7</div>
+        <div style="margin-left: auto;">Welcome, Admin</div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul class="menu">
+                <li><a href="/dashboard/home">Dashboard</a></li>
+                <li><a href="#message-detection">Message Detection</a></li>
+                <li><a href="#malware-detection">Malware Detection</a></li>
+                <li><a href="/dashboard/logs" class="active">System Logs</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <h1 class="page-title">System Logs</h1>
+            
+            <div class="welcome-panel">
+                <h2>System Activity Logs</h2>
+                <p>View and manage system logs. These logs show all API requests and responses.</p>
+            </div>
+
+            <div class="dashboard-cards">
+                <div id="logsCard" class="card">
+                    <h2>
+                        System Logs
+                        <div>
+                            <button onclick="clearLogs()" class="refresh-btn">🗑️ Clear</button>
+                            <button onclick="fetchLogs()" class="refresh-btn">↻ Refresh</button>
+                        </div>
+                    </h2>
+                    <div class="card-content">
+                        <ul id="logsList" class="logs-list">
+                            <!-- Logs will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function clearLogs() {
+            fetch('/api/v1/dev/logs', {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    fetchLogs();
+                }
+            })
+            .catch(error => {
+                const logsList = document.getElementById('logsList');
+                logsList.innerHTML = '<li style="color: #d63638;">Error clearing logs</li>';
+            });
+        }
+
+        function fetchLogs() {
+            fetch('/api/v1/dev/logs')
+                .then(response => response.json())
+                .then(data => {
+                    const logsList = document.getElementById('logsList');
+                    logsList.innerHTML = '';
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        // Reverse the logs array to show newest first
+                        data.logs.reverse().forEach(log => {
+                            const li = document.createElement('li');
+                            li.textContent = log;
+                            
+                            // Check if log contains response status
+                            if (log.includes('Response Status:')) {
+                                if (log.includes('200')) {
+                                    li.classList.add('status-200');
+                                } else if (log.includes('404')) {
+                                    li.classList.add('status-404');
+                                }
+                            }
+                            
+                            logsList.appendChild(li);
+                        });
+                    } else {
+                        logsList.innerHTML = '<li>No logs available</li>';
+                    }
+                })
+                .catch(error => {
+                    const logsList = document.getElementById('logsList');
+                    logsList.innerHTML = '<li style="color: #d63638;">Error fetching logs</li>';
+                });
+        }
+
+        // Initial load of logs
+        fetchLogs();
+        
+        // Refresh logs every 30 seconds
+        setInterval(fetchLogs, 30000);
+    </script>
+</body>
+</html>

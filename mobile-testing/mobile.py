@@ -8,13 +8,13 @@ import json
 import os
 import time
 
-BASE_URL = 'https://vault-7.vercel.app'
-#BASE_URL ='http://127.0.0.1:5000'
+#BASE_URL = 'https://vault-7.vercel.app'
+BASE_URL ='http://127.0.0.1:5000'
 TOKEN_MESSAGE = ''
 TOKEN_FILE = ''
 
 def simulate_health_check():
-    url = f"{BASE_URL}/check_health"
+    url = f"{BASE_URL}/api/v1//check_health"
     print("\n [-] Sending GET request to /check_health endpoint")
     response = requests.get(url)
     print(f"\n {response.text}")
@@ -23,12 +23,12 @@ def simulate_health_check():
 def simulate_get_token_for_message(condition):
     global TOKEN_MESSAGE
     # First send a get request and get the client_ip from the server
-    url = f"{BASE_URL}/check_health"
+    url = f"{BASE_URL}/api/v1/check_health"
     print("\n [-] First sending GET request to /check_health endpoint")
     response = requests.get(url)
     print(f"\n {response.text}")
     #Extract the client ip from the response
-    print("\n [-] Extrcting client_ip from the response")
+    print("\n [-] Extracting client_ip from the response")
     response_data = response.json()
     client_ip = response_data.get("client_ip")
     time.sleep(2)
@@ -44,7 +44,7 @@ def simulate_get_token_for_message(condition):
     print(f"\n [-] GUID generated as :  {device_guid}")
     time.sleep(1)
     print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_message")
-    url =  f"{BASE_URL}/get_token_for_message"
+    url =  f"{BASE_URL}/api/v1/get_token_for_message"
     headers = {'Content-Type': 'application/json'}
     json_data = json.dumps({"device_guid": device_guid})
     response = requests.post(url, headers=headers, data=json_data)
@@ -64,12 +64,12 @@ def simulate_get_token_for_message(condition):
 def simulate_get_token_for_file(condition):
     global TOKEN_FILE
     # First send a get request and get the client_ip from the server
-    url = f"{BASE_URL}/check_health"
+    url = f"{BASE_URL}/api/v1/check_health"
     print("\n [-] First sending GET request to /check_health endpoint")
     response = requests.get(url)
     print(f"\n {response.text}")
     #Extract the client ip from the response
-    print("\n [-] Extrcting client_ip from the response")
+    print("\n [-] Extracting client_ip from the response")
     response_data = response.json()
     client_ip = response_data.get("client_ip")
     time.sleep(2)
@@ -85,7 +85,7 @@ def simulate_get_token_for_file(condition):
     print(f"\n [-] GUID generated as :  {device_guid}")
     time.sleep(1)
     print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_file")
-    url =  f"{BASE_URL}/get_token_for_files"
+    url =  f"{BASE_URL}/api/v1/get_token_for_files"
     headers = {'Content-Type': 'application/json'}
     json_data = json.dumps({"device_guid": device_guid})
     response = requests.post(url, headers=headers, data=json_data)
@@ -102,7 +102,7 @@ def simulate_get_token_for_file(condition):
         buffer = input(" [-] Press enter to continue....")
 
 def simulate_get_token_fake_guid():
-    url = f"{BASE_URL}/check_health"
+    url = f"{BASE_URL}/api/v1/check_health"
     print("\n [!] Not sending /check_health endpoint\n")
     client_ip = input (" [-] Enter IP to make GUID with : ")
     time.sleep(2)
@@ -118,7 +118,7 @@ def simulate_get_token_fake_guid():
     print(f"\n [-] GUID generated as :  {device_guid}")
     time.sleep(1)
     print(f"\n [-] Now sending POST request with GUID to endpoint /get_token_for_message")
-    url =  f"{BASE_URL}/get_token_for_message"
+    url =  f"{BASE_URL}/api/v1/get_token_for_message"
     headers = {'Content-Type': 'application/json'}
     json_data = json.dumps({"device_guid": device_guid})
     response = requests.post(url, headers=headers, data=json_data)
@@ -129,7 +129,7 @@ def simulate_get_token_fake_guid():
     buffer = input(" [-] Press enter to continue....")
 
 def simulate_sending_message_detect():
-    url = f"{BASE_URL}/message_detection"    
+    url = f"{BASE_URL}/api/v1/message_detection"    
     print("\n\n [-] First running get_token_for_message function to get token")
     simulate_get_token_for_message(1)
     time.sleep(2)
@@ -149,7 +149,7 @@ def simulate_sending_message_detect():
 
 # Sending signature along with the filename for detection
 def simulate_send_signature_detect():
-    url = f"{BASE_URL}/malware_detection"
+    url = f"{BASE_URL}/api/v1/malware_detection"
     print("\n\n[-] First running get_token_for_files function to get token")
     simulate_get_token_for_file(1)
     time.sleep(2)
@@ -191,7 +191,7 @@ def simulate_send_signature_detect():
 def main():
     choice = 0
     while(choice != 7):
-        os.system("clear")
+        os.system("cls")
         print("\n ~~Main Menu~~\n")
         print(" 1. Simulate heatlh check \n ")
         print(" 2. Simulate getting token for message with GUID \n")
@@ -214,6 +214,8 @@ def main():
                 simulate_sending_message_detect()
             case "6":
                 simulate_send_signature_detect()
+            case "7":
+                exit(0)
             case _:
                 print(" Invalid Choice!")
 

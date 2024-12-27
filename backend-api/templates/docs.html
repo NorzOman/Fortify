@@ -4,52 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Vault - 7 API Documentation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
     <style>
-        /* Basic resets */
+        /* CSS Reset */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* Global Styles */
+        :root {
+            --primary-color: #0085ba;
+            --primary-dark: #006799;
+            --danger-color: #dc3232;
+            --danger-dark: #a00;
+            --text-color: #444;
+            --dark-bg: #23282d;
+            --light-bg: #f1f1f1;
+            --white: #fff;
+            --border-color: #ccd0d4;
+        }
+
         body {
-            font-family: 'Ubuntu Mono', monospace;
-            background-color: #121212;
-            color: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
             line-height: 1.6;
             padding: 20px;
-            font-size: 1em;
+            font-size: 14px;
             max-width: 1200px;
-            margin: 0 auto; /* Center the content */
+            margin: 0 auto;
         }
 
         h1, h2 {
-            color: #4CAF50;
+            color: var(--primary-color);
             text-align: center;
-            font-size: 1.5em;
+            font-size: 23px;
             margin-bottom: 20px;
+            font-weight: 400;
         }
 
         h3 {
-            color: #2196F3;
+            color: var(--text-color);
             margin-bottom: 10px;
-            font-size: 1.2em;
+            font-size: 20px;
+            font-weight: 400;
         }
 
         h4 {
-            color: #FF5722;
+            color: var(--text-color);
             margin-top: 10px;
             margin-bottom: 5px;
-            font-size: 1.1em;
+            font-size: 16px;
+            font-weight: 500;
         }
 
         .section {
-            background-color: #1e1e1e;
+            background: var(--white);
             padding: 20px;
-            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 1px rgba(0,0,0,.04);
             margin-bottom: 25px;
-            box-shadow: 0 1px 5px rgba(0,0,0,0.3);
         }
 
         .endpoint {
@@ -61,59 +76,60 @@
         }
 
         pre {
-            background-color: #333;
+            background: var(--light-bg);
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid var(--border-color);
             overflow-x: auto;
             word-wrap: break-word;
-            color: #f5f5f5;
-            font-size: 14px;
+            color: var(--text-color);
+            font-size: 13px;
             margin-bottom: 15px;
+            font-family: Consolas, Monaco, monospace;
         }
 
-        .endpoint-response, .request, .error {
+        .endpoint-response, .request {
             margin-top: 15px;
         }
 
         .endpoint-response {
-            background-color: #2a2a2a;
+            background: var(--white);
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid var(--border-color);
         }
 
         .error {
-            background-color: #f44336;
+            background: #fff5f5;
+            border-left: 4px solid var(--danger-color);
             padding: 15px;
-            border-radius: 5px;
-            color: #fff;
+            margin-top: 15px;
         }
 
         .request {
-            background-color: #303030;
+            background: var(--white);
             padding: 15px;
-            border-radius: 5px;
+            border: 1px solid var(--border-color);
         }
 
         footer {
             text-align: center;
             padding-top: 20px;
-            font-size: 1em;
-            color: #bbb;
+            font-size: 13px;
+            color: #666;
             margin-top: 40px;
         }
 
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 782px) {
             body {
                 padding: 10px;
             }
 
             h1, h2 {
-                font-size: 1.2em;
+                font-size: 20px;
             }
 
             h3 {
-                font-size: 1.1em;
+                font-size: 18px;
             }
 
             pre {
@@ -128,15 +144,15 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.1em;
+                font-size: 18px;
             }
 
             h2 {
-                font-size: 1.0em;
+                font-size: 16px;
             }
 
             h3 {
-                font-size: 1em;
+                font-size: 15px;
             }
 
             .section {
@@ -165,7 +181,7 @@
 
     <!-- Health Check Endpoint -->
     <div class="section">
-        <h3>2) Health Check (`/check_health`)</h3>
+        <h3>2) Health Check (`/api/v1/check_health`)</h3>
         <div class="endpoint">
             <p><strong>Method:</strong> GET</p>
             <p>This endpoint allows the client to check the availability of the API.</p>
@@ -183,7 +199,7 @@
 
     <!-- Get Token for Message Detection -->
     <div class="section">
-        <h3>3) Get Token for Message Detection (`/get_token_for_message`)</h3>
+        <h3>3) Get Token for Message Detection (`/api/v1/get_token_for_message`)</h3>
         <div class="endpoint">
             <p><strong>Method:</strong> POST</p>
             <p>This endpoint returns a token for SMS phishing detection. You must provide a `device_guid`.</p>
@@ -217,7 +233,7 @@
 
     <!-- Get Token for Malware Detection -->
     <div class="section">
-        <h3>4) Get Token for Malware Detection (`/get_token_for_files`)</h3>
+        <h3>4) Get Token for Malware Detection (`/api/v1/get_token_for_files`)</h3>
         <div class="endpoint">
             <p><strong>Method:</strong> POST</p>
             <p>This endpoint returns a token for file malware detection. You must provide a `device_guid`.</p>
@@ -251,7 +267,7 @@
 
     <!-- Message Detection -->
     <div class="section">
-        <h3>5) Message Detection (`/message_detection`)</h3>
+        <h3>5) Message Detection (`/api/v1/message_detection`)</h3>
         <div class="endpoint">
             <p><strong>Method:</strong> POST</p>
             <p>Uploads a message for phishing detection. Requires a valid JWT token.</p>
@@ -291,7 +307,7 @@
 
     <!-- Malware Detection -->
     <div class="section">
-        <h3>6) Malware Detection (`/malware_detection`)</h3>
+        <h3>6) Malware Detection (`/api/v1/malware_detection`)</h3>
         <div class="endpoint">
             <p><strong>Method:</strong> POST</p>
             <p>Uploads file signatures for malware detection. Requires a valid JWT token.</p>
@@ -343,7 +359,8 @@
     </div>
 
     <footer>
-        <p>&copy; 2024 Vault-7 API Documentation</p>
+        <p>Thank you for using our system. Version 1.0</p>
+        <p>Are you a developer? <a href="/login">Log in</a></p>
     </footer>
 </body>
 </html>

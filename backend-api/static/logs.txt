@@ -1,0 +1,28 @@
+Response Status: 200 OK | Response Length: 65 | Endpoint: logs | IP: 127.0.0.1 - 2024-12-27 12:20:16,166 
+127.0.0.1 - - [27/Dec/2024 12:20:16] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-27 12:20:16,167 
+Response Status: 200 OK | Response Length: 131 | Endpoint: logs | IP: 127.0.0.1 - 2024-12-27 12:20:16,193 
+127.0.0.1 - - [27/Dec/2024 12:20:16] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-27 12:20:16,194 
+Response Status: 200 OK | Response Length: 11834 | Endpoint: dashboard_home | IP: 127.0.0.1 - 2024-12-27 12:20:18,790 
+127.0.0.1 - - [27/Dec/2024 12:20:18] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-27 12:20:18,791 
+Response Status: 200 OK | Response Length: 67 | Endpoint: check_health | IP: 127.0.0.1 - 2024-12-27 12:20:18,875 
+127.0.0.1 - - [27/Dec/2024 12:20:18] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-27 12:20:18,876 
+Response Status: 200 OK | Response Length: 19 | Endpoint: alerts | IP: 127.0.0.1 - 2024-12-27 12:20:18,893 
+127.0.0.1 - - [27/Dec/2024 12:20:18] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-27 12:20:18,894 
+Response Status: 200 OK | Response Length: 19 | Endpoint: alerts | IP: 127.0.0.1 - 2024-12-27 12:20:19,950 
+127.0.0.1 - - [27/Dec/2024 12:20:19] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-27 12:20:19,950 
+Response Status: 200 OK | Response Length: 19 | Endpoint: alerts | IP: 127.0.0.1 - 2024-12-27 12:20:20,134 
+127.0.0.1 - - [27/Dec/2024 12:20:20] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-27 12:20:20,135 
+Response Status: 200 OK | Response Length: 19 | Endpoint: alerts | IP: 127.0.0.1 - 2024-12-27 12:20:20,278 
+127.0.0.1 - - [27/Dec/2024 12:20:20] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-27 12:20:20,278 
+Response Status: 200 OK | Response Length: 8392 | Endpoint: dashboard_logs | IP: 127.0.0.1 - 2024-12-27 12:20:23,791 
+127.0.0.1 - - [27/Dec/2024 12:20:23] "GET /dashboard/logs HTTP/1.1" 200 - - 2024-12-27 12:20:23,791 
+Response Status: 200 OK | Response Length: 1069 | Endpoint: logs | IP: 127.0.0.1 - 2024-12-27 12:20:23,891 
+127.0.0.1 - - [27/Dec/2024 12:20:23] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-27 12:20:23,891 
+Response Status: 302 FOUND | Response Length: 199 | Endpoint: logout | IP: 127.0.0.1 - 2024-12-27 12:20:24,270 
+127.0.0.1 - - [27/Dec/2024 12:20:24] "[32mGET /logout HTTP/1.1[0m" 302 - - 2024-12-27 12:20:24,271 
+Response Status: 200 OK | Response Length: 2788 | Endpoint: login | IP: 127.0.0.1 - 2024-12-27 12:20:24,287 
+127.0.0.1 - - [27/Dec/2024 12:20:24] "GET /login HTTP/1.1" 200 - - 2024-12-27 12:20:24,287 
+ * Detected change in 'C:\\Users\\admin\\Documents\\GitHub\\Vault-7\\backend-api\\app.py', reloading - 2024-12-27 12:20:30,621 
+ * Restarting with stat - 2024-12-27 12:20:30,990 
+ * Debugger is active! - 2024-12-27 12:20:32,684 
+ * Debugger PIN: 141-322-994 - 2024-12-27 12:20:32,691 

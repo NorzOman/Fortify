@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault - 7 Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f1f1f1;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: #fff;
+            padding: 24px;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 1px 3px rgba(0,0,0,.13);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-header h1 {
+            color: #23282d;
+            font-size: 24px;
+            font-weight: 400;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            color: #23282d;
+            font-size: 14px;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 3px 10px;
+            font-size: 16px;
+            line-height: 1.33333333;
+            border: 1px solid #ddd;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+            background-color: #fff;
+            color: #32373c;
+            min-height: 40px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0 12px 2px;
+            height: 35px;
+            background: #0085ba;
+            border: 1px solid #006799;
+            color: #fff;
+            font-size: 14px;
+            line-height: 2.14285714;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #006799;
+        }
+
+        .error {
+            color: #dc3232;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Vault - 7</h1>
+        </div>
+        {% if error %}
+        <div class="error">
+            {{ error }}
+        </div>
+        {% endif %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="submit-btn">Log In</button>
+        </form>
+    </div>
+</body>
+</html>
