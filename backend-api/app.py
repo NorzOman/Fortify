@@ -1,8 +1,9 @@
 # Imports for handling Flask-related stuff
 from flask import Flask, request, jsonify, render_template , session , redirect , url_for , g
+import os
 # Initializing the app and setting the secret key
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'arshad_number_1_also_this_is_uncrackable_secret_key_try_any_wordlists_idc'
+app.config['SECRET_KEY'] = os.urandom(32).hex()
 
 
 # Imports for handling AES encryption and decryption
@@ -16,7 +17,6 @@ import base64
 import jwt
 import json
 import datetime
-import os
 import time
 
 
@@ -37,30 +37,31 @@ alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
 allowlist_file_path = os.path.join(app.root_path, 'static', 'allowlist.txt')
 blocklist_file_path = os.path.join(app.root_path, 'static', 'blocklist.txt')
 
+
+
 # BEFORE AND AFTER REQUEST FOR LOGGING RELATED STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
 
+# Before request logging
 @app.before_request
 def log_request_info():
     g.client_ip = request.remote_addr
-    g.request_path = request.path  # Log the full requested URL
-    g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())  # Log the timestamp
+    g.request_path = request.path
+    g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
     # Check if the IP is in the blocklist
     with open(blocklist_file_path, 'r') as f:
-        blocklist = [ip.strip() for ip in f.readlines()]  # Read and clean the blocklist
+        blocklist = [ip.strip() for ip in f.readlines()]
 
     if g.client_ip in blocklist:
-        with open(alerts_file_path, 'a') as f:
-            f.write(f"[ blocked ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
-        return jsonify({"error": "[Access denied] Your IP is blocked |  We are sending our combat forces to your location"}), 403
+        return render_template('403.html'), 403
 
     # Log suspicious access attempts
     if '/login' in g.request_path or '/dashboard' in g.request_path:
         with open(alerts_file_path, 'a') as f:
             f.write(f"[ suspicious ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
 
-
+# After request logging
 @app.after_request
 def after_request(response):
     app.logger.info(f"[LOG] [{g.timestamp}] IP {g.client_ip}"
@@ -69,11 +70,10 @@ def after_request(response):
     response.headers['X-Endpoint'] = request.endpoint
     return response
 
-    # @app.errorhandler(404)
-    # def page_not_found(e):
-    #     app.logger.error(f"[LOG] [{g.timestamp}] IP {g.client_ip} "
-    #                     f"tried to access nonexistent endpoint {g.request_path} and received 404ERROR.")
-    #     return "Page not found", 404
+# Error handler for 404 errors
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 # ---------------------------------------------------------------------------------------------------------------------------
 
@@ -104,24 +104,36 @@ def validate_token(token):
 def check_malicious_signatures(signatures):
     db_path = 'signaturesdb.sqlite'
     
+    # Input validation - ensure signatures contains valid MD5 hashes
+    if not all(isinstance(sig, (list, tuple)) and len(sig) == 2 and 
+              isinstance(sig[1], str) and len(sig[1]) == 32 and 
+              all(c in '0123456789abcdefABCDEF' for c in sig[1])
+              for sig in signatures):
+        return json.dumps({"error": "Invalid signature format"})
+
     # Connect to the SQLite database
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
+    # Extract hashes and use parameterized query
     hashes = [signature[1] for signature in signatures]
-    placeholders = ', '.join(['?'] * len(hashes))
-    query = f"SELECT hash, name FROM HashDB WHERE hash IN ({placeholders})"
+    placeholders = ','.join('?' * len(hashes))
+    query = "SELECT hash, name FROM HashDB WHERE hash IN ({})".format(placeholders)
 
+    # Execute with parameters to prevent SQL injection
     cursor.execute(query, hashes)
     result = cursor.fetchall()
     conn.close()
 
     malicious_hashes = []
-
     for row in result:
         hash_value, name = row
         file_name = next(file_name for file_name, file_hash in signatures if file_hash == hash_value)
-        malicious_hashes.append({"file_name": file_name, "hash": hash_value, "name": name})
+        malicious_hashes.append({
+            "file_name": file_name,
+            "hash": hash_value, 
+            "name": name
+        })
 
     return json.dumps(malicious_hashes, indent=4)
 
@@ -260,7 +272,7 @@ def malware_detection():
 
     return jsonify(json.loads(malicious_signatures_json))
 
-
+# Alerts route
 @app.route('/api/v1/dev/alerts', methods=['GET','DELETE'])
 def alerts():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -290,6 +302,7 @@ def alerts():
         with open(alerts_file_path, 'w') as file:
             file.truncate(0)
 
+# Logs route
 @app.route('/api/v1/dev/logs', methods=['GET', 'DELETE'])
 def logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -314,7 +327,7 @@ def logs():
         except Exception as e:
             return jsonify({"error": f"An error occurred while clearing the logs: {str(e)}"}), 500
 
-
+# Allowlist route
 @app.route('/api/v1/dev/allowlist', methods=['GET','POST','DELETE'])
 def allowlist():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -346,8 +359,7 @@ def allowlist():
 
         return jsonify({"message": f"IP address removed successfully"}), 200
 
-
-
+# Blocklist route
 @app.route('/api/v1/dev/blocklist', methods=['GET','POST','DELETE'])
 def blocklist():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -385,6 +397,9 @@ def blocklist():
 
 # DASHBOARD RELATED STUFFS
 # ------------------------------------------------------------------------------------------------------------------------------
+
+
+# Handle login
 @app.route('/login',methods=['GET','POST'])
 def login():
     if request.method == 'POST':
@@ -394,33 +409,63 @@ def login():
         if username == './admin' and password == 'Engineer$@987':
             session['logged_in'] = True
             session['username'] = 'admin'
+            session['expiry'] = datetime.datetime.now() + datetime.timedelta(minutes=5)
             return redirect(url_for('dashboard_home'))
         else:
             return render_template('login.html',error='Incident will be reported')
     return render_template('login.html')
 
+# Handle logout
 @app.route('/logout',methods=['GET'])
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
+    session.pop('expiry', None)
     return redirect(url_for('login'))
 
+# Handle dashboard home
 @app.route('/dashboard/home',methods=['GET'])
 def dashboard_home():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
+    
+    # Check if session has expired
+    if session.get('expiry'):
+        expiry_time = session.get('expiry')
+        if datetime.datetime.now() > expiry_time:
+            session.clear()
+            return redirect(url_for('login'))
+            
     return render_template('dashboard_home.html')
 
+# Handle dashboard logs
 @app.route('/dashboard/logs',methods=['GET'])
 def dashboard_logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
+        
+    # Check if session has expired
+    if session.get('expiry'):
+        expiry_time = session.get('expiry')
+        if datetime.datetime.now() > expiry_time:
+            session.clear()
+            return redirect(url_for('login'))
+            
     return render_template('dashboard_logs.html')
 
+# Handle dashboard firewall
 @app.route('/dashboard/firewall',methods=['GET'])
 def dashboard_firewall():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
+        
+    # Check if session has expired
+    if session.get('expiry'):
+        expiry_time = session.get('expiry')
+        if datetime.datetime.now() > expiry_time:
+            session.clear()
+            return redirect(url_for('login'))
+            
     return render_template('dashboard_firewall.html')
 
 # ------------------------------------------------------------------------------------------------------------------------------
@@ -430,3 +475,5 @@ def dashboard_firewall():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True,port=5000)
+
+

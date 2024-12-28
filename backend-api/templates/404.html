@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found - Page Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #fff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            text-align: left;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            color: #000;
+        }
+
+        .status-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-line {
+            width: 3px;
+            height: 20px;
+            margin-right: 1rem;
+        }
+
+        .green {
+            background: #10B981;
+        }
+
+        .red {
+            background: #EF4444;
+        }
+
+        .status-text {
+            color: #666;
+        }
+
+        .error-details {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .error-code {
+            color: #888;
+            font-family: monospace;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404: Page Not Found</h1>
+        <div class="status-box">
+            <div class="status-item">
+                <div class="status-line green"></div>
+                <span class="status-text">Server is Online</span>
+            </div>
+            <div class="status-item">
+                <div class="status-line green"></div>
+                <span class="status-text">Connection is Active</span>
+            </div>
+            <div class="status-item">
+                <div class="status-line red"></div>
+                <span class="status-text">Page Not Found</span>
+            </div>
+        </div>
+
+        <div class="error-details">
+            <p>The page you are looking for could not be found.</p>
+            <div class="error-code">Error Code: 404 Not Found</div>
+        </div>
+    </div>
+</body>
+</html>
