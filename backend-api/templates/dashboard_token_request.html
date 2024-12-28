@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault-7 Dashboard</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #f0f0f1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    line-height: 1.4;
+}
+
+#adminbar {
+    background: #1d2327;
+    color: #fff;
+    height: 32px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
+
+#adminbar .logo {
+    font-size: 16px;
+    font-weight: 600;
+    margin-right: 20px;
+}
+
+.container {
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    padding-top: 32px;
+}
+
+.sidebar {
+    float: left;
+    width: 240px;
+    background: linear-gradient(180deg, #1d2327 0%, #23282d 100%);
+    height: calc(100vh - 32px);
+    position: fixed;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.menu {
+    list-style: none;
+    margin: 24px 0;
+}
+
+.menu li {
+    margin: 4px 8px;
+}
+
+.menu a {
+    color: #f0f0f1;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+}
+
+.menu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #2271b1;
+    transform: translateX(4px);
+}
+
+.menu a.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid #2271b1;
+    color: #fff;
+}
+
+.content {
+    margin-left: 240px;
+    padding: 25px 40px;
+    flex-grow: 1;
+}
+
+.page-title {
+    color: #1d2327;
+    font-size: 23px;
+    font-weight: 400;
+    margin: 0 0 1rem;
+    padding: 0;
+    line-height: 1.3;
+}
+
+.welcome-panel {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.welcome-panel h2 {
+    font-size: 18px;
+    margin: 0 0 1rem;
+}
+
+.dashboard-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.allow-card {
+    background: #e8f5e9;
+    border: 1px solid #81c784;
+}
+
+.block-card {
+    background: #ffebee;
+    border: 1px solid #e57373;
+}
+
+.card h2 {
+    font-size: 14px;
+    padding: 12px 16px;
+    margin: 0;
+    border-bottom: 1px solid #c3c4c7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-content {
+    padding: 16px;
+    color: #3c434a;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.refresh-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2271b1;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+.refresh-btn:hover {
+    color: #135e96;
+}
+
+/* Token Requests Table Adjustments */
+.token-requests-table {
+    width: 100%;  /* Full width of the container */
+    margin-top: 20px;
+    border-collapse: collapse;
+    height: 100%; /* Ensure table takes up the available height */
+}
+
+.token-requests-table th, .token-requests-table td {
+    padding: 8px;  /* Smaller padding for a compact design */
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 12px;  /* Reduced font size */
+}
+
+.token-requests-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.token-requests-table td {
+    background-color: #fff;
+}
+
+.token-requests-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.action-btn {
+    padding: 4px 8px;  /* Smaller padding */
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #f44336;
+    color: white;
+    font-size: 12px;  /* Smaller font size */
+    margin-left: 8px;
+}
+
+.action-btn.allow-btn {
+    background-color: #4CAF50;
+}
+
+.action-btn.remove-btn {
+    background-color: #f44336;
+}
+
+.action-btn.allow-btn:hover {
+    background-color: #45a049;
+}
+
+.action-btn.remove-btn:hover {
+    background-color: #e57373;
+}
+
+/* To limit user agent to 6 words */
+.user-agent {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    </style>
+</head>
+<body>
+    <div id="adminbar">
+        <div class="logo">Vault-7</div>
+        <div style="margin-left: auto;">Welcome, Admin</div>
+    </div>
+
+    <div class="container">
+        <div class="sidebar">
+            <ul class="menu">
+                <li><a href="/dashboard/home">Dashboard</a></li>
+                <li><a href="/dashboard/firewall">Firewall</a></li>
+                <li><a href="/dashboard/token_request" class="active">Token Requests</a></li>
+                <li><a href="/dashboard/logs">System Logs</a></li>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <h1 class="page-title">Token Requests</h1>
+            
+            <div class="welcome-panel">
+                <h2>Manage Token Requests</h2>
+                <p>Review token requests. You can allow or remove token requests.</p>
+            </div>
+
+            <div class="dashboard-cards">
+                <div id="tokenRequestsCard" class="card allow-card">
+                    <h2>
+                        Pending Token Requests
+                        <div>
+                            <button onclick="fetchTokenRequests()" class="refresh-btn">↻ Refresh</button>
+                        </div>
+                    </h2>
+                    <div class="card-content">
+                        <table class="token-requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>IP Address</th>
+                                    <th>User Agent</th>
+                                    <th>Timestamp</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tokenRequestsList">
+                                <!-- Token requests will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function allowTokenRequest(email) {
+            fetch('/api/v1/dev/pending_requests', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchTokenRequests(); // Refresh the list after allowing
+                } else {
+                    response.json().then(data => alert(data.message || 'Failed to allow token request'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to allow token request');
+            });
+        }
+
+        function removeTokenRequest(email) {
+            fetch('/api/v1/token/remove', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchTokenRequests(); // Refresh the list after removal
+                } else {
+                    response.json().then(data => alert(data.message || 'Failed to remove token request'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to remove token request');
+            });
+        }
+
+        function fetchTokenRequests() {
+            fetch('/api/v1/dev/pending_requests')
+                .then(response => response.json())
+                .then(data => {
+                    const tokenRequestsList = document.getElementById('tokenRequestsList');
+                    tokenRequestsList.innerHTML = '';  // Clear the previous content
+                    
+                    for (const email in data.requests) {
+                        if (data.requests.hasOwnProperty(email)) {
+                            const request = data.requests[email];
+
+                            // Limit the user-agent to 6 words
+                            const userAgent = request.user_agent.split(' ').slice(0, 6).join(' ') + (request.user_agent.split(' ').length > 6 ? '...' : '');
+
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${request.email}</td>
+                                <td>${request.ip_address}</td>
+                                <td class="user-agent">${userAgent}</td>
+                                <td>${request.timestamp}</td>
+                                <td>
+                                    <button class="action-btn allow-btn" onclick="allowTokenRequest('${request.email}')">✔ Allow</button>
+                                    <button class="action-btn remove-btn" onclick="removeTokenRequest('${request.email}')">✘ Remove</button>
+                                </td>
+                            `;
+                            tokenRequestsList.appendChild(row);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching token requests:', error);
+                    alert('Error fetching token requests');
+                });
+        }
+
+        // Initial fetch on page load
+        fetchTokenRequests();
+    </script>
+</body>
+</html>

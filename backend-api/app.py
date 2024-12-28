@@ -1,3 +1,15 @@
+# ⣶⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+# ⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾
+# ⠘⢿⣿⣿⣿⣿⣦⣀⣀⣀⣄⣀⣀⣠⣀⣤⣶⣿⣿⣿⣿⣿
+# ⠀⠈⠻⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋
+# ⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⠋⠀⠀
+# ⠀⠀⢠⣿⣿⡏⠆⢹⣿⣿⣿⣿⣿⣿⠒⠈⣿⣿⣿⣇⠀⠀
+# ⠀⠀⣼⣿⣿⣷⣶⣿⣿⣛⣻⣿⣿⣿⣶⣾⣿⣿⣿⣿⡀⠀
+# ⠀⠀⡁⠀⠈⣿⣿⣿⣿⢟⣛⡻⣿⣿⣿⣟⠀⠀⠈⣿⡇⠀
+# ⠀⠀⢿⣶⣿⣿⣿⣿⣿⡻⣿⡿⣿⣿⣿⣿⣶⣶⣾⣿⣿⠀
+# ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆
+
+
 # Imports for handling Flask-related stuff
 from flask import Flask, request, jsonify, render_template , session , redirect , url_for , g
 import os
@@ -18,7 +30,7 @@ import jwt
 import json
 import datetime
 import time
-
+import datetime
 
 # Imports for reading the signatures from the database of hashes
 import sqlite3
@@ -34,53 +46,18 @@ logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(messa
 alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
 
 # Setting up allowlist and blocklist
-allowlist_file_path = os.path.join(app.root_path, 'static', 'allowlist.txt')
-blocklist_file_path = os.path.join(app.root_path, 'static', 'blocklist.txt')
+allowlist_file_path = os.path.join(app.root_path, 'static', 'IP_allowlist.txt')
+blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
 
 
-
-# BEFORE AND AFTER REQUEST FOR LOGGING RELATED STUFFS
-# ---------------------------------------------------------------------------------------------------------------------------
-
-# Before request logging
-@app.before_request
-def log_request_info():
-    g.client_ip = request.remote_addr
-    g.request_path = request.path
-    g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
-
-    # Check if the IP is in the blocklist
-    with open(blocklist_file_path, 'r') as f:
-        blocklist = [ip.strip() for ip in f.readlines()]
-
-    if g.client_ip in blocklist:
-        return render_template('403.html'), 403
-
-    # Log suspicious access attempts
-    if '/login' in g.request_path or '/dashboard' in g.request_path:
-        with open(alerts_file_path, 'a') as f:
-            f.write(f"[ suspicious ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
-
-# After request logging
-@app.after_request
-def after_request(response):
-    app.logger.info(f"[LOG] [{g.timestamp}] IP {g.client_ip}"
-                    f" tried to access {g.request_path} and received status {response.status_code} ")
-    response.headers['X-Processed-By'] = 'Vault - 7'
-    response.headers['X-Endpoint'] = request.endpoint
-    return response
-
-# Error handler for 404 errors
-@app.errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
-
-# ---------------------------------------------------------------------------------------------------------------------------
-
-
+# Setting up USERS.json for access key handling
+users_file_path = os.path.join(app.root_path, 'static', 'users.json')
+requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
+token_allowlist_file_path = os.path.join(app.root_path, 'static', 'TOKEN_allowlist.json')
 
 # FUNCTIONS NEEDED OVERALL STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
+
 
 # Token validation function
 def validate_token(token):
@@ -98,6 +75,14 @@ def validate_token(token):
         return False
     except jwt.InvalidTokenError:
         return False
+
+
+def is_ip_blocked(ip_address):
+    if os.path.exists(blocklist_file_path):
+        with open(blocklist_file_path, 'r') as f:
+            blocklist = [ip.strip() for ip in f.readlines()]
+            return ip_address in blocklist
+    return False
 
 
 # Function searches through database with MD5 signatures
@@ -137,12 +122,55 @@ def check_malicious_signatures(signatures):
 
     return json.dumps(malicious_hashes, indent=4)
 
+
 # ---------------------------------------------------------------------------------------------------------------------------
+
+
+
+# BEFORE AND AFTER REQUEST FOR LOGGING RELATED STUFFS
+# ---------------------------------------------------------------------------------------------------------------------------
+
+
+# Before request logging
+@app.before_request
+def log_request_info():
+    g.client_ip = request.remote_addr
+    g.request_path = request.path
+    g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+
+    if is_ip_blocked(g.client_ip):
+        return render_template('403.html'), 403
+
+    # Log suspicious access attempts
+    if '/login' in g.request_path or '/dashboard' in g.request_path:
+        with open(alerts_file_path, 'a') as f:
+            f.write(f"[ suspicious ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
+
+# After request logging
+@app.after_request
+def after_request(response):
+    app.logger.info(f"[LOG] [{g.timestamp}] IP {g.client_ip}"
+                    f" tried to access {g.request_path} and received status {response.status_code} ")
+    response.headers['X-Processed-By'] = 'Vault - 7'
+    response.headers['X-Endpoint'] = request.endpoint
+    return response
+
+# Error handler for 404 errors
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+# ---------------------------------------------------------------------------------------------------------------------------
+
+
+
 
 
 
 # API ENDPOINTS RELATED STUFFS
 # ------------------------------------------------------------------------------------------------------------------------------
+
 
 # Root route leads to API documentation
 @app.route('/', methods=['GET'])
@@ -272,7 +300,47 @@ def malware_detection():
 
     return jsonify(json.loads(malicious_signatures_json))
 
-# Alerts route
+# API token request route
+@app.route('/api/v1/api_access', methods=['POST'])
+def api_access():
+    data = request.get_json()
+    email = data['email']
+    ip_address = data['ip_address']
+    user_agent = data['user_agent']
+    
+    # First we check if the IP is blocked
+    if is_ip_blocked(ip_address):
+        return jsonify({"message": "IP address is blocked"}), 403
+
+    # Second we check if the email either doesnt exist or its less than 24 hours old
+    with open(users_file_path, 'r') as f:
+        users = json.load(f)
+    if email not in users:
+        return jsonify({"message": "Email not found"}), 403
+
+    # Third we check if the request already existed
+    with open(requests_file_path, 'r') as f:
+        requests_data = json.load(f)
+
+    if email in requests_data:
+        return jsonify({"message": "Request already made from this email"}), 511
+
+    # Otherwise, save the request
+    request_info = {
+        'email': email,
+        'ip_address': ip_address,
+        'user_agent': user_agent,
+        'timestamp': datetime.now().isoformat()
+    }
+
+    # Save the request to the requests file
+    requests_data[email] = request_info
+    with open(requests_file_path, 'w') as f:
+        json.dump(requests_data, f, indent=4)
+
+    return jsonify({"message": "Request accepted"}), 200
+
+# [ DASHBOARD ] Alerts route
 @app.route('/api/v1/dev/alerts', methods=['GET','DELETE'])
 def alerts():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -302,7 +370,7 @@ def alerts():
         with open(alerts_file_path, 'w') as file:
             file.truncate(0)
 
-# Logs route
+# [ DASHBOARD ] Logs route
 @app.route('/api/v1/dev/logs', methods=['GET', 'DELETE'])
 def logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -327,7 +395,7 @@ def logs():
         except Exception as e:
             return jsonify({"error": f"An error occurred while clearing the logs: {str(e)}"}), 500
 
-# Allowlist route
+# [ DASHBOARD ] Allowlist route
 @app.route('/api/v1/dev/allowlist', methods=['GET','POST','DELETE'])
 def allowlist():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -359,7 +427,7 @@ def allowlist():
 
         return jsonify({"message": f"IP address removed successfully"}), 200
 
-# Blocklist route
+# [ DASHBOARD ] Blocklist route
 @app.route('/api/v1/dev/blocklist', methods=['GET','POST','DELETE'])
 def blocklist():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -391,6 +459,57 @@ def blocklist():
         return jsonify({"message": f"IP address {ip_address} removed successfully"}), 200
 
 
+# [ DASHBOARD ] Token Requests route
+@app.route('/api/v1/dev/pending_requests', methods=['GET', 'POST', 'DELETE'])
+def pending_requests():
+    # Ensure the user is an admin
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+    
+    if request.method == 'GET':
+        # Read and return the requests from the file
+        with open(requests_file_path, 'r') as file:
+            requests_data = json.load(file)
+        return jsonify({"requests": requests_data}), 200
+
+    elif request.method == 'POST':
+        # Get the email from the incoming JSON data
+        data = request.get_json()
+        email = data.get('email')
+
+        # If email is not provided, return an error
+        if not email:
+            return jsonify({"error": "Missing email in request data."}), 400
+
+        # Generate a token with a 30-day expiry
+        token = jwt.encode(
+            {
+                'email': email,
+                'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).timestamp()
+            },
+            app.config['SECRET_KEY'],
+            algorithm='HS256'
+        )
+
+        # Open the allowlist file and append the new token data
+        with open(token_allowlist_file_path, 'r+') as file:
+            token_data = json.load(file)
+            token_data.append({'email': email, 'token': token})
+            file.seek(0)
+            json.dump(token_data, file, indent=4)
+
+        # Open the requests_file_path and remove the json for that email since the request was reviewed
+        with open(requests_file_path, 'r') as file:
+            requests_data = json.load(file)
+        if email in requests_data:
+            del requests_data[email]
+        with open(requests_file_path, 'w') as file:
+            json.dump(requests_data, file, indent=4)
+
+        return jsonify({"message": "Token request accepted and email request removed successfully."}), 200
+  
+#
+
 # ------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -400,7 +519,7 @@ def blocklist():
 
 
 # Handle login
-@app.route('/login',methods=['GET','POST'])
+@app.route('/dev/login',methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
@@ -409,33 +528,28 @@ def login():
         if username == './admin' and password == 'Engineer$@987':
             session['logged_in'] = True
             session['username'] = 'admin'
-            session['expiry'] = datetime.datetime.now() + datetime.timedelta(minutes=5)
             return redirect(url_for('dashboard_home'))
         else:
             return render_template('login.html',error='Incident will be reported')
     return render_template('login.html')
 
 # Handle logout
-@app.route('/logout',methods=['GET'])
+@app.route('/dev/logout',methods=['GET'])
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
-    session.pop('expiry', None)
     return redirect(url_for('login'))
+
+@app.route('/dashboard',methods=['GET'])
+def dashboard():
+    return redirect(url_for('dashboard_home'))
 
 # Handle dashboard home
 @app.route('/dashboard/home',methods=['GET'])
 def dashboard_home():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
-    
-    # Check if session has expired
-    if session.get('expiry'):
-        expiry_time = session.get('expiry')
-        if datetime.datetime.now() > expiry_time:
-            session.clear()
-            return redirect(url_for('login'))
-            
+
     return render_template('dashboard_home.html')
 
 # Handle dashboard logs
@@ -443,14 +557,7 @@ def dashboard_home():
 def dashboard_logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
-        
-    # Check if session has expired
-    if session.get('expiry'):
-        expiry_time = session.get('expiry')
-        if datetime.datetime.now() > expiry_time:
-            session.clear()
-            return redirect(url_for('login'))
-            
+
     return render_template('dashboard_logs.html')
 
 # Handle dashboard firewall
@@ -458,18 +565,19 @@ def dashboard_logs():
 def dashboard_firewall():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return redirect(url_for('login'))
-        
-    # Check if session has expired
-    if session.get('expiry'):
-        expiry_time = session.get('expiry')
-        if datetime.datetime.now() > expiry_time:
-            session.clear()
-            return redirect(url_for('login'))
             
     return render_template('dashboard_firewall.html')
 
-# ------------------------------------------------------------------------------------------------------------------------------
 
+# Handle dashboard manage token
+@app.route('/dashboard/token_request',methods=['GET'])
+def dashboard_token_request():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return redirect(url_for('login'))
+            
+    return render_template('dashboard_token_request.html')
+
+# ------------------------------------------------------------------------------------------------------------------------------
 
 
 

@@ -1,0 +1,6 @@
+[LOG] [2024-12-28 23:34:35] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-28 23:34:35,809
+127.0.0.1 - - [28/Dec/2024 23:34:35] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-28 23:34:35,810
+[LOG] [2024-12-28 23:34:35] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-28 23:34:35,819
+127.0.0.1 - - [28/Dec/2024 23:34:35] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-28 23:34:35,819
+[LOG] [2024-12-28 23:34:36] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-28 23:34:36,267
+127.0.0.1 - - [28/Dec/2024 23:34:36] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-28 23:34:36,268

@@ -5,199 +5,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vault-7 Dashboard</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            background: #f0f0f1;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-            line-height: 1.4;
-        }
+body {
+    background: #f0f0f1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    line-height: 1.4;
+}
 
-        #adminbar {
-            background: #1d2327;
-            color: #fff;
-            height: 32px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            padding: 0 16px;
-        }
+#adminbar {
+    background: #1d2327;
+    color: #fff;
+    height: 32px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+}
 
-        #adminbar .logo {
-            font-size: 16px;
-            font-weight: 600;
-            margin-right: 20px;
-        }
+#adminbar .logo {
+    font-size: 16px;
+    font-weight: 600;
+    margin-right: 20px;
+}
 
-        .container {
-            height: 100%;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            padding-top: 32px;
-        }
+.container {
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    padding-top: 32px;
+}
 
-        .sidebar {
-            float: left;
-            width: 240px;
-            background: linear-gradient(180deg, #1d2327 0%, #23282d 100%);
-            height: calc(100vh - 32px);
-            position: fixed;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
+.sidebar {
+    float: left;
+    width: 240px;
+    background: linear-gradient(180deg, #1d2327 0%, #23282d 100%);
+    height: calc(100vh - 32px);
+    position: fixed;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
 
-        .menu {
-            list-style: none;
-            margin: 24px 0;
-        }
+.menu {
+    list-style: none;
+    margin: 24px 0;
+}
 
-        .menu li {
-            margin: 4px 8px;
-        }
+.menu li {
+    margin: 4px 8px;
+}
 
-        .menu a {
-            color: #f0f0f1;
-            text-decoration: none;
-            display: block;
-            padding: 12px 20px;
-            font-size: 14px;
-            border-radius: 6px;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            border-left: 4px solid transparent;
-        }
+.menu a {
+    color: #f0f0f1;
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+}
 
-        .menu a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #2271b1;
-            transform: translateX(4px);
-        }
+.menu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 4px solid #2271b1;
+    transform: translateX(4px);
+}
 
-        .menu a.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 4px solid #2271b1;
-            color: #fff;
-        }
+.menu a.active {
+    background: rgba(255, 255, 255, 0.15);
+    border-left: 4px solid #2271b1;
+    color: #fff;
+}
 
-        .content {
-            margin-left: 240px;
-            padding: 25px 40px;
-            flex-grow: 1;
-        }
+.content {
+    margin-left: 240px;
+    padding: 25px 40px;
+    flex-grow: 1;
+}
 
-        .page-title {
-            color: #1d2327;
-            font-size: 23px;
-            font-weight: 400;
-            margin: 0 0 1rem;
-            padding: 0;
-            line-height: 1.3;
-        }
+.page-title {
+    color: #1d2327;
+    font-size: 22px;
+    font-weight: 400;
+    margin: 0 0 1rem;
+    padding: 0;
+    line-height: 1.3;
+}
 
-        .welcome-panel {
-            background: #fff;
-            border: 1px solid #c3c4c7;
-            box-shadow: 0 1px 1px rgba(0,0,0,.04);
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-        }
+.welcome-panel {
+    background: #fff;
+    border: 1px solid #c3c4c7;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
 
-        .welcome-panel h2 {
-            font-size: 18px;
-            margin: 0 0 1rem;
-        }
+.welcome-panel h2 {
+    font-size: 18px;
+    margin: 0 0 1rem;
+}
 
-        .dashboard-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+.dashboard-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-        .card {
-            background: #fff;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
+.card {
+    background: #fff;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
 
-        .allow-card {
-            background: #e8f5e9;
-            border: 1px solid #81c784;
-        }
+.allow-card {
+    background: #e8f5e9;
+    border: 1px solid #81c784;
+}
 
-        .block-card {
-            background: #ffebee;
-            border: 1px solid #e57373;
-        }
+.block-card {
+    background: #ffebee;
+    border: 1px solid #e57373;
+}
 
-        .card h2 {
-            font-size: 14px;
-            padding: 12px 16px;
-            margin: 0;
-            border-bottom: 1px solid #c3c4c7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.card h2 {
+    font-size: 14px;
+    padding: 12px 16px;
+    margin: 0;
+    border-bottom: 1px solid #c3c4c7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .card-content {
-            padding: 16px;
-            color: #3c434a;
-            max-height: 500px;
-            overflow-y: auto;
-        }
+.card-content {
+    padding: 16px;
+    color: #3c434a;
+    max-height: 500px;
+    overflow-y: auto;
+}
 
-        .refresh-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #2271b1;
-            font-size: 14px;
-            margin-left: 8px;
-        }
+.refresh-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #2271b1;
+    font-size: 14px;
+    margin-left: 8px;
+}
 
-        .refresh-btn:hover {
-            color: #135e96;
-        }
+.refresh-btn:hover {
+    color: #135e96;
+}
 
-        .ip-list {
-            list-style: none;
-        }
+.ip-list-table {
+    width: 100%;  /* Full width of the container */
+    margin-top: 20px;
+    border-collapse: collapse;
+    height: 100%; /* Ensure table takes up the available height */
+}
 
-        .ip-list li {
-            padding: 8px;
-            margin: 4px 0;
-            border-radius: 4px;
-            font-size: 13px;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.ip-list-table th, .ip-list-table td {
+    padding: 8px;  /* Smaller padding for a compact design */
+    border: 1px solid #ddd;
+    text-align: left;
+    font-size: 12px;  /* Reduced font size */
+}
 
-        .ip-list li:hover {
-            background: rgba(255,255,255,0.3);
-        }
+.ip-list-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
 
-        .delete-btn {
-            cursor: pointer;
-            color: #dc3545;
-            margin-left: 8px;
-            padding: 2px 6px;
-        }
+.ip-list-table td {
+    background-color: #fff;
+}
 
-        .delete-btn:hover {
-            color: #c82333;
-        }
-    </style>
+.ip-list-table tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.delete-btn {
+    padding: 4px 8px;  /* Smaller padding */
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #f44336;
+    color: white;
+    font-size: 12px;  /* Smaller font size */
+    margin-left: 8px;
+}
+
+.delete-btn:hover {
+    background-color: #e57373;
+}
+
+/* To limit IP address to 6 words */
+.ip-address {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+</style>
 </head>
 <body>
     <div id="adminbar">
@@ -210,9 +230,9 @@
             <ul class="menu">
                 <li><a href="/dashboard/home">Dashboard</a></li>
                 <li><a href="/dashboard/firewall" class="active">Firewall</a></li>
-                <li><a href="/dashboard/manage-token">Manage Token</a></li>
+                <li><a href="/dashboard/token_request">Token Requests</a></li>
                 <li><a href="/dashboard/logs">System Logs</a></li>
-                <li><a href="/logout">Logout</a></li>
+                <li><a href="/dev/logout">Logout</a></li>
             </ul>
         </div>
 
@@ -234,9 +254,17 @@
                         </div>
                     </h2>
                     <div class="card-content">
-                        <ul id="allowList" class="ip-list">
-                            <!-- Allowed IPs will be populated here -->
-                        </ul>
+                        <table class="ip-list-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allowList">
+                                <!-- Allowed IPs will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -249,9 +277,17 @@
                         </div>
                     </h2>
                     <div class="card-content">
-                        <ul id="blockList" class="ip-list">
-                            <!-- Blocked IPs will be populated here -->
-                        </ul>
+                        <table class="ip-list-table">
+                            <thead>
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="blockList">
+                                <!-- Blocked IPs will be populated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -291,14 +327,19 @@
                     const allowList = document.getElementById('allowList');
                     allowList.innerHTML = '';
                     data.allowlist.forEach(ip => {
-                        const li = document.createElement('li');
+                        const tr = document.createElement('tr');
+                        const tdIP = document.createElement('td');
+                        tdIP.className = 'ip-address';
+                        tdIP.textContent = ip.trim();
+                        const tdActions = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         deleteButton.className = 'delete-btn';
                         deleteButton.textContent = '✕';
                         deleteButton.addEventListener('click', () => deleteIP(ip, 'allow'));
-                        li.textContent = ip.trim(); // Trim any extra spaces/newlines when displaying
-                        li.appendChild(deleteButton);
-                        allowList.appendChild(li);
+                        tdActions.appendChild(deleteButton);
+                        tr.appendChild(tdIP);
+                        tr.appendChild(tdActions);
+                        allowList.appendChild(tr);
                     });
                 });
     
@@ -309,14 +350,19 @@
                     const blockList = document.getElementById('blockList');
                     blockList.innerHTML = '';
                     data.blocklist.forEach(ip => {
-                        const li = document.createElement('li');
+                        const tr = document.createElement('tr');
+                        const tdIP = document.createElement('td');
+                        tdIP.className = 'ip-address';
+                        tdIP.textContent = ip.trim();
+                        const tdActions = document.createElement('td');
                         const deleteButton = document.createElement('button');
                         deleteButton.className = 'delete-btn';
                         deleteButton.textContent = '✕';
                         deleteButton.addEventListener('click', () => deleteIP(ip, 'block'));
-                        li.textContent = ip.trim(); // Trim any extra spaces/newlines when displaying
-                        li.appendChild(deleteButton);
-                        blockList.appendChild(li);
+                        tdActions.appendChild(deleteButton);
+                        tr.appendChild(tdIP);
+                        tr.appendChild(tdActions);
+                        blockList.appendChild(tr);
                     });
                 });
         }
@@ -351,7 +397,5 @@
         // Initial fetch on page load
         fetchIPList();
     </script>
-    
-
 </body>
 </html>
