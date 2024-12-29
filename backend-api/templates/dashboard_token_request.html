@@ -309,8 +309,8 @@ body {
         }
 
         function removeTokenRequest(email) {
-            fetch('/api/v1/token/remove', {
-                method: 'POST',
+            fetch('/api/v1/dev/pending_requests', {
+                method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },

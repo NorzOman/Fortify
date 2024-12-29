@@ -316,21 +316,27 @@ def api_access():
     with open(users_file_path, 'r') as f:
         users = json.load(f)
     if email not in users:
-        return jsonify({"message": "Email not found"}), 403
+        return jsonify({"message": "Email not found"}), 405
 
     # Third we check if the request already existed
     with open(requests_file_path, 'r') as f:
         requests_data = json.load(f)
-
     if email in requests_data:
         return jsonify({"message": "Request already made from this email"}), 511
+
+    # Fourth we also check if the token was already alloted
+    with open(token_allowlist_file_path, 'r') as f:
+        token_allowlist = json.load(f)
+    if any(entry['email'] == email for entry in token_allowlist):
+        return jsonify({"message": "Token already allotted for this email"}), 525
+
 
     # Otherwise, save the request
     request_info = {
         'email': email,
         'ip_address': ip_address,
         'user_agent': user_agent,
-        'timestamp': datetime.now().isoformat()
+        'timestamp': datetime.datetime.now().isoformat()
     }
 
     # Save the request to the requests file
@@ -341,13 +347,12 @@ def api_access():
     return jsonify({"message": "Request accepted"}), 200
 
 # [ DASHBOARD ] Alerts route
-@app.route('/api/v1/dev/alerts', methods=['GET','DELETE'])
+@app.route('/api/v1/dev/alerts', methods=['GET', 'DELETE'])
 def alerts():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return jsonify({"error": "Unauthorized access. Admin privileges required."}), 403
- 
+
     if request.method == 'GET':
-        # Get allowlist IPs
         with open(allowlist_file_path, 'r') as f:
             allowed_ips = [ip.strip() for ip in f.readlines()]
 
@@ -365,10 +370,13 @@ def alerts():
                             filtered_alerts.append(alert)
 
         return jsonify({"alerts": filtered_alerts}), 200
-    
+
     elif request.method == 'DELETE':
         with open(alerts_file_path, 'w') as file:
             file.truncate(0)
+
+        return jsonify({"message": "Alerts cleared successfully."}), 200
+
 
 # [ DASHBOARD ] Logs route
 @app.route('/api/v1/dev/logs', methods=['GET', 'DELETE'])
@@ -462,12 +470,10 @@ def blocklist():
 # [ DASHBOARD ] Token Requests route
 @app.route('/api/v1/dev/pending_requests', methods=['GET', 'POST', 'DELETE'])
 def pending_requests():
-    # Ensure the user is an admin
     if not session.get('logged_in') or session.get('username') != 'admin':
         return jsonify({"error": "Unauthorized access. Please log in."}), 403
-    
+
     if request.method == 'GET':
-        # Read and return the requests from the file
         with open(requests_file_path, 'r') as file:
             requests_data = json.load(file)
         return jsonify({"requests": requests_data}), 200
@@ -507,8 +513,27 @@ def pending_requests():
             json.dump(requests_data, file, indent=4)
 
         return jsonify({"message": "Token request accepted and email request removed successfully."}), 200
+    
+    elif request.method == 'DELETE':
+        data = request.get_json()
+        email = data.get('email', '').strip()
+        if not email:
+            return jsonify({"error": "Email is required."}), 400
+
+        with open(requests_file_path, 'r') as file:
+            requests_data = json.load(file)
+
+        if email not in requests_data:
+            return jsonify({"error": "Email not found in requests."}), 404
+
+        del requests_data[email]
+        with open(requests_file_path, 'w') as file:
+            json.dump(requests_data, file, indent=4)
+
+        return jsonify({"message": "Email removed successfully."}), 200
+
+
   
-#
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -567,7 +592,6 @@ def dashboard_firewall():
         return redirect(url_for('login'))
             
     return render_template('dashboard_firewall.html')
-
 
 # Handle dashboard manage token
 @app.route('/dashboard/token_request',methods=['GET'])
