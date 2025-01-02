@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vault-7 Dashboard</title>
     <style>
+        :root {
+            --primary-color: #0A84FF;
+            --bg-color: #1a1a1a;
+            --text-color: #e4e4e4;
+            --border-color: #333333;
+            --nav-bg: rgba(26,26,26,0.95);
+            --code-bg: #2a2a2a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,27 +21,31 @@
         }
 
         body {
-            background: #f0f0f1;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.4;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
         }
 
         #adminbar {
-            background: #1d2327;
-            color: #fff;
-            height: 32px;
+            background: var(--nav-bg);
+            color: var(--text-color);
+            height: 48px;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            z-index: 99999;
+            z-index: 100;
             display: flex;
             align-items: center;
-            padding: 0 16px;
+            padding: 0 20px;
+            border-bottom: 1px solid var(--border-color);
         }
 
         #adminbar .logo {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: 600;
             margin-right: 20px;
         }
@@ -42,16 +55,16 @@
             width: 100%;
             min-height: 100vh;
             display: flex;
-            padding-top: 32px;
+            padding-top: 48px;
         }
 
         .sidebar {
             float: left;
             width: 240px;
-            background: linear-gradient(180deg, #1d2327 0%, #23282d 100%);
-            height: calc(100vh - 32px);
+            background: var(--nav-bg);
+            height: calc(100vh - 48px);
             position: fixed;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            border-right: 1px solid var(--border-color);
         }
 
         .menu {
@@ -64,27 +77,23 @@
         }
 
         .menu a {
-            color: #f0f0f1;
+            color: var(--text-color);
             text-decoration: none;
             display: block;
             padding: 12px 20px;
             font-size: 14px;
             border-radius: 6px;
-            transition: all 0.2s ease;
             font-weight: 500;
-            border-left: 4px solid transparent;
         }
 
         .menu a:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-left: 4px solid #2271b1;
-            transform: translateX(4px);
+            background: var(--code-bg);
+            color: var(--primary-color);
         }
 
         .menu a.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-left: 4px solid #2271b1;
-            color: #fff;
+            background: var(--code-bg);
+            color: var(--primary-color);
         }
 
         .content {
@@ -94,26 +103,24 @@
         }
 
         .page-title {
-            color: #1d2327;
-            font-size: 23px;
-            font-weight: 400;
-            margin: 0 0 1rem;
-            padding: 0;
-            line-height: 1.3;
+            color: var(--text-color);
+            font-size: 36px;
+            font-weight: 600;
+            margin: 0 0 30px;
+            text-align: center;
         }
 
         .welcome-panel {
-            background: #fff;
-            border: 1px solid #c3c4c7;
-            box-shadow: 0 1px 1px rgba(0,0,0,.04);
-            padding: 25px;
+            background: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
             margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 12px;
         }
 
         .welcome-panel h2 {
-            font-size: 18px;
-            margin: 0 0 1rem;
+            font-size: 28px;
+            margin-bottom: 15px;
         }
 
         .dashboard-cards {
@@ -123,26 +130,24 @@
         }
 
         .card {
-            background: #fff;
-            border: 1px solid #c3c4c7;
-            box-shadow: 0 1px 1px rgba(0,0,0,.04);
-            border-radius: 4px;
-            transition: all 0.3s ease;
+            background: var(--nav-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
         }
 
         .card h2 {
-            font-size: 14px;
-            padding: 12px 16px;
+            font-size: 20px;
+            padding: 15px;
             margin: 0;
-            border-bottom: 1px solid #c3c4c7;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .card-content {
-            padding: 16px;
-            color: #3c434a;
+            padding: 20px;
+            color: var(--text-color);
             max-height: 500px;
             overflow-y: auto;
         }
@@ -151,13 +156,13 @@
             background: none;
             border: none;
             cursor: pointer;
-            color: #2271b1;
+            color: var(--primary-color);
             font-size: 14px;
-            margin-left: 8px;
+            padding: 8px;
         }
 
         .refresh-btn:hover {
-            color: #135e96;
+            opacity: 0.8;
         }
 
         .logs-list {
@@ -165,26 +170,28 @@
         }
 
         .logs-list li {
-            padding: 8px;
+            padding: 12px;
             margin: 4px 0;
-            border-radius: 4px;
+            border-radius: 8px;
             font-size: 13px;
-            border-bottom: 1px solid #f0f0f1;
+            border: 1px solid var(--border-color);
+            background: var(--code-bg);
         }
 
         .logs-list li:hover {
-            background: #f0f0f1;
+            border-color: var(--primary-color);
         }
+
         .status-200 {
-            background-color: #c8e6c9 !important;
+            border-left: 3px solid #32D74B !important;
         }
 
         .status-400 {
-            background-color: #ffcdd2 !important;
+            border-left: 3px solid #FF453A !important;
         }
 
         .status-other {
-            background-color: #ffe0b2 !important;
+            border-left: 3px solid #FFD60A !important;
         }
     </style>
 </head>
@@ -197,10 +204,10 @@
     <div class="container">
         <div class="sidebar">
             <ul class="menu">
-                <li><a href="/dashboard/home">Dashboard</a></li>
-                <li><a href="/dashboard/firewall">Firewall</a></li>
-                <li><a href="/dashboard/token_request">Token Requests</a></li>
-                <li><a href="/dashboard/logs" class="active">System Logs</a></li>
+                <li><a href="/dev/dashboard/home">Dashboard</a></li>
+                <li><a href="/dev/dashboard/firewall">Firewall</a></li>
+                <li><a href="/dev/dashboard/token_request">Token Requests</a></li>
+                <li><a href="/dev/dashboard/logs" class="active">System Logs</a></li>
                 <li><a href="/dev/logout">Logout</a></li>
             </ul>
         </div>
@@ -245,7 +252,7 @@
             })
             .catch(error => {
                 const logsList = document.getElementById('logsList');
-                logsList.innerHTML = '<li style="color: #d63638;">Error clearing logs</li>';
+                logsList.innerHTML = '<li style="color: #FF453A;">Error clearing logs</li>';
             });
         }
 
@@ -284,7 +291,7 @@
                 })
                 .catch(error => {
                     const logsList = document.getElementById('logsList');
-                    logsList.innerHTML = '<li style="color: #d63638;">Error fetching logs</li>';
+                    logsList.innerHTML = '<li style="color: #FF453A;">Error fetching logs</li>';
                 });
         }
 

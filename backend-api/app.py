@@ -12,11 +12,17 @@
 
 # Imports for handling Flask-related stuff
 from flask import Flask, request, jsonify, render_template , session , redirect , url_for , g
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
+
+
 # Initializing the app and setting the secret key
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(32).hex()
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
 # Imports for handling AES encryption and decryption
 from Crypto.Cipher import AES
@@ -30,7 +36,6 @@ import jwt
 import json
 import datetime
 import time
-import datetime
 
 # Imports for reading the signatures from the database of hashes
 import sqlite3
@@ -51,13 +56,32 @@ blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
 
 
 # Setting up USERS.json for access key handling
-users_file_path = os.path.join(app.root_path, 'static', 'users.json')
 requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
-token_allowlist_file_path = os.path.join(app.root_path, 'static', 'TOKEN_allowlist.json')
+
+# Initializing the database
+# ---------------------------------------------------------------------------------------------------------------------------
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
+    api_key = db.Column(db.String(120), nullable=True)
+    message_api_calls = db.Column(db.Integer, nullable=True)
+    file_api_calls = db.Column(db.Integer, nullable=True)
+    threats_detected = db.Column(db.Integer, nullable=True)
+    api_key_requested = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return f"User('{self.email}', '{self.api_key}', '{self.message_api_calls}', '{self.file_api_calls}', '{self.threats_detected}')"
+
+with app.app_context():
+    db.create_all()
+
+
+
 
 # FUNCTIONS NEEDED OVERALL STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
-
 
 # Token validation function
 def validate_token(token):
@@ -173,8 +197,8 @@ def page_not_found(e):
 
 
 # Root route leads to API documentation
-@app.route('/', methods=['GET'])
-def home():
+@app.route('/docs', methods=['GET'])
+def docs():
     return render_template('docs.html')
 
 # Route returns client IP with 200 OK message to note API is active
@@ -300,51 +324,6 @@ def malware_detection():
 
     return jsonify(json.loads(malicious_signatures_json))
 
-# API token request route
-@app.route('/api/v1/api_access', methods=['POST'])
-def api_access():
-    data = request.get_json()
-    email = data['email']
-    ip_address = data['ip_address']
-    user_agent = data['user_agent']
-    
-    # First we check if the IP is blocked
-    if is_ip_blocked(ip_address):
-        return jsonify({"message": "IP address is blocked"}), 403
-
-    # Second we check if the email either doesnt exist or its less than 24 hours old
-    with open(users_file_path, 'r') as f:
-        users = json.load(f)
-    if email not in users:
-        return jsonify({"message": "Email not found"}), 405
-
-    # Third we check if the request already existed
-    with open(requests_file_path, 'r') as f:
-        requests_data = json.load(f)
-    if email in requests_data:
-        return jsonify({"message": "Request already made from this email"}), 511
-
-    # Fourth we also check if the token was already alloted
-    with open(token_allowlist_file_path, 'r') as f:
-        token_allowlist = json.load(f)
-    if any(entry['email'] == email for entry in token_allowlist):
-        return jsonify({"message": "Token already allotted for this email"}), 525
-
-
-    # Otherwise, save the request
-    request_info = {
-        'email': email,
-        'ip_address': ip_address,
-        'user_agent': user_agent,
-        'timestamp': datetime.datetime.now().isoformat()
-    }
-
-    # Save the request to the requests file
-    requests_data[email] = request_info
-    with open(requests_file_path, 'w') as f:
-        json.dump(requests_data, f, indent=4)
-
-    return jsonify({"message": "Request accepted"}), 200
 
 # [ DASHBOARD ] Alerts route
 @app.route('/api/v1/dev/alerts', methods=['GET', 'DELETE'])
@@ -497,12 +476,9 @@ def pending_requests():
             algorithm='HS256'
         )
 
-        # Open the allowlist file and append the new token data
-        with open(token_allowlist_file_path, 'r+') as file:
-            token_data = json.load(file)
-            token_data.append({'email': email, 'token': token})
-            file.seek(0)
-            json.dump(token_data, file, indent=4)
+        user = User.query.filter_by(email=email).first()
+        user.api_key = token
+        db.session.commit()
 
         # Open the requests_file_path and remove the json for that email since the request was reviewed
         with open(requests_file_path, 'r') as file:
@@ -542,7 +518,6 @@ def pending_requests():
 # DASHBOARD RELATED STUFFS
 # ------------------------------------------------------------------------------------------------------------------------------
 
-
 # Handle login
 @app.route('/dev/login',methods=['GET','POST'])
 def login():
@@ -553,7 +528,7 @@ def login():
         if username == './admin' and password == 'Engineer$@987':
             session['logged_in'] = True
             session['username'] = 'admin'
-            return redirect(url_for('dashboard_home'))
+            return redirect('/dev/dashboard/home')
         else:
             return render_template('login.html',error='Incident will be reported')
     return render_template('login.html')
@@ -563,47 +538,160 @@ def login():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
-    return redirect(url_for('login'))
+    return redirect('/dev/login')
 
-@app.route('/dashboard',methods=['GET'])
+@app.route('/dev/dashboard',methods=['GET'])
 def dashboard():
-    return redirect(url_for('dashboard_home'))
+    return redirect('/dev/dashboard/home')
 
 # Handle dashboard home
-@app.route('/dashboard/home',methods=['GET'])
+@app.route('/dev/dashboard/home',methods=['GET'])
 def dashboard_home():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect(url_for('login'))
+        return redirect('/dev/login')
 
     return render_template('dashboard_home.html')
 
 # Handle dashboard logs
-@app.route('/dashboard/logs',methods=['GET'])
+@app.route('/dev/dashboard/logs',methods=['GET'])
 def dashboard_logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect(url_for('login'))
+        return redirect('/dev/login')
 
     return render_template('dashboard_logs.html')
 
 # Handle dashboard firewall
-@app.route('/dashboard/firewall',methods=['GET'])
+@app.route('/dev/dashboard/firewall',methods=['GET'])
 def dashboard_firewall():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect(url_for('login'))
+        return redirect('/dev/login')
             
     return render_template('dashboard_firewall.html')
 
 # Handle dashboard manage token
-@app.route('/dashboard/token_request',methods=['GET'])
+@app.route('/dev/dashboard/token_request',methods=['GET'])
 def dashboard_token_request():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect(url_for('login'))
+        return redirect('/dev/login')
             
     return render_template('dashboard_token_request.html')
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
 
+# End User Related Routes
+# ------------------------------------------------------------------------------------------------------------------------------
+
+@app.route('/',methods=['GET'])
+def home():
+    return render_template('home.html')
+
+@app.route('/user/register',methods=['GET','POST'])
+def user_register():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            return render_template('user_register.html',error='Passwords do not match')
+
+        # Check if the email already exists
+        if User.query.filter_by(email=email).first():
+            return render_template('user_register.html',error='Email already exists')
+
+        # Create the hashed password
+        hashed_password = generate_password_hash(password,method='pbkdf2:sha256')
+
+        # Create the user with default values for API fields
+        user = User(
+            email=email,
+            password=hashed_password,
+            api_key=None,
+            message_api_calls=0,
+            file_api_calls=0, 
+            threats_detected=0,
+            api_key_requested=False
+        )
+        
+        db.session.add(user)
+        db.session.commit()
+
+        session['logged_in'] = True
+        session['email'] = email
+
+        return redirect('/user/myaccount')
+
+    return render_template('user_register.html')
+
+
+@app.route('/user/login',methods=['GET','POST'])
+def user_login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if user and check_password_hash(user.password, password):
+            session['logged_in'] = True
+            session['email'] = email
+            return redirect(url_for('user_myaccount'))
+        else:
+            return render_template('user_login.html', error='Invalid email or password')
+            
+    return render_template('user_login.html')
+
+
+@app.route('/user/request_api_key',methods=['POST'])
+def user_request_api_key():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('user_login'))
+
+    email = session['email']
+    user = User.query.filter_by(email=email).first()
+    user.api_key_requested = True
+    db.session.commit()
+
+    # Get request details
+    ip_address = request.remote_addr
+    user_agent = request.headers.get('User-Agent')
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Load existing requests
+    with open(requests_file_path, 'r') as f:
+        requests_data = json.load(f)
+
+    # Add new request
+    requests_data[email] = {
+        'email': email,
+        'ip_address': ip_address,
+        'user_agent': user_agent,
+        'timestamp': timestamp
+    }
+
+    # Save updated requests
+    with open(requests_file_path, 'w') as f:
+        json.dump(requests_data, f, indent=4)
+
+    return redirect('/user/myaccount')
+
+    
+@app.route('/user/myaccount',methods=['GET'])
+def user_myaccount():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect('/user/login')
+
+    email = session['email']
+    user = User.query.filter_by(email=email).first()
+    return render_template('myaccount.html', user=user)
+
+
+@app.route('/user/logout',methods=['GET'])
+def user_logout():
+    session.pop('logged_in', None)
+    session.pop('email', None)
+    return redirect('/user/login')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True,port=5000)

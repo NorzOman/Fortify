@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vault - 7 Login</title>
+    <title>Vault - 7 Register</title>
     <style>
         :root {
             --primary-color: #0A84FF;
@@ -12,7 +12,6 @@
             --border-color: #333333;
             --nav-bg: rgba(26,26,26,0.95);
             --code-bg: #2a2a2a;
-            --dev-color: #FF453A;
         }
 
         * {
@@ -48,7 +47,7 @@
             opacity: 1;
         }
 
-        .login-container {
+        .register-container {
             background: var(--nav-bg);
             padding: 32px;
             max-width: 380px;
@@ -59,30 +58,16 @@
             border: 1px solid var(--border-color);
         }
 
-        .login-header {
+        .register-header {
             text-align: center;
             margin-bottom: 24px;
-            position: relative;
         }
 
-        .login-header h1 {
+        .register-header h1 {
             color: var(--text-color);
             font-size: 28px;
             font-weight: 600;
             letter-spacing: -0.009em;
-        }
-
-        .dev-badge {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: var(--dev-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            transform: rotate(12deg);
         }
 
         .form-group {
@@ -140,14 +125,28 @@
             border-radius: 8px;
             font-size: 15px;
         }
+
+        .login-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
     <a href="/" class="back-button">←</a>
-    <div class="login-container">
-        <div class="login-header">
-            <h1>Vault - 7</h1>
-            <span class="dev-badge">DEV MODE</span>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
         </div>
         {% if error %}
         <div class="error">
@@ -156,15 +155,22 @@
         {% endif %}
         <form method="POST">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required placeholder="Enter dev credentials">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="Enter dev password">
+                <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="submit-btn">Access Dev Dashboard</button>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit" class="submit-btn">Register</button>
         </form>
+        <div class="login-link">
+            Already have an account? <a href="/user/login">Sign in</a>
+        </div>
     </div>
 </body>
 </html>

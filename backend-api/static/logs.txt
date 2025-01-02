@@ -1,106 +1,54 @@
-[LOG] [2024-12-29 15:29:09] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-29 15:29:09,048
-127.0.0.1 - - [29/Dec/2024 15:29:09] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-29 15:29:09,048
-[LOG] [2024-12-29 15:29:09] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-29 15:29:09,055
-127.0.0.1 - - [29/Dec/2024 15:29:09] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-29 15:29:09,056
-[LOG] [2024-12-29 15:29:10] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:10,426
-127.0.0.1 - - [29/Dec/2024 15:29:10] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:10,426
-[LOG] [2024-12-29 15:29:10] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:10,514
-127.0.0.1 - - [29/Dec/2024 15:29:10] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:10,515
-[LOG] [2024-12-29 15:29:10] IP 127.0.0.1 tried to access /dashboard/home and received status 200  - 2024-12-29 15:29:10,827
-127.0.0.1 - - [29/Dec/2024 15:29:10] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-29 15:29:10,827
-[LOG] [2024-12-29 15:29:10] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2024-12-29 15:29:10,896
-127.0.0.1 - - [29/Dec/2024 15:29:10] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-29 15:29:10,896
-[LOG] [2024-12-29 15:29:10] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2024-12-29 15:29:10,899
-127.0.0.1 - - [29/Dec/2024 15:29:10] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-29 15:29:10,900
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:11,115
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:11,115
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:11,184
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:11,184
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:11,185
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:11,186
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:11,479
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:11,480
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:11,550
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:11,550
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:11,914
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:11,914
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:11,997
-[LOG] [2024-12-29 15:29:11] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:11,997
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:11,998
-127.0.0.1 - - [29/Dec/2024 15:29:11] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:11,998
-[LOG] [2024-12-29 15:29:12] IP 127.0.0.1 tried to access /dashboard/home and received status 200  - 2024-12-29 15:29:12,319
-127.0.0.1 - - [29/Dec/2024 15:29:12] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-29 15:29:12,319
-[LOG] [2024-12-29 15:29:12] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2024-12-29 15:29:12,410
-127.0.0.1 - - [29/Dec/2024 15:29:12] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-29 15:29:12,412
-[LOG] [2024-12-29 15:29:12] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2024-12-29 15:29:12,417
-127.0.0.1 - - [29/Dec/2024 15:29:12] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-29 15:29:12,417
-[LOG] [2024-12-29 15:29:14] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:14,832
-127.0.0.1 - - [29/Dec/2024 15:29:14] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:14,832
-[LOG] [2024-12-29 15:29:14] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:14,902
-127.0.0.1 - - [29/Dec/2024 15:29:14] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:14,903
-[LOG] [2024-12-29 15:29:14] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:14,903
-127.0.0.1 - - [29/Dec/2024 15:29:14] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:14,904
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:17,092
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:17,092
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:17,163
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:17,165
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /dashboard/logs and received status 200  - 2024-12-29 15:29:17,510
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /dashboard/logs HTTP/1.1" 200 - - 2024-12-29 15:29:17,510
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-29 15:29:17,581
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-29 15:29:17,582
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:17,829
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:17,830
-[LOG] [2024-12-29 15:29:17] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:17,896
-127.0.0.1 - - [29/Dec/2024 15:29:17] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:17,897
-[LOG] [2024-12-29 15:29:18] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:18,219
-127.0.0.1 - - [29/Dec/2024 15:29:18] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:18,219
-[LOG] [2024-12-29 15:29:18] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:18,287
-127.0.0.1 - - [29/Dec/2024 15:29:18] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:18,292
-[LOG] [2024-12-29 15:29:18] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:18,293
-127.0.0.1 - - [29/Dec/2024 15:29:18] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:18,294
-[LOG] [2024-12-29 15:29:18] IP 127.0.0.1 tried to access /dashboard/logs and received status 200  - 2024-12-29 15:29:18,532
-127.0.0.1 - - [29/Dec/2024 15:29:18] "GET /dashboard/logs HTTP/1.1" 200 - - 2024-12-29 15:29:18,532
-[LOG] [2024-12-29 15:29:18] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-29 15:29:18,611
-127.0.0.1 - - [29/Dec/2024 15:29:18] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-29 15:29:18,612
-[LOG] [2024-12-29 15:29:26] IP 127.0.0.1 tried to access /dashboard/home and received status 200  - 2024-12-29 15:29:26,614
-127.0.0.1 - - [29/Dec/2024 15:29:26] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-29 15:29:26,615
-[LOG] [2024-12-29 15:29:26] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2024-12-29 15:29:26,685
-127.0.0.1 - - [29/Dec/2024 15:29:26] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-29 15:29:26,686
-[LOG] [2024-12-29 15:29:26] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2024-12-29 15:29:26,689
-127.0.0.1 - - [29/Dec/2024 15:29:26] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-29 15:29:26,690
-[LOG] [2024-12-29 15:29:33] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:33,398
-127.0.0.1 - - [29/Dec/2024 15:29:33] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:33,398
-[LOG] [2024-12-29 15:29:33] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:33,458
-127.0.0.1 - - [29/Dec/2024 15:29:33] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:33,459
-[LOG] [2024-12-29 15:29:33] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:33,464
-127.0.0.1 - - [29/Dec/2024 15:29:33] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:33,465
-[LOG] [2024-12-29 15:29:36] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:36,448
-127.0.0.1 - - [29/Dec/2024 15:29:36] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:36,449
-[LOG] [2024-12-29 15:29:36] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:36,499
-127.0.0.1 - - [29/Dec/2024 15:29:36] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:36,500
-[LOG] [2024-12-29 15:29:40] IP 127.0.0.1 tried to access /dashboard/home and received status 200  - 2024-12-29 15:29:40,135
-127.0.0.1 - - [29/Dec/2024 15:29:40] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-29 15:29:40,136
-[LOG] [2024-12-29 15:29:40] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2024-12-29 15:29:40,204
-127.0.0.1 - - [29/Dec/2024 15:29:40] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-29 15:29:40,205
-[LOG] [2024-12-29 15:29:40] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2024-12-29 15:29:40,209
-127.0.0.1 - - [29/Dec/2024 15:29:40] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-29 15:29:40,210
-[LOG] [2024-12-29 15:29:41] IP 127.0.0.1 tried to access /dashboard/firewall and received status 200  - 2024-12-29 15:29:41,164
-127.0.0.1 - - [29/Dec/2024 15:29:41] "GET /dashboard/firewall HTTP/1.1" 200 - - 2024-12-29 15:29:41,164
-[LOG] [2024-12-29 15:29:41] IP 127.0.0.1 tried to access /api/v1/dev/allowlist and received status 200  - 2024-12-29 15:29:41,219
-127.0.0.1 - - [29/Dec/2024 15:29:41] "GET /api/v1/dev/allowlist HTTP/1.1" 200 - - 2024-12-29 15:29:41,220
-[LOG] [2024-12-29 15:29:41] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2024-12-29 15:29:41,222
-127.0.0.1 - - [29/Dec/2024 15:29:41] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2024-12-29 15:29:41,223
-[LOG] [2024-12-29 15:29:42] IP 127.0.0.1 tried to access /dashboard/token_request and received status 200  - 2024-12-29 15:29:42,607
-127.0.0.1 - - [29/Dec/2024 15:29:42] "GET /dashboard/token_request HTTP/1.1" 200 - - 2024-12-29 15:29:42,608
-[LOG] [2024-12-29 15:29:42] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2024-12-29 15:29:42,659
-127.0.0.1 - - [29/Dec/2024 15:29:42] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2024-12-29 15:29:42,659
-[LOG] [2024-12-29 15:29:43] IP 127.0.0.1 tried to access /dashboard/logs and received status 200  - 2024-12-29 15:29:43,449
-127.0.0.1 - - [29/Dec/2024 15:29:43] "GET /dashboard/logs HTTP/1.1" 200 - - 2024-12-29 15:29:43,449
-[LOG] [2024-12-29 15:29:43] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2024-12-29 15:29:43,499
-127.0.0.1 - - [29/Dec/2024 15:29:43] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2024-12-29 15:29:43,499
-[LOG] [2024-12-29 15:29:45] IP 127.0.0.1 tried to access /dashboard/home and received status 200  - 2024-12-29 15:29:45,248
-127.0.0.1 - - [29/Dec/2024 15:29:45] "GET /dashboard/home HTTP/1.1" 200 - - 2024-12-29 15:29:45,248
-[LOG] [2024-12-29 15:29:45] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2024-12-29 15:29:45,289
-127.0.0.1 - - [29/Dec/2024 15:29:45] "GET /api/v1/check_health HTTP/1.1" 200 - - 2024-12-29 15:29:45,289
-[LOG] [2024-12-29 15:29:45] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2024-12-29 15:29:45,293
-127.0.0.1 - - [29/Dec/2024 15:29:45] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2024-12-29 15:29:45,294
+[LOG] [2025-01-02 11:13:44] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-02 11:13:44,262
+127.0.0.1 - - [02/Jan/2025 11:13:44] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-02 11:13:44,262
+[LOG] [2025-01-02 11:13:44] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-02 11:13:44,267
+127.0.0.1 - - [02/Jan/2025 11:13:44] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-02 11:13:44,267
+[LOG] [2025-01-02 11:13:48] IP 127.0.0.1 tried to access /dev/logout and received status 302  - 2025-01-02 11:13:48,032
+127.0.0.1 - - [02/Jan/2025 11:13:48] "[32mGET /dev/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:13:48,032
+[LOG] [2025-01-02 11:13:48] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-02 11:13:48,037
+127.0.0.1 - - [02/Jan/2025 11:13:48] "GET /dev/login HTTP/1.1" 200 - - 2025-01-02 11:13:48,037
+[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /dev/login and received status 302  - 2025-01-02 11:13:53,530
+127.0.0.1 - - [02/Jan/2025 11:13:53] "[32mPOST /dev/login HTTP/1.1[0m" 302 - - 2025-01-02 11:13:53,531
+[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-02 11:13:53,548
+127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-02 11:13:53,549
+[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-02 11:13:53,668
+127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-02 11:13:53,668
+[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-02 11:13:53,673
+127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-02 11:13:53,674
+[LOG] [2025-01-02 11:13:55] IP 127.0.0.1 tried to access /dev/dashboard/token_request and received status 200  - 2025-01-02 11:13:55,475
+127.0.0.1 - - [02/Jan/2025 11:13:55] "GET /dev/dashboard/token_request HTTP/1.1" 200 - - 2025-01-02 11:13:55,475
+[LOG] [2025-01-02 11:13:55] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:13:55,519
+127.0.0.1 - - [02/Jan/2025 11:13:55] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:13:55,519
+127.0.0.1 - - [02/Jan/2025 11:14:04] "[35m[1mGET /user/myaccount HTTP/1.1[0m" 500 - - 2025-01-02 11:14:04,237
+127.0.0.1 - - [02/Jan/2025 11:14:04] "[36mGET /user/myaccount?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 - - 2025-01-02 11:14:04,278
+127.0.0.1 - - [02/Jan/2025 11:14:04] "[36mGET /user/myaccount?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 - - 2025-01-02 11:14:04,278
+127.0.0.1 - - [02/Jan/2025 11:14:04] "GET /user/myaccount?__debugger__=yes&cmd=resource&f=console.png&s=EYNcfcYw8idytGvX8CI4 HTTP/1.1" 200 - - 2025-01-02 11:14:04,316
+[LOG] [2025-01-02 11:14:07] IP 127.0.0.1 tried to access /user/login and received status 302  - 2025-01-02 11:14:08,921
+127.0.0.1 - - [02/Jan/2025 11:14:08] "[32mPOST /user/login HTTP/1.1[0m" 302 - - 2025-01-02 11:14:08,923
+[LOG] [2025-01-02 11:14:08] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-02 11:14:08,936
+127.0.0.1 - - [02/Jan/2025 11:14:08] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-02 11:14:08,936
+[LOG] [2025-01-02 11:14:08] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:08,986
+127.0.0.1 - - [02/Jan/2025 11:14:08] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:08,986
+[LOG] [2025-01-02 11:14:15] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:14:15,541
+127.0.0.1 - - [02/Jan/2025 11:14:15] "POST /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:14:15,541
+[LOG] [2025-01-02 11:14:15] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:14:15,546
+127.0.0.1 - - [02/Jan/2025 11:14:15] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:14:15,547
+[LOG] [2025-01-02 11:14:17] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-02 11:14:17,051
+127.0.0.1 - - [02/Jan/2025 11:14:17] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-02 11:14:17,052
+[LOG] [2025-01-02 11:14:17] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:17,083
+127.0.0.1 - - [02/Jan/2025 11:14:17] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:17,084
+[LOG] [2025-01-02 11:14:21] IP 127.0.0.1 tried to access /user/logout and received status 302  - 2025-01-02 11:14:21,009
+127.0.0.1 - - [02/Jan/2025 11:14:21] "[32mGET /user/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:14:21,010
+[LOG] [2025-01-02 11:14:21] IP 127.0.0.1 tried to access /user/login and received status 200  - 2025-01-02 11:14:21,026
+127.0.0.1 - - [02/Jan/2025 11:14:21] "GET /user/login HTTP/1.1" 200 - - 2025-01-02 11:14:21,026
+[LOG] [2025-01-02 11:14:23] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-02 11:14:23,895
+127.0.0.1 - - [02/Jan/2025 11:14:23] "GET / HTTP/1.1" 200 - - 2025-01-02 11:14:23,895
+[LOG] [2025-01-02 11:14:23] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:23,943
+127.0.0.1 - - [02/Jan/2025 11:14:23] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:23,943
+[LOG] [2025-01-02 11:14:26] IP 127.0.0.1 tried to access /dev/logout and received status 302  - 2025-01-02 11:14:26,621
+127.0.0.1 - - [02/Jan/2025 11:14:26] "[32mGET /dev/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:14:26,622
+[LOG] [2025-01-02 11:14:26] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-02 11:14:26,632
+127.0.0.1 - - [02/Jan/2025 11:14:26] "GET /dev/login HTTP/1.1" 200 - - 2025-01-02 11:14:26,633
+ * Detected change in '/home/admin/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-02 11:14:36,001
+ * Restarting with stat - 2025-01-02 11:14:36,190
+ * Debugger is active! - 2025-01-02 11:14:36,891
+ * Debugger PIN: 213-967-679 - 2025-01-02 11:14:36,891
