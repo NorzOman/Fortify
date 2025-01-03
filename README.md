@@ -49,4 +49,4 @@ The server will start running, and you can interact with the API on the specifie
 
 
 ## Further Information
-You can visit the `/docs` endpoint on the live server to get detailed information about the backend.
+You can visit the docs.pdf in the backend-api folder for a brifed working description
