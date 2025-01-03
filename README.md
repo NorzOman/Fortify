@@ -1,28 +1,52 @@
-# Vault-7
-
-Mobile-based Anti-Virus and Phishing Detection Engine.  
-**Author**: Arshad
-
----
+# Vault-7 API
 
 ## Overview
-Vault-7 is an advanced mobile-based security solution designed to safeguard users from viruses and phishing attacks. The project incorporates a powerful API, a backend dashboard for management, and comprehensive system logs for robust monitoring.
+Vault-7 API is a backend service designed to manage authentication tokens for detection messages and malware detection. It provides endpoints for securely handling tokens used in the detection pipeline, ensuring seamless communication between various detection systems and tools.
 
----
 
-## Features
+## Installation
 
-### Dashboard Overview
-- User-friendly interface for managing and monitoring security activities.
+Follow the steps below to get the Vault-7 API running on your local machine.
 
-![Dashboard Overview](https://github.com/user-attachments/assets/225afdcc-f606-424c-bb7f-a41b194e0524)
+### 1. Clone the Repository
+Clone the Vault-7 API repository to your local machine.
 
-### Firewall Management
-- Tools to configure and monitor firewall rules.
+```
+git clone https://github.com/NorzOman/Vault-7.git
+```
+![1](https://github.com/user-attachments/assets/0ef532ca-66fa-433c-b117-f7f94cffa181)
 
-![Firewall Management](https://github.com/user-attachments/assets/53410a52-9e5a-411c-8aa7-a013ebb94f43)
 
-### System Logs
-- Comprehensive logs for tracking system events.
+### 2. Set Up Your Python Environment
+Create and activate a Python virtual environment to isolate your dependencies.
 
-![System Logs](https://github.com/user-attachments/assets/1f549ea7-ea87-45f2-86a4-3bc30e41ad06)
+```
+python -m venv venv
+source venv\Scripts\activate
+```
+![2](https://github.com/user-attachments/assets/c596a9d1-41fc-4683-9f5e-f437cdcb9b89)
+
+
+### 3. Install Dependencies
+Install the necessary dependencies from the `requirements.txt` file.
+
+```
+pip install -r requirements.txt
+```
+![3](https://github.com/user-attachments/assets/07b5f5eb-b553-4ccd-bb3c-8e6bc547265a)
+
+
+### 4. Run the Backend API (`app.py`)
+Once dependencies are installed, you can start the backend API by running `app.py`. This will spin up the backend service.
+
+```
+python app.py
+```
+![4](https://github.com/user-attachments/assets/0687fb4b-25cc-43f8-a163-331a50a0364d)
+
+
+The server will start running, and you can interact with the API on the specified port (e.g., `http://localhost:5000`).
+
+
+## Further Information
+You can visit the `/docs` endpoint on the live server to get detailed information about the backend.
