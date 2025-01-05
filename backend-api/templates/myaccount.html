@@ -3,18 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vault-7 API - My Account</title>
+    <title>Fortify Endpoint Security - My Account</title>
     <style>
         :root {
-            --primary-color: #007AFF;
-            --bg-color: #ffffff;
-            --text-color: #1d1d1f;
-            --border-color: #d2d2d7;
-            --nav-bg: rgba(255,255,255,0.8);
-            --code-bg: rgba(0,0,0,0.03);
-        }
-
-        .dark-mode {
             --primary-color: #0A84FF;
             --bg-color: #1a1a1a;
             --text-color: #e4e4e4;
@@ -61,25 +52,39 @@
             align-items: center;
         }
 
-        .theme-toggle, .logout-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
+        .profile-icon {
             cursor: pointer;
+            position: relative;
             padding: 8px;
-            transition: opacity 0.2s ease;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .profile-menu.active {
+            display: block;
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 8px 16px;
+            color: var(--text-color);
             text-decoration: none;
+            transition: background-color 0.2s ease;
         }
 
-        .logout-btn {
-            background: #FF453A;
-            color: white;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-
-        .theme-toggle:hover, .logout-btn:hover {
-            opacity: 0.8;
+        .profile-menu a:hover {
+            background-color: var(--code-bg);
         }
 
         .container {
@@ -120,11 +125,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            word-break: break-all; /* Add this to prevent token overflow */
+            word-break: break-all;
         }
 
         .api-key span {
-            margin-right: 10px; /* Add spacing between token and copy button */
+            margin-right: 10px;
         }
 
         .request-api-btn {
@@ -158,7 +163,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
-            flex-shrink: 0; /* Prevent button from shrinking */
+            flex-shrink: 0;
         }
 
         .usage-stats {
@@ -199,14 +204,17 @@
 <body>
     <nav class="nav">
         <div class="nav-left">
-            <img src="/static/logo.svg" alt="Vault-7" height="20">
+            <a href="/"><img src="/static/icon.png" alt="Fortify Endpoint Security" height="40"></a>
         </div>
         <div class="nav-right">
-            <button class="theme-toggle" onclick="toggleTheme()">
-                <span class="light-icon">🌙</span>
-                <span class="dark-icon" style="display:none">☀️</span>
-            </button>
-            <a href="/user/logout" class="logout-btn">Logout</a>
+            <div class="profile-icon" onclick="toggleProfileMenu()">
+                👤
+                <div class="profile-menu" id="profileMenu">
+                    <a href="/user/myaccount">My Account</a>
+                    <a href="/user/portal">Threat Portal</a>
+                    <a href="/user/logout">Logout</a>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -261,26 +269,11 @@
     </div>
 
     <footer>
-        <p>Copyright © 2025 Vault-7. All rights reserved.</p>
+        <p>Copyright © 2025 Fortify Endpoint Security. All rights reserved.</p>
         <p>Version 1.0</p>
     </footer>
 
     <script>
-        const toggleTheme = () => {
-            document.body.classList.toggle('dark-mode');
-            const lightIcon = document.querySelector('.light-icon');
-            const darkIcon = document.querySelector('.dark-icon');
-            const isDark = document.body.classList.contains('dark-mode');
-            lightIcon.style.display = isDark ? 'none' : 'inline';
-            darkIcon.style.display = isDark ? 'inline' : 'none';
-        }
-
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.body.classList.add('dark-mode');
-            document.querySelector('.light-icon').style.display = 'none';
-            document.querySelector('.dark-icon').style.display = 'inline';
-        }
-
         function copyApiKey() {
             const apiKey = document.querySelector('.api-key span').textContent;
             navigator.clipboard.writeText(apiKey);
@@ -290,6 +283,21 @@
                 btn.textContent = 'Copy';
             }, 2000);
         }
+
+        function toggleProfileMenu() {
+            document.getElementById('profileMenu').classList.toggle('active');
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const profileIcon = document.querySelector('.profile-icon');
+            const profileMenu = document.getElementById('profileMenu');
+            
+            // Only close if click is outside profile icon and menu is active
+            if (!profileIcon.contains(e.target) && profileMenu.classList.contains('active')) {
+                profileMenu.classList.remove('active');
+            }
+        });
     </script>
 </body>
 </html>

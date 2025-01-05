@@ -135,10 +135,6 @@
             border: 1px solid var(--border-color);
         }
 
-        .allow-card {
-            border-left: 3px solid #32D74B;
-        }
-
         .block-card {
             border-left: 3px solid #FF453A;
         }
@@ -240,33 +236,10 @@
             
             <div class="welcome-panel">
                 <h2>IP Access Control</h2>
-                <p>Manage IP addresses that are allowed or blocked from accessing the system.</p>
+                <p>Manage IP addresses that are blocked from accessing the system.</p>
             </div>
 
             <div class="dashboard-cards">
-                <div id="allowCard" class="card allow-card">
-                    <h2>
-                        IP Allow List
-                        <div>
-                            <button onclick="addIP('allow')" class="refresh-btn">➕ Add IP</button>
-                            <button onclick="fetchIPList()" class="refresh-btn">↻ Refresh</button>
-                        </div>
-                    </h2>
-                    <div class="card-content">
-                        <table class="ip-list-table">
-                            <thead>
-                                <tr>
-                                    <th>IP Address</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="allowList">
-                                <!-- Allowed IPs will be populated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <div id="blockCard" class="card block-card">
                     <h2>
                         IP Block List
@@ -295,8 +268,7 @@
 
     <script>
         function deleteIP(ip, listType) {
-            const endpoint = listType === 'allow' ? '/api/v1/dev/allowlist' : '/api/v1/dev/blocklist';
-            fetch(endpoint, {
+            fetch('/api/v1/dev/blocklist', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -319,28 +291,6 @@
         }
     
         function fetchIPList() {
-            fetch('/api/v1/dev/allowlist')
-                .then(response => response.json())
-                .then(data => {
-                    const allowList = document.getElementById('allowList');
-                    allowList.innerHTML = '';
-                    data.allowlist.forEach(ip => {
-                        const tr = document.createElement('tr');
-                        const tdIP = document.createElement('td');
-                        tdIP.className = 'ip-address';
-                        tdIP.textContent = ip.trim();
-                        const tdActions = document.createElement('td');
-                        const deleteButton = document.createElement('button');
-                        deleteButton.className = 'delete-btn';
-                        deleteButton.textContent = '✕';
-                        deleteButton.addEventListener('click', () => deleteIP(ip, 'allow'));
-                        tdActions.appendChild(deleteButton);
-                        tr.appendChild(tdIP);
-                        tr.appendChild(tdActions);
-                        allowList.appendChild(tr);
-                    });
-                });
-    
             fetch('/api/v1/dev/blocklist')
                 .then(response => response.json())
                 .then(data => {
@@ -365,10 +315,9 @@
         }
     
         function addIP(listType) {
-            const ip = prompt("Enter IP address to " + listType);
+            const ip = prompt("Enter IP address to block");
             if (ip) {
-                const endpoint = listType === 'allow' ? '/api/v1/dev/allowlist' : '/api/v1/dev/blocklist';
-                fetch(endpoint, {
+                fetch('/api/v1/dev/blocklist', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

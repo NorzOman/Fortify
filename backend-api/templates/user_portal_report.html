@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Report Issues - Fortify Web Portal</title>
+    <style>
+        :root {
+            --primary-color: #0A84FF;
+            --bg-color: #1a1a1a;
+            --text-color: #e4e4e4;
+            --border-color: #333333;
+            --nav-bg: rgba(26,26,26,0.95);
+            --code-bg: #2a2a2a;
+            --disabled-color: rgba(255,255,255,0.2);
+            --toast-bg: #2c2a1c;
+            --toast-border: #443e1d;
+            --toast-text: #ffd970;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            --card-hover-shadow: 0 8px 15px rgba(0,0,0,0.4);
+            --success-bg: #132a1a;
+            --success-border: #166534;
+            --success-text: #86efac;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.4;
+            font-size: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 48px;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .profile-icon {
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            position: relative;
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--nav-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-menu.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .profile-menu a {
+            display: block;
+            padding: 8px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-menu a:hover {
+            background-color: var(--code-bg);
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 0 20px;
+            flex: 1;
+            margin-bottom: 60px;
+        }
+
+        .report-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .report-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .report-header p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .report-form {
+            background: var(--bg-color);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .report-form:hover {
+            border-color: var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-color);
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.8;
+        }
+
+        .submit-btn:disabled {
+            background: var(--disabled-color);
+            cursor: not-allowed;
+        }
+
+        footer {
+            position: static;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 0.8rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer p {
+            margin: 0.2rem 0;
+            color: var(--text-color);
+            opacity: 0.7;
+            font-size: 0.8rem;
+            line-height: 1.2;
+        }
+
+        .success-message {
+            display: none;
+            background: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="/">
+                <img src="/static/icon.png" alt="Fortify Web Portal" height="40">
+            </a>
+        </div>
+        <div class="nav-right">
+            <div class="profile-icon" onclick="toggleProfileMenu()">
+                👤
+                <div class="profile-menu" id="profileMenu">
+                    <a href="/user/myaccount">My Account</a>
+                    <a href="/user/portal">Threat Portal</a>
+                    <a href="/user/logout">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <div class="report-container">
+            <div class="report-header">
+                <h1>Submit a Report</h1>
+                <p>Report bugs, security issues, or provide feedback to help us improve</p>
+            </div>
+
+            <div class="report-form">
+                <form id="reportForm" onsubmit="submitReport(event)">
+                    <div class="form-group">
+                        <label for="reportType">Report Type</label>
+                        <select id="reportType" required>
+                            <option value="">Select a report type</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="security">Security Issue</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" required placeholder="Brief description of the issue">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Detailed Description</label>
+                        <textarea id="description" required placeholder="Please provide as much detail as possible..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Submit Report</button>
+                </form>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                <i class="fas fa-check-circle"></i>
+                <h3>Thank you for your report!</h3>
+                <p>We'll review your submission and take appropriate action.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Copyright © 2025 Fortify Endpoint Security. All rights reserved.</p>
+        <p>Version 1.0</p>
+    </footer>
+
+    <script>
+        const toggleProfileMenu = () => {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('active');
+        }
+
+        document.addEventListener('click', (e) => {
+            const profileIcon = document.querySelector('.profile-icon');
+            const profileMenu = document.getElementById('profileMenu');
+            if (!profileIcon.contains(e.target) && profileMenu.classList.contains('active')) {
+                profileMenu.classList.remove('active');
+            }
+        });
+
+        function submitReport(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const successMessage = document.getElementById('successMessage');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Simulate API call
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Report';
+                event.target.reset();
+                successMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 5000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

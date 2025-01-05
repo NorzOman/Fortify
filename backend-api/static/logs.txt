@@ -1,54 +1,268 @@
-[LOG] [2025-01-02 11:13:44] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-02 11:13:44,262
-127.0.0.1 - - [02/Jan/2025 11:13:44] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-02 11:13:44,262
-[LOG] [2025-01-02 11:13:44] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-02 11:13:44,267
-127.0.0.1 - - [02/Jan/2025 11:13:44] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-02 11:13:44,267
-[LOG] [2025-01-02 11:13:48] IP 127.0.0.1 tried to access /dev/logout and received status 302  - 2025-01-02 11:13:48,032
-127.0.0.1 - - [02/Jan/2025 11:13:48] "[32mGET /dev/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:13:48,032
-[LOG] [2025-01-02 11:13:48] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-02 11:13:48,037
-127.0.0.1 - - [02/Jan/2025 11:13:48] "GET /dev/login HTTP/1.1" 200 - - 2025-01-02 11:13:48,037
-[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /dev/login and received status 302  - 2025-01-02 11:13:53,530
-127.0.0.1 - - [02/Jan/2025 11:13:53] "[32mPOST /dev/login HTTP/1.1[0m" 302 - - 2025-01-02 11:13:53,531
-[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-02 11:13:53,548
-127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-02 11:13:53,549
-[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-02 11:13:53,668
-127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-02 11:13:53,668
-[LOG] [2025-01-02 11:13:53] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-02 11:13:53,673
-127.0.0.1 - - [02/Jan/2025 11:13:53] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-02 11:13:53,674
-[LOG] [2025-01-02 11:13:55] IP 127.0.0.1 tried to access /dev/dashboard/token_request and received status 200  - 2025-01-02 11:13:55,475
-127.0.0.1 - - [02/Jan/2025 11:13:55] "GET /dev/dashboard/token_request HTTP/1.1" 200 - - 2025-01-02 11:13:55,475
-[LOG] [2025-01-02 11:13:55] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:13:55,519
-127.0.0.1 - - [02/Jan/2025 11:13:55] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:13:55,519
-127.0.0.1 - - [02/Jan/2025 11:14:04] "[35m[1mGET /user/myaccount HTTP/1.1[0m" 500 - - 2025-01-02 11:14:04,237
-127.0.0.1 - - [02/Jan/2025 11:14:04] "[36mGET /user/myaccount?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 - - 2025-01-02 11:14:04,278
-127.0.0.1 - - [02/Jan/2025 11:14:04] "[36mGET /user/myaccount?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 - - 2025-01-02 11:14:04,278
-127.0.0.1 - - [02/Jan/2025 11:14:04] "GET /user/myaccount?__debugger__=yes&cmd=resource&f=console.png&s=EYNcfcYw8idytGvX8CI4 HTTP/1.1" 200 - - 2025-01-02 11:14:04,316
-[LOG] [2025-01-02 11:14:07] IP 127.0.0.1 tried to access /user/login and received status 302  - 2025-01-02 11:14:08,921
-127.0.0.1 - - [02/Jan/2025 11:14:08] "[32mPOST /user/login HTTP/1.1[0m" 302 - - 2025-01-02 11:14:08,923
-[LOG] [2025-01-02 11:14:08] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-02 11:14:08,936
-127.0.0.1 - - [02/Jan/2025 11:14:08] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-02 11:14:08,936
-[LOG] [2025-01-02 11:14:08] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:08,986
-127.0.0.1 - - [02/Jan/2025 11:14:08] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:08,986
-[LOG] [2025-01-02 11:14:15] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:14:15,541
-127.0.0.1 - - [02/Jan/2025 11:14:15] "POST /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:14:15,541
-[LOG] [2025-01-02 11:14:15] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-02 11:14:15,546
-127.0.0.1 - - [02/Jan/2025 11:14:15] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-02 11:14:15,547
-[LOG] [2025-01-02 11:14:17] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-02 11:14:17,051
-127.0.0.1 - - [02/Jan/2025 11:14:17] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-02 11:14:17,052
-[LOG] [2025-01-02 11:14:17] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:17,083
-127.0.0.1 - - [02/Jan/2025 11:14:17] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:17,084
-[LOG] [2025-01-02 11:14:21] IP 127.0.0.1 tried to access /user/logout and received status 302  - 2025-01-02 11:14:21,009
-127.0.0.1 - - [02/Jan/2025 11:14:21] "[32mGET /user/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:14:21,010
-[LOG] [2025-01-02 11:14:21] IP 127.0.0.1 tried to access /user/login and received status 200  - 2025-01-02 11:14:21,026
-127.0.0.1 - - [02/Jan/2025 11:14:21] "GET /user/login HTTP/1.1" 200 - - 2025-01-02 11:14:21,026
-[LOG] [2025-01-02 11:14:23] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-02 11:14:23,895
-127.0.0.1 - - [02/Jan/2025 11:14:23] "GET / HTTP/1.1" 200 - - 2025-01-02 11:14:23,895
-[LOG] [2025-01-02 11:14:23] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-02 11:14:23,943
-127.0.0.1 - - [02/Jan/2025 11:14:23] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-02 11:14:23,943
-[LOG] [2025-01-02 11:14:26] IP 127.0.0.1 tried to access /dev/logout and received status 302  - 2025-01-02 11:14:26,621
-127.0.0.1 - - [02/Jan/2025 11:14:26] "[32mGET /dev/logout HTTP/1.1[0m" 302 - - 2025-01-02 11:14:26,622
-[LOG] [2025-01-02 11:14:26] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-02 11:14:26,632
-127.0.0.1 - - [02/Jan/2025 11:14:26] "GET /dev/login HTTP/1.1" 200 - - 2025-01-02 11:14:26,633
- * Detected change in '/home/admin/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-02 11:14:36,001
- * Restarting with stat - 2025-01-02 11:14:36,190
- * Debugger is active! - 2025-01-02 11:14:36,891
- * Debugger PIN: 213-967-679 - 2025-01-02 11:14:36,891
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:52:01,829
+ * Restarting with stat - 2025-01-05 19:52:02,034
+ * Debugger is active! - 2025-01-05 19:52:02,783
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:52:02,786
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:52:15,043
+ * Restarting with stat - 2025-01-05 19:52:15,247
+ * Debugger is active! - 2025-01-05 19:52:15,997
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:52:16,001
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:52:33,392
+ * Restarting with stat - 2025-01-05 19:52:33,599
+ * Debugger is active! - 2025-01-05 19:52:34,361
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:52:34,364
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:52:49,691
+ * Restarting with stat - 2025-01-05 19:52:49,906
+ * Debugger is active! - 2025-01-05 19:52:50,701
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:52:50,705
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:53:11,193
+ * Restarting with stat - 2025-01-05 19:53:11,433
+ * Debugger is active! - 2025-01-05 19:53:12,185
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:53:12,190
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:53:34,715
+ * Restarting with stat - 2025-01-05 19:53:34,920
+ * Debugger is active! - 2025-01-05 19:53:35,631
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:53:35,636
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:54:00,173
+ * Restarting with stat - 2025-01-05 19:54:00,386
+ * Debugger is active! - 2025-01-05 19:54:01,113
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:54:01,116
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:54:45,111
+ * Restarting with stat - 2025-01-05 19:54:45,326
+ * Debugger is active! - 2025-01-05 19:54:46,396
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:54:46,402
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:54:48,473
+ * Restarting with stat - 2025-01-05 19:54:48,675
+ * Debugger is active! - 2025-01-05 19:54:49,395
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:54:49,398
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:55:57,968
+ * Restarting with stat - 2025-01-05 19:55:58,191
+ * Debugger is active! - 2025-01-05 19:55:59,105
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:55:59,110
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-05 19:56:59,553
+ * Restarting with stat - 2025-01-05 19:56:59,763
+ * Debugger is active! - 2025-01-05 19:57:00,554
+ * Debugger PIN: 329-563-895 - 2025-01-05 19:57:00,559
+[LOG] [2025-01-05 19:57:08] IP 127.0.0.1 tried to access /dev/dashboard/logs and received status 200  - 2025-01-05 19:57:08,401
+127.0.0.1 - - [05/Jan/2025 19:57:08] "GET /dev/dashboard/logs HTTP/1.1" 200 - - 2025-01-05 19:57:08,401
+[LOG] [2025-01-05 19:57:08] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-05 19:57:08,548
+127.0.0.1 - - [05/Jan/2025 19:57:08] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-05 19:57:08,548
+[LOG] [2025-01-05 19:57:10] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-05 19:57:10,557
+127.0.0.1 - - [05/Jan/2025 19:57:10] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-05 19:57:10,558
+[LOG] [2025-01-05 19:57:10] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:10,708
+127.0.0.1 - - [05/Jan/2025 19:57:10] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:10,709
+[LOG] [2025-01-05 19:57:10] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:10,713
+127.0.0.1 - - [05/Jan/2025 19:57:10] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:10,714
+[LOG] [2025-01-05 19:57:12] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-05 19:57:12,045
+127.0.0.1 - - [05/Jan/2025 19:57:12] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-05 19:57:12,046
+[LOG] [2025-01-05 19:57:12] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:12,156
+127.0.0.1 - - [05/Jan/2025 19:57:12] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:12,156
+[LOG] [2025-01-05 19:57:12] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:12,157
+127.0.0.1 - - [05/Jan/2025 19:57:12] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:12,157
+[LOG] [2025-01-05 19:57:14] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:14,093
+127.0.0.1 - - [05/Jan/2025 19:57:14] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:14,093
+[LOG] [2025-01-05 19:57:15] IP 127.0.0.1 tried to access /dev/dashboard/firewall and received status 200  - 2025-01-05 19:57:15,209
+127.0.0.1 - - [05/Jan/2025 19:57:15] "GET /dev/dashboard/firewall HTTP/1.1" 200 - - 2025-01-05 19:57:15,210
+[LOG] [2025-01-05 19:57:15] IP 127.0.0.1 tried to access /api/v1/dev/blocklist and received status 200  - 2025-01-05 19:57:15,337
+127.0.0.1 - - [05/Jan/2025 19:57:15] "GET /api/v1/dev/blocklist HTTP/1.1" 200 - - 2025-01-05 19:57:15,338
+[LOG] [2025-01-05 19:57:17] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-05 19:57:17,186
+127.0.0.1 - - [05/Jan/2025 19:57:17] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-05 19:57:17,187
+[LOG] [2025-01-05 19:57:17] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:17,328
+[LOG] [2025-01-05 19:57:17] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:17,331
+127.0.0.1 - - [05/Jan/2025 19:57:17] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:17,333
+127.0.0.1 - - [05/Jan/2025 19:57:17] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:17,335
+[LOG] [2025-01-05 19:57:19] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:19,246
+127.0.0.1 - - [05/Jan/2025 19:57:19] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:19,247
+[LOG] [2025-01-05 19:57:21] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:21,243
+127.0.0.1 - - [05/Jan/2025 19:57:21] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:21,244
+[LOG] [2025-01-05 19:57:23] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:23,470
+127.0.0.1 - - [05/Jan/2025 19:57:23] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:23,470
+[LOG] [2025-01-05 19:57:25] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:25,612
+127.0.0.1 - - [05/Jan/2025 19:57:25] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:25,613
+[LOG] [2025-01-05 19:57:27] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:27,449
+127.0.0.1 - - [05/Jan/2025 19:57:27] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:27,449
+[LOG] [2025-01-05 19:57:29] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:29,629
+127.0.0.1 - - [05/Jan/2025 19:57:29] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:29,629
+[LOG] [2025-01-05 19:57:31] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:31,626
+127.0.0.1 - - [05/Jan/2025 19:57:31] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:31,627
+[LOG] [2025-01-05 19:57:33] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:33,644
+127.0.0.1 - - [05/Jan/2025 19:57:33] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:33,645
+[LOG] [2025-01-05 19:57:35] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:35,659
+127.0.0.1 - - [05/Jan/2025 19:57:35] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:35,659
+[LOG] [2025-01-05 19:57:37] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:37,243
+127.0.0.1 - - [05/Jan/2025 19:57:37] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:37,243
+[LOG] [2025-01-05 19:57:39] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:39,659
+127.0.0.1 - - [05/Jan/2025 19:57:39] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:39,660
+[LOG] [2025-01-05 19:57:41] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:41,682
+127.0.0.1 - - [05/Jan/2025 19:57:41] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:41,683
+[LOG] [2025-01-05 19:57:43] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:43,702
+127.0.0.1 - - [05/Jan/2025 19:57:43] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:43,703
+[LOG] [2025-01-05 19:57:45] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:45,741
+127.0.0.1 - - [05/Jan/2025 19:57:45] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:45,742
+[LOG] [2025-01-05 19:57:47] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:47,264
+127.0.0.1 - - [05/Jan/2025 19:57:47] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:47,264
+[LOG] [2025-01-05 19:57:49] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:49,863
+127.0.0.1 - - [05/Jan/2025 19:57:49] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:49,863
+[LOG] [2025-01-05 19:57:51] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:51,911
+127.0.0.1 - - [05/Jan/2025 19:57:51] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:51,912
+[LOG] [2025-01-05 19:57:54] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:54,030
+127.0.0.1 - - [05/Jan/2025 19:57:54] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:54,030
+[LOG] [2025-01-05 19:57:56] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:57:56,030
+127.0.0.1 - - [05/Jan/2025 19:57:56] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:57:56,030
+[LOG] [2025-01-05 19:57:57] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:57:57,257
+127.0.0.1 - - [05/Jan/2025 19:57:57] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:57:57,257
+[LOG] [2025-01-05 19:58:00] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:00,042
+127.0.0.1 - - [05/Jan/2025 19:58:00] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:00,043
+[LOG] [2025-01-05 19:58:02] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:02,054
+127.0.0.1 - - [05/Jan/2025 19:58:02] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:02,054
+[LOG] [2025-01-05 19:58:04] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:04,070
+127.0.0.1 - - [05/Jan/2025 19:58:04] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:04,070
+[LOG] [2025-01-05 19:58:06] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:06,081
+127.0.0.1 - - [05/Jan/2025 19:58:06] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:06,081
+[LOG] [2025-01-05 19:58:07] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:58:07,258
+127.0.0.1 - - [05/Jan/2025 19:58:07] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:58:07,258
+[LOG] [2025-01-05 19:58:10] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:10,082
+127.0.0.1 - - [05/Jan/2025 19:58:10] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:10,083
+[LOG] [2025-01-05 19:58:12] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:12,094
+127.0.0.1 - - [05/Jan/2025 19:58:12] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:12,095
+[LOG] [2025-01-05 19:58:14] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:14,108
+127.0.0.1 - - [05/Jan/2025 19:58:14] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:14,108
+[LOG] [2025-01-05 19:58:16] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:16,106
+127.0.0.1 - - [05/Jan/2025 19:58:16] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:16,106
+[LOG] [2025-01-05 19:58:17] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:58:17,256
+127.0.0.1 - - [05/Jan/2025 19:58:17] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:58:17,256
+[LOG] [2025-01-05 19:58:20] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:20,117
+127.0.0.1 - - [05/Jan/2025 19:58:20] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:20,117
+[LOG] [2025-01-05 19:58:22] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:22,141
+127.0.0.1 - - [05/Jan/2025 19:58:22] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:22,147
+[LOG] [2025-01-05 19:58:24] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:24,165
+127.0.0.1 - - [05/Jan/2025 19:58:24] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:24,165
+[LOG] [2025-01-05 19:58:26] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:26,178
+127.0.0.1 - - [05/Jan/2025 19:58:26] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:26,178
+[LOG] [2025-01-05 19:58:27] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:58:27,259
+127.0.0.1 - - [05/Jan/2025 19:58:27] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:58:27,260
+[LOG] [2025-01-05 19:58:30] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:30,179
+127.0.0.1 - - [05/Jan/2025 19:58:30] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:30,182
+[LOG] [2025-01-05 19:58:32] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:32,197
+127.0.0.1 - - [05/Jan/2025 19:58:32] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:32,197
+[LOG] [2025-01-05 19:58:34] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:34,211
+127.0.0.1 - - [05/Jan/2025 19:58:34] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:34,212
+[LOG] [2025-01-05 19:58:36] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:36,224
+127.0.0.1 - - [05/Jan/2025 19:58:36] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:36,224
+[LOG] [2025-01-05 19:58:37] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:58:37,259
+127.0.0.1 - - [05/Jan/2025 19:58:37] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:58:37,260
+[LOG] [2025-01-05 19:58:40] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:40,234
+127.0.0.1 - - [05/Jan/2025 19:58:40] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:40,234
+[LOG] [2025-01-05 19:58:42] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:42,237
+127.0.0.1 - - [05/Jan/2025 19:58:42] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:42,237
+[LOG] [2025-01-05 19:58:44] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:44,246
+127.0.0.1 - - [05/Jan/2025 19:58:44] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:44,247
+[LOG] [2025-01-05 19:58:46] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:46,250
+127.0.0.1 - - [05/Jan/2025 19:58:46] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:46,250
+[LOG] [2025-01-05 19:58:48] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:48,260
+127.0.0.1 - - [05/Jan/2025 19:58:48] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:48,260
+[LOG] [2025-01-05 19:58:50] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:50,275
+127.0.0.1 - - [05/Jan/2025 19:58:50] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:50,275
+[LOG] [2025-01-05 19:58:52] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:52,291
+127.0.0.1 - - [05/Jan/2025 19:58:52] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:52,291
+[LOG] [2025-01-05 19:58:54] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:54,294
+127.0.0.1 - - [05/Jan/2025 19:58:54] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:54,295
+[LOG] [2025-01-05 19:58:56] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:56,311
+127.0.0.1 - - [05/Jan/2025 19:58:56] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:56,311
+[LOG] [2025-01-05 19:58:58] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:58:58,324
+127.0.0.1 - - [05/Jan/2025 19:58:58] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:58:58,324
+[LOG] [2025-01-05 19:59:00] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:00,334
+127.0.0.1 - - [05/Jan/2025 19:59:00] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:00,334
+[LOG] [2025-01-05 19:59:02] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:02,349
+127.0.0.1 - - [05/Jan/2025 19:59:02] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:02,349
+[LOG] [2025-01-05 19:59:04] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:04,364
+127.0.0.1 - - [05/Jan/2025 19:59:04] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:04,364
+[LOG] [2025-01-05 19:59:06] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:06,378
+127.0.0.1 - - [05/Jan/2025 19:59:06] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:06,378
+[LOG] [2025-01-05 19:59:08] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-05 19:59:08,123
+127.0.0.1 - - [05/Jan/2025 19:59:08] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-05 19:59:08,123
+[LOG] [2025-01-05 19:59:08] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:08,217
+127.0.0.1 - - [05/Jan/2025 19:59:08] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:08,218
+[LOG] [2025-01-05 19:59:08] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:08,218
+127.0.0.1 - - [05/Jan/2025 19:59:08] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:08,219
+[LOG] [2025-01-05 19:59:10] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:10,175
+127.0.0.1 - - [05/Jan/2025 19:59:10] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:10,176
+[LOG] [2025-01-05 19:59:12] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:12,260
+127.0.0.1 - - [05/Jan/2025 19:59:12] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:12,260
+[LOG] [2025-01-05 19:59:14] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:14,304
+127.0.0.1 - - [05/Jan/2025 19:59:14] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:14,305
+[LOG] [2025-01-05 19:59:16] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:16,506
+127.0.0.1 - - [05/Jan/2025 19:59:16] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:16,507
+[LOG] [2025-01-05 19:59:18] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:18,169
+127.0.0.1 - - [05/Jan/2025 19:59:18] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:18,170
+[LOG] [2025-01-05 19:59:20] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:20,572
+127.0.0.1 - - [05/Jan/2025 19:59:20] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:20,573
+[LOG] [2025-01-05 19:59:22] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:22,589
+127.0.0.1 - - [05/Jan/2025 19:59:22] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:22,589
+[LOG] [2025-01-05 19:59:24] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:24,661
+127.0.0.1 - - [05/Jan/2025 19:59:24] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:24,663
+[LOG] [2025-01-05 19:59:26] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:26,676
+127.0.0.1 - - [05/Jan/2025 19:59:26] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:26,681
+[LOG] [2025-01-05 19:59:28] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:28,170
+127.0.0.1 - - [05/Jan/2025 19:59:28] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:28,171
+[LOG] [2025-01-05 19:59:30] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:30,723
+127.0.0.1 - - [05/Jan/2025 19:59:30] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:30,724
+[LOG] [2025-01-05 19:59:32] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:32,697
+127.0.0.1 - - [05/Jan/2025 19:59:32] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:32,697
+[LOG] [2025-01-05 19:59:34] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:34,724
+127.0.0.1 - - [05/Jan/2025 19:59:34] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:34,725
+[LOG] [2025-01-05 19:59:36] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:36,735
+127.0.0.1 - - [05/Jan/2025 19:59:36] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:36,736
+[LOG] [2025-01-05 19:59:38] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:38,192
+127.0.0.1 - - [05/Jan/2025 19:59:38] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:38,192
+[LOG] [2025-01-05 19:59:40] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:40,736
+127.0.0.1 - - [05/Jan/2025 19:59:40] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:40,736
+[LOG] [2025-01-05 19:59:42] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:42,752
+127.0.0.1 - - [05/Jan/2025 19:59:42] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:42,752
+[LOG] [2025-01-05 19:59:44] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:44,770
+127.0.0.1 - - [05/Jan/2025 19:59:44] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:44,770
+[LOG] [2025-01-05 19:59:46] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:46,784
+127.0.0.1 - - [05/Jan/2025 19:59:46] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:46,785
+[LOG] [2025-01-05 19:59:48] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:48,196
+127.0.0.1 - - [05/Jan/2025 19:59:48] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:48,196
+[LOG] [2025-01-05 19:59:50] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:50,800
+127.0.0.1 - - [05/Jan/2025 19:59:50] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:50,800
+[LOG] [2025-01-05 19:59:52] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:52,800
+127.0.0.1 - - [05/Jan/2025 19:59:52] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:52,803
+[LOG] [2025-01-05 19:59:54] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:54,808
+127.0.0.1 - - [05/Jan/2025 19:59:54] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:54,809
+[LOG] [2025-01-05 19:59:56] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 19:59:56,802
+127.0.0.1 - - [05/Jan/2025 19:59:56] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 19:59:56,802
+[LOG] [2025-01-05 19:59:58] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 19:59:58,197
+127.0.0.1 - - [05/Jan/2025 19:59:58] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 19:59:58,198
+[LOG] [2025-01-05 20:00:00] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:00,803
+127.0.0.1 - - [05/Jan/2025 20:00:00] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:00,803
+[LOG] [2025-01-05 20:00:02] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:02,817
+127.0.0.1 - - [05/Jan/2025 20:00:02] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:02,818
+[LOG] [2025-01-05 20:00:04] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:04,832
+127.0.0.1 - - [05/Jan/2025 20:00:04] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:04,833
+[LOG] [2025-01-05 20:00:06] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:06,845
+127.0.0.1 - - [05/Jan/2025 20:00:06] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:06,846
+[LOG] [2025-01-05 20:00:08] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 20:00:08,196
+127.0.0.1 - - [05/Jan/2025 20:00:08] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 20:00:08,196
+[LOG] [2025-01-05 20:00:10] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:10,849
+127.0.0.1 - - [05/Jan/2025 20:00:10] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:10,849
+[LOG] [2025-01-05 20:00:12] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:12,848
+127.0.0.1 - - [05/Jan/2025 20:00:12] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:12,849
+[LOG] [2025-01-05 20:00:14] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:14,848
+127.0.0.1 - - [05/Jan/2025 20:00:14] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:14,848
+[LOG] [2025-01-05 20:00:16] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:16,849
+127.0.0.1 - - [05/Jan/2025 20:00:16] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:16,850
+[LOG] [2025-01-05 20:00:18] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 20:00:18,245
+127.0.0.1 - - [05/Jan/2025 20:00:18] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 20:00:18,246
+[LOG] [2025-01-05 20:00:20] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:20,872
+127.0.0.1 - - [05/Jan/2025 20:00:20] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:20,872
+[LOG] [2025-01-05 20:00:22] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:22,885
+127.0.0.1 - - [05/Jan/2025 20:00:22] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:22,885
+[LOG] [2025-01-05 20:00:24] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:24,895
+127.0.0.1 - - [05/Jan/2025 20:00:24] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:24,895
+[LOG] [2025-01-05 20:00:26] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:26,904
+127.0.0.1 - - [05/Jan/2025 20:00:26] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-05 20:00:26,904
+[LOG] [2025-01-05 20:00:28] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-05 20:00:28,199
+127.0.0.1 - - [05/Jan/2025 20:00:28] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-05 20:00:28,199
+[LOG] [2025-01-05 20:00:30] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-05 20:00:30,907
+127.0.0.1 - - [05/Jan/2025 20:00:30] "GET 

@@ -1,74 +1,95 @@
-# ⣶⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-# ⣿⣿⣿⣷⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣶⣾
-# ⠘⢿⣿⣿⣿⣿⣦⣀⣀⣀⣄⣀⣀⣠⣀⣤⣶⣿⣿⣿⣿⣿
-# ⠀⠈⠻⣿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋
-# ⠀⠀⠀⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣟⠋⠀⠀
-# ⠀⠀⢠⣿⣿⡏⠆⢹⣿⣿⣿⣿⣿⣿⠒⠈⣿⣿⣿⣇⠀⠀
-# ⠀⠀⣼⣿⣿⣷⣶⣿⣿⣛⣻⣿⣿⣿⣶⣾⣿⣿⣿⣿⡀⠀
-# ⠀⠀⡁⠀⠈⣿⣿⣿⣿⢟⣛⡻⣿⣿⣿⣟⠀⠀⠈⣿⡇⠀
-# ⠀⠀⢿⣶⣿⣿⣿⣿⣿⡻⣿⡿⣿⣿⣿⣿⣶⣶⣾⣿⣿⠀
-# ⠀⠀⠘⣿⣿⣿⣿⣿⣿⣿⣷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡆
+#  __      __         _ _              ______ 
+#  \ \    / /        | | |            |____  |
+#   \ \  / /_ _ _   _| | |_   ______      / / 
+#    \ \/ / _` | | | | | __| |______|    / /  
+#     \  / (_| | |_| | | |_             / /   
+#      \/ \__,_|\__,_|_|\__|           /_/    
+                                            
+# ---------------------------------------------------------------------------------------------------------------------------
 
 
-# Imports for handling Flask-related stuff
-from flask import Flask, request, jsonify, render_template , session , redirect , url_for , g
+# Flask-related imports
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template,
+    session,
+    redirect,
+    url_for,
+    g,
+    send_file
+)
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 
-
-# Initializing the app and setting the secret key
-app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(32).hex()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
-
-# Imports for handling AES encryption and decryption
+# Cryptography imports
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
-import hashlib
-import base64
 
-
-# Imports for token making and related tasks
-import jwt
+# Standard library imports
+import os
 import json
-import datetime
 import time
+import base64
+import hashlib
+import datetime
+import requests
 
-# Imports for reading the signatures from the database of hashes
-import sqlite3
+# JWT import
+import jwt
+
+# Initialize Flask app
+app = Flask(__name__)
+
+# App configuration
+app.config['SECRET_KEY'] = 'arshad_is_the_secret'  # todo : os.urandom(32).hex()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize database
+db = SQLAlchemy(app)
+
+
+
+# Setting up paths:
+# ---------------------------------------------------------------------------------------------------------------------------
+
+alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
+allowlist_file_path = os.path.join(app.root_path, 'static', 'IP_allowlist.txt')
+blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
+requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
+base_url = 'http://127.0.0.1:5000'
+
+# ---------------------------------------------------------------------------------------------------------------------------
+
 
 
 # Setting up logging
+# ---------------------------------------------------------------------------------------------------------------------------
+
 import logging
+
 logs_file_path = os.path.join(app.root_path, 'static', 'logs.txt')
 logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(message)s - %(asctime)s')
 
-
-#Setting up alerts
-alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
-
-# Setting up allowlist and blocklist
-allowlist_file_path = os.path.join(app.root_path, 'static', 'IP_allowlist.txt')
-blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
+# ---------------------------------------------------------------------------------------------------------------------------
 
 
-# Setting up USERS.json for access key handling
-requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
 
 # Initializing the database
 # ---------------------------------------------------------------------------------------------------------------------------
+
+import sqlite3
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
     api_key = db.Column(db.String(120), nullable=True)
-    message_api_calls = db.Column(db.Integer, nullable=True)
-    file_api_calls = db.Column(db.Integer, nullable=True)
-    threats_detected = db.Column(db.Integer, nullable=True)
+    message_api_calls = db.Column(db.Integer, nullable=True, default=0)
+    file_api_calls = db.Column(db.Integer, nullable=True, default=0) 
+    threats_detected = db.Column(db.Integer, nullable=True, default=0)
     api_key_requested = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
@@ -77,75 +98,107 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
+# ---------------------------------------------------------------------------------------------------------------------------
 
 
 
 # FUNCTIONS NEEDED OVERALL STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
 
-# Token validation function
-def validate_token(token):
+
+# Function that pushes system alert logs in case of system errors
+def push_system_alert(message,category):
     try:
-        # Decode and validate the token
+        with open(alerts_file_path, 'a') as f:
+            f.write(f"[ {category} ] : {message}\n")
+    except Exception as e:
+        print(f"Failed to write system alert: {str(e)}")
+
+
+# Function used to validate the token
+def validate_token(token):
+    if not token:   # If not token, return false
+        return False
+
+    try: # Test if the token is expired , if not return true
         decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-
-        # Check if the token is expired
-        if 'exp' in decoded_token:
-            exp_time = datetime.datetime.fromtimestamp(decoded_token['exp'], tz=datetime.timezone.utc)
-            if exp_time < datetime.datetime.now(datetime.timezone.utc):
-                return False
+        exp_time = decoded_token.get('exp')
+        if exp_time and exp_time < datetime.datetime.now(datetime.timezone.utc).timestamp():
+            return False
         return True
-    except jwt.ExpiredSignatureError:
+    except jwt.ExpiredSignatureError: # If expired, return false
         return False
-    except jwt.InvalidTokenError:
+    except jwt.InvalidTokenError: # If invalid, return false
         return False
 
 
+# Function used to check if the IP is blocked
 def is_ip_blocked(ip_address):
     if os.path.exists(blocklist_file_path):
-        with open(blocklist_file_path, 'r') as f:
-            blocklist = [ip.strip() for ip in f.readlines()]
-            return ip_address in blocklist
-    return False
+        try:
+            with open(blocklist_file_path, 'r') as f:
+                blocklist = [ip.strip() for ip in f.readlines()]
+                if ip_address in blocklist:
+                    return True
+                return False
+        except Exception as e:
+            push_system_alert(f"Error reading blocklist file: {e}", "failed")
+            return True
+    else:
+        push_system_alert(f"Blocklist file does not exist", "failed")
+        return True
 
 
-# Function searches through database with MD5 signatures
+# Function used to check if the signatures are malicious
 def check_malicious_signatures(signatures):
-    db_path = 'signaturesdb.sqlite'
+    try:
+        db_path = 'signatures1db.sqlite'
+        
+        # Input validation - ensure signatures contains valid MD5 hashes
+        if not all(isinstance(sig, (list, tuple)) and len(sig) == 2 and 
+                  isinstance(sig[1], str) and len(sig[1]) == 32 and 
+                  all(c in '0123456789abcdefABCDEF' for c in sig[1])
+                  for sig in signatures):
+            return json.dumps({"error": "Invalid signature format"})
+
+        # Connect to the SQLite database
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        # Extract hashes and use parameterized query
+        hashes = [signature[1] for signature in signatures]
+        placeholders = ','.join('?' * len(hashes))
+        query = "SELECT hash, name FROM HashDB WHERE hash IN ({})".format(placeholders)
+
+        # Execute with parameters to prevent SQL injection
+        cursor.execute(query, hashes)
+        result = cursor.fetchall()
+        conn.close()
+
+        malicious_hashes = []
+        for row in result:
+            hash_value, name = row
+            file_name = next(file_name for file_name, file_hash in signatures if file_hash == hash_value)
+            malicious_hashes.append({
+                "file_name": file_name,
+                "hash": hash_value, 
+                "name": name,
+            })
+
+        if not malicious_hashes:
+            return json.dumps({"status": "all-safe"}, indent=4)
+        
+        return json.dumps(malicious_hashes, indent=4)
+
+    except sqlite3.Error as e:
+        error_msg = f"Database error while checking signatures: {str(e)}"
+        push_system_alert(error_msg, "failed")
+        return json.dumps({"error": "There was an issue on our side, please try again later"})
     
-    # Input validation - ensure signatures contains valid MD5 hashes
-    if not all(isinstance(sig, (list, tuple)) and len(sig) == 2 and 
-              isinstance(sig[1], str) and len(sig[1]) == 32 and 
-              all(c in '0123456789abcdefABCDEF' for c in sig[1])
-              for sig in signatures):
-        return json.dumps({"error": "Invalid signature format"})
-
-    # Connect to the SQLite database
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
-
-    # Extract hashes and use parameterized query
-    hashes = [signature[1] for signature in signatures]
-    placeholders = ','.join('?' * len(hashes))
-    query = "SELECT hash, name FROM HashDB WHERE hash IN ({})".format(placeholders)
-
-    # Execute with parameters to prevent SQL injection
-    cursor.execute(query, hashes)
-    result = cursor.fetchall()
-    conn.close()
-
-    malicious_hashes = []
-    for row in result:
-        hash_value, name = row
-        file_name = next(file_name for file_name, file_hash in signatures if file_hash == hash_value)
-        malicious_hashes.append({
-            "file_name": file_name,
-            "hash": hash_value, 
-            "name": name
-        })
-
-    return json.dumps(malicious_hashes, indent=4)
-
+    except Exception as e:
+        error_msg = f"Error checking malicious signatures: {str(e)}"
+        push_system_alert(error_msg, "failed")
+        return json.dumps({"error": "There was an issue on our side, please try again later"})
 
 # ---------------------------------------------------------------------------------------------------------------------------
 
@@ -153,7 +206,6 @@ def check_malicious_signatures(signatures):
 
 # BEFORE AND AFTER REQUEST FOR LOGGING RELATED STUFFS
 # ---------------------------------------------------------------------------------------------------------------------------
-
 
 # Before request logging
 @app.before_request
@@ -165,12 +217,8 @@ def log_request_info():
     if is_ip_blocked(g.client_ip):
         return render_template('403.html'), 403
 
-    # Log suspicious access attempts
-    if '/login' in g.request_path or '/dashboard' in g.request_path:
-        with open(alerts_file_path, 'a') as f:
-            f.write(f"[ suspicious ] {g.client_ip} tried to access {g.request_path} at {g.timestamp}\n")
 
-# After request logging
+# After request logging 
 @app.after_request
 def after_request(response):
     app.logger.info(f"[LOG] [{g.timestamp}] IP {g.client_ip}"
@@ -179,14 +227,13 @@ def after_request(response):
     response.headers['X-Endpoint'] = request.endpoint
     return response
 
+
 # Error handler for 404 errors
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-
 # ---------------------------------------------------------------------------------------------------------------------------
-
 
 
 
@@ -197,43 +244,62 @@ def page_not_found(e):
 
 
 # Root route leads to API documentation
-@app.route('/docs', methods=['GET'])
+@app.route('/api/v1/dev/docs', methods=['GET'])
 def docs():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return render_template('403.html'), 403
+    
     return render_template('docs.html')
+
 
 # Route returns client IP with 200 OK message to note API is active
 @app.route('/api/v1/check_health', methods=['GET'])
 def check_health():
-    client_ip = request.remote_addr
-    response_data = {
-        "status": "Server is running OK",
-        "client_ip": client_ip
-    }
-    return jsonify(response_data), 200
+    try:
+        client_ip = request.remote_addr
+        response_data = {
+            "status": "Server is running OK",
+            "client_ip": client_ip
+        }
+        return jsonify(response_data), 200
+    except Exception as e:
+        return jsonify({"error": "Internal server error | Report to admin with error code: #HEALTH-001"}), 500
+
 
 # Route returns a token that can be used for SMS phishing detection
 @app.route('/api/v1/get_token_for_message', methods=['POST'])
 def get_token_for_message():
-    data = request.get_json()
-    if 'device_guid' not in data:
-        return jsonify({"error": "Missing device_guid"}), 400    
-
-    # Get the client IP
-    client_ip = request.remote_addr
-
-    # Get the device GUID from the POST request, guid is made from encrypted client IP
-    device_guid = data.get('device_guid')
-
-    # Set client IP as the key
-    key = hashlib.sha256(client_ip.encode()).digest()[:16]
-    cipher = AES.new(key, AES.MODE_ECB)
-
-    # Try to decrypt the key to validate the get token attempt
     try:
-        encrypted_ip = base64.b64decode(device_guid)
-        decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
-        # If the decrypted thing matches the client IP: token request validated for that IP
-        if decrypted_ip == client_ip:
+        try:
+            data = request.get_json()
+            if 'device_guid' not in data:
+                return jsonify({"error": "Missing device_guid"}), 400    
+        except Exception as e:
+            return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-001"}), 400
+
+        # Get client IP and device GUID
+        try:
+            client_ip = request.remote_addr
+            device_guid = data.get('device_guid')
+        except Exception as e:
+            return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-001"}), 403
+
+        # Generate encryption key and cipher
+        try:
+            key = hashlib.sha256(client_ip.encode()).digest()[:16]
+            cipher = AES.new(key, AES.MODE_ECB)
+            encrypted_ip = base64.b64decode(device_guid)
+            decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #AES-001"}), 500
+
+        # Validate decrypted IP matches client IP
+        if decrypted_ip != client_ip:
+            push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
+            return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-001"}), 400
+
+        # Generate JWT token
+        try:
             token = jwt.encode(
                 {
                     'client_ip': client_ip,
@@ -243,34 +309,47 @@ def get_token_for_message():
                 algorithm='HS256'
             )
             return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
-        else:
-            return jsonify({"message": "Malicious attempt to get token"}), 400
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-001"}), 500
+
     except Exception as e:
-        return jsonify({"error": "Server Side Issue | Report to admin"}), 400
+        return jsonify({"error": "Internal server error | Report to admin with error code: #GTFM-001"}), 500
+
 
 # Route returns a token that can be used for malware detection
 @app.route('/api/v1/get_token_for_files', methods=['POST'])
 def get_token_for_files():
-    data = request.get_json()
-    if 'device_guid' not in data:
-        return jsonify({"error": "Missing device_guid"}), 400    
-
-    # Get the client IP
-    client_ip = request.remote_addr
-
-    # Get the device GUID from the POST request, guid is made from encrypted client IP
-    device_guid = data.get('device_guid')
-
-    # Set client IP as the key
-    key = hashlib.sha256(client_ip.encode()).digest()[:16]
-    cipher = AES.new(key, AES.MODE_ECB)
-
-    # Try to decrypt the key to validate the get token attempt
     try:
-        encrypted_ip = base64.b64decode(device_guid)
-        decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
-        # If the decrypted thing matches the client IP: token request validated for that IP
-        if decrypted_ip == client_ip:
+        try:
+            data = request.get_json()
+            if 'device_guid' not in data:
+                return jsonify({"error": "Missing device_guid"}), 400    
+        except Exception as e:
+            return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-002"}), 400
+
+        # Get client IP and device GUID
+        try:
+            client_ip = request.remote_addr
+            device_guid = data.get('device_guid')
+        except Exception as e:
+            return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-002"}), 403
+
+        # Generate encryption key and cipher
+        try:
+            key = hashlib.sha256(client_ip.encode()).digest()[:16]
+            cipher = AES.new(key, AES.MODE_ECB)
+            encrypted_ip = base64.b64decode(device_guid)
+            decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #AES-002"}), 500
+
+        # Validate decrypted IP matches client IP
+        if decrypted_ip != client_ip:
+            push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
+            return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-002"}), 400
+
+        # Generate JWT token
+        try:
             token = jwt.encode(
                 {
                     'client_ip': client_ip,
@@ -280,81 +359,112 @@ def get_token_for_files():
                 algorithm='HS256'
             )
             return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
-        else:
-            return jsonify({"message": "Malicious attempt to get token"}), 400
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-002"}), 500
+
     except Exception as e:
-        return jsonify({"error": "Server Side Issue | Report to admin"}), 400
+        return jsonify({"error": "Internal server error | Report to admin with error code: #GTFF-001"}), 500
+
 
 # Message detection route
 @app.route('/api/v1/message_detection', methods=['POST'])
 def message_detection():
-    data = request.get_json()
-    token = data.get('token')
+    try:
+        # Get and validate request data
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid request data"}), 400
+        except Exception as e:
+            return jsonify({"error": "Error processing request data | Report to admin with error code: #DATA-003"}), 400
 
-    if not token:
-        return jsonify({"error": "Token is missing"}), 400
+        # Check token exists and is valid
+        try:
+            token = data.get('token')
+            if not token:
+                return jsonify({"error": "Token is missing"}), 400
+            if not validate_token(token):
+                return jsonify({"error": "Invalid or expired token"}), 403
+        except Exception as e:
+            return jsonify({"error": "Error validating token | Report to admin with error code: #TOKEN-001"}), 403
 
-    if not validate_token(token):
-        return jsonify({"error": "Invalid token"}), 403
+        # Process message and check for phishing
+        try:
+            message = data.get('message', '')
+            if 'free' in message.lower():
+                return jsonify({"Report": "Phishing attempt detected"}), 200
+            else:
+                return jsonify({"message": "Safe SMS | No Phishing attempt detected"}), 200
+        except Exception as e:
+            return jsonify({"error": "Error processing message | Report to admin with error code: #MSG-001"}), 500
 
-    message = data.get('message', '')
-    if 'free' in message.lower():
-        return jsonify({"Report": "Phishing attempt detected"}), 200
-    else:
-        return jsonify({"message": "Safe SMS | No Phishing attempt detected"}), 200
+    except Exception as e:
+        return jsonify({"error": "Internal server error | Report to admin with error code: #MSGD-001"}), 500
+
 
 # Malware detection route
 @app.route('/api/v1/malware_detection', methods=['POST'])
 def malware_detection():
-    data = request.get_json()
-    token = data.get('token')
+    try:
+        # Get and validate request data
+        try:
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "Invalid request data"}), 400
+        except Exception as e:
+            return jsonify({"error": "Error processing request data | Report to admin with error code: #DATA-004"}), 400
 
-    if not token:
-        return jsonify({"error": "Token is missing"}), 400
+        # Check token exists and is valid
+        try:
+            token = data.get('token')
+            if not token:
+                return jsonify({"error": "Token is missing"}), 400
+            if not validate_token(token):
+                return jsonify({"error": "Invalid or expired token"}), 403
+        except Exception as e:
+            return jsonify({"error": "Error validating token | Report to admin with error code: #TOKEN-002"}), 403
 
-    if not validate_token(token):
-        return jsonify({"error": "Invalid token"}), 403
+        # Process signatures and check for malware
+        try:
+            signatures = data.get('signatures', [])
+            if not signatures:
+                return jsonify({"error": "No signatures provided"}), 400
+                
+            malicious_signatures_json = check_malicious_signatures(signatures)
+            return jsonify(json.loads(malicious_signatures_json)), 200
+            
+        except Exception as e:
+            return jsonify({"error": "Error processing signatures | Report to admin with error code: #SIG-001"}), 500
 
-    signatures = data.get('signatures', [])
-    
-    if not signatures:
-        return jsonify({"error": "No signatures provided"}), 400
-
-    malicious_signatures_json = check_malicious_signatures(signatures)
-
-    return jsonify(json.loads(malicious_signatures_json))
+    except Exception as e:
+        return jsonify({"error": "Internal server error | Report to admin with error code: #MALD-001"}), 500
 
 
 # [ DASHBOARD ] Alerts route
 @app.route('/api/v1/dev/alerts', methods=['GET', 'DELETE'])
 def alerts():
-    if not session.get('logged_in') or session.get('username') != 'admin':
-        return jsonify({"error": "Unauthorized access. Admin privileges required."}), 403
+    try:
+        if not session.get('logged_in') or session.get('username') != 'admin':
+            return jsonify({"error": "Unauthorized access. Admin privileges required."}), 403
 
-    if request.method == 'GET':
-        with open(allowlist_file_path, 'r') as f:
-            allowed_ips = [ip.strip() for ip in f.readlines()]
+        if request.method == 'GET':
+            try:
+                with open(alerts_file_path, 'r') as file:
+                    alerts_data = [alert.strip() for alert in file.readlines() if alert.strip()]
+                return jsonify({"alerts": alerts_data}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error reading alerts file: {str(e)}"}), 500
 
-        with open(alerts_file_path, 'r') as file:
-            alerts_data = file.readlines()
-            filtered_alerts = []
-            for alert in alerts_data:
-                alert = alert.strip()
-                if alert:
-                    ip_start = alert.find(']') + 2
-                    ip_end = alert.find('tried') - 1
-                    if ip_start > 0 and ip_end > 0:
-                        ip = alert[ip_start:ip_end]
-                        if ip not in allowed_ips:
-                            filtered_alerts.append(alert)
+        elif request.method == 'DELETE':
+            try:
+                with open(alerts_file_path, 'w') as file:
+                    file.truncate(0)
+                return jsonify({"message": "Alerts cleared successfully."}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error clearing alerts file: {str(e)}"}), 500
 
-        return jsonify({"alerts": filtered_alerts}), 200
-
-    elif request.method == 'DELETE':
-        with open(alerts_file_path, 'w') as file:
-            file.truncate(0)
-
-        return jsonify({"message": "Alerts cleared successfully."}), 200
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
 # [ DASHBOARD ] Logs route
@@ -369,7 +479,6 @@ def logs():
                 logs_data = file.readlines()
             filtered_logs = [log.strip() for log in logs_data if log.startswith('[LOG]')]
             return jsonify({"logs": filtered_logs}), 200
-
         except Exception as e:
             return jsonify({"error": f"An error occurred while reading logs: {str(e)}"}), 500
 
@@ -378,138 +487,137 @@ def logs():
             with open(logs_file_path, 'w') as file:
                 file.truncate(0)
             return jsonify({"success": True, "message": "Logs cleared successfully!"}), 200
-
         except Exception as e:
             return jsonify({"error": f"An error occurred while clearing the logs: {str(e)}"}), 500
 
-# [ DASHBOARD ] Allowlist route
-@app.route('/api/v1/dev/allowlist', methods=['GET','POST','DELETE'])
-def allowlist():
-    if not session.get('logged_in') or session.get('username') != 'admin':
-        return jsonify({"error": "Unauthorized access. Please log in."}), 403
 
-    if request.method == 'GET':
-        with open(allowlist_file_path, 'r') as file:
-            allowlist_data = file.readlines()
-        return jsonify({"allowlist": allowlist_data}), 200
-    
-    elif request.method == 'POST':
-        data = request.get_json()
-        ip_address = data.get('ip_address')
-        with open(allowlist_file_path, 'a') as file:
-            file.write(ip_address + '\n')
-        return jsonify({"message": "IP address added successfully"}), 200
-
-    elif request.method == 'DELETE':
-        data = request.get_json()
-        ip_address = data.get('ip_address').strip()  # Strip whitespace/newlines
-
-        with open(allowlist_file_path, 'r') as file:
-            allowlist_data = file.readlines()        
-
-        updated_allowlist = [ip.strip() for ip in allowlist_data if ip.strip() != ip_address]
- 
-        with open(allowlist_file_path, 'w') as file:
-            file.write('\n'.join(updated_allowlist) + '\n')
-
-        return jsonify({"message": f"IP address removed successfully"}), 200
-
-# [ DASHBOARD ] Blocklist route
+# [ DASHBOARD ] Firewall Blocklist route
 @app.route('/api/v1/dev/blocklist', methods=['GET','POST','DELETE'])
 def blocklist():
-    if not session.get('logged_in') or session.get('username') != 'admin':
-        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+    try:
+        if not session.get('logged_in') or session.get('username') != 'admin':
+            return jsonify({"error": "Unauthorized access. Please log in."}), 403
 
-    if request.method == 'GET':
-        with open(blocklist_file_path, 'r') as file:
-            blocklist_data = file.readlines()
-        return jsonify({"blocklist": blocklist_data}), 200
+        if request.method == 'GET':
+            try:
+                with open(blocklist_file_path, 'r') as file:
+                    blocklist_data = file.readlines()
+                return jsonify({"blocklist": blocklist_data}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error reading blocklist: {str(e)}"}), 500
 
-    elif request.method == 'POST':
-        data = request.get_json()
-        ip_address = data.get('ip_address')
-        with open(blocklist_file_path, 'a') as file:
-            file.write(ip_address + '\n')
-        return jsonify({"message": "IP address added successfully"}), 200
+        elif request.method == 'POST':
+            try:
+                data = request.get_json()
+                ip_address = data.get('ip_address')
+                if not ip_address:
+                    return jsonify({"error": "IP address is required"}), 400
+                    
+                with open(blocklist_file_path, 'a') as file:
+                    file.write(ip_address + '\n')
+                return jsonify({"message": "IP address added successfully"}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error adding IP to blocklist: {str(e)}"}), 500
 
-    elif request.method == 'DELETE':
-        data = request.get_json()
-        ip_address = data.get('ip_address').strip() 
-        with open(blocklist_file_path, 'r') as file:
-            blocklist_data = file.readlines()
+        elif request.method == 'DELETE':
+            try:
+                data = request.get_json()
+                ip_address = data.get('ip_address')
+                if not ip_address:
+                    return jsonify({"error": "IP address was not supplied"}), 400
+                    
+                ip_address = ip_address.strip()
+                with open(blocklist_file_path, 'r') as file:
+                    blocklist_data = file.readlines()
 
-        updated_blocklist = [ip.strip() for ip in blocklist_data if ip.strip() != ip_address]
+                updated_blocklist = [ip.strip() for ip in blocklist_data if ip.strip() != ip_address]
 
-        with open(blocklist_file_path, 'w') as file:
-            file.write('\n'.join(updated_blocklist) + '\n')
+                with open(blocklist_file_path, 'w') as file:
+                    file.write('\n'.join(updated_blocklist) + '\n')
 
-        return jsonify({"message": f"IP address {ip_address} removed successfully"}), 200
+                return jsonify({"message": f"IP address {ip_address} removed successfully"}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error removing IP from blocklist: {str(e)}"}), 500
+
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
 
 # [ DASHBOARD ] Token Requests route
 @app.route('/api/v1/dev/pending_requests', methods=['GET', 'POST', 'DELETE'])
 def pending_requests():
-    if not session.get('logged_in') or session.get('username') != 'admin':
-        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+    try:
+        if not session.get('logged_in') or session.get('username') != 'admin':
+            return jsonify({"error": "Unauthorized access. Please log in."}), 403
 
-    if request.method == 'GET':
-        with open(requests_file_path, 'r') as file:
-            requests_data = json.load(file)
-        return jsonify({"requests": requests_data}), 200
+        if request.method == 'GET':
+            try:
+                with open(requests_file_path, 'r') as file:
+                    requests_data = json.load(file)
+                return jsonify({"requests": requests_data}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error reading requests data: {str(e)}"}), 500
 
-    elif request.method == 'POST':
-        # Get the email from the incoming JSON data
-        data = request.get_json()
-        email = data.get('email')
+        elif request.method == 'POST':
+            try:
+                # Get the email from the incoming JSON data
+                data = request.get_json()
+                email = data.get('email')
 
-        # If email is not provided, return an error
-        if not email:
-            return jsonify({"error": "Missing email in request data."}), 400
+                # If email is not provided, return an error
+                if not email:
+                    return jsonify({"error": "Missing email in request data."}), 400
 
-        # Generate a token with a 30-day expiry
-        token = jwt.encode(
-            {
-                'email': email,
-                'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).timestamp()
-            },
-            app.config['SECRET_KEY'],
-            algorithm='HS256'
-        )
+                # Generate a token with a 30-day expiry
+                token = jwt.encode(
+                    {
+                        'email': email,
+                        'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).timestamp()
+                    },
+                    app.config['SECRET_KEY'],
+                    algorithm='HS256'
+                )
 
-        user = User.query.filter_by(email=email).first()
-        user.api_key = token
-        db.session.commit()
+                user = User.query.filter_by(email=email).first()
+                user.api_key = token
+                db.session.commit()
 
-        # Open the requests_file_path and remove the json for that email since the request was reviewed
-        with open(requests_file_path, 'r') as file:
-            requests_data = json.load(file)
-        if email in requests_data:
-            del requests_data[email]
-        with open(requests_file_path, 'w') as file:
-            json.dump(requests_data, file, indent=4)
+                # Open the requests_file_path and remove the json for that email since the request was reviewed
+                with open(requests_file_path, 'r') as file:
+                    requests_data = json.load(file)
+                if email in requests_data:
+                    del requests_data[email]
+                with open(requests_file_path, 'w') as file:
+                    json.dump(requests_data, file, indent=4)
 
-        return jsonify({"message": "Token request accepted and email request removed successfully."}), 200
-    
-    elif request.method == 'DELETE':
-        data = request.get_json()
-        email = data.get('email', '').strip()
-        if not email:
-            return jsonify({"error": "Email is required."}), 400
+                return jsonify({"message": "Token request accepted successfully."}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error processing token request: {str(e)}"}), 500
+        
+        elif request.method == 'DELETE':
+            try:
+                data = request.get_json()
+                email = data.get('email', '').strip()
+                if not email:
+                    return jsonify({"error": "Email is required."}), 400
 
-        with open(requests_file_path, 'r') as file:
-            requests_data = json.load(file)
+                with open(requests_file_path, 'r') as file:
+                    requests_data = json.load(file)
 
-        if email not in requests_data:
-            return jsonify({"error": "Email not found in requests."}), 404
+                if email not in requests_data:
+                    return jsonify({"error": "Email not found in requests."}), 404
 
-        del requests_data[email]
-        with open(requests_file_path, 'w') as file:
-            json.dump(requests_data, file, indent=4)
+                del requests_data[email]
+                with open(requests_file_path, 'w') as file:
+                    json.dump(requests_data, file, indent=4)
 
-        return jsonify({"message": "Email removed successfully."}), 200
+                return jsonify({"message": "Email removed successfully."}), 200
+            except Exception as e:
+                return jsonify({"error": f"Error removing email request: {str(e)}"}), 500
 
+    except Exception as e:
+        return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
-  
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -525,7 +633,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if username == './admin' and password == 'Engineer$@987':
+        if username == 'admin' and password == 'admin':
             session['logged_in'] = True
             session['username'] = 'admin'
             return redirect('/dev/dashboard/home')
@@ -538,7 +646,7 @@ def login():
 def logout():
     session.pop('logged_in', None)
     session.pop('username', None)
-    return redirect('/dev/login')
+    return redirect('/')
 
 @app.route('/dev/dashboard',methods=['GET'])
 def dashboard():
@@ -584,7 +692,15 @@ def dashboard_token_request():
 
 @app.route('/',methods=['GET'])
 def home():
-    return render_template('home.html')
+    if 'logged_in' not in session or not session['logged_in']:
+        return render_template('home.html',status="not logged in")
+    return render_template('home.html',status="logged in")
+
+@app.route('/services',methods=['GET'])
+def services():
+    if 'logged_in' not in session or not session['logged_in']:
+        return render_template('services.html',status="not logged in")
+    return render_template('services.html',status="logged in")
 
 @app.route('/user/register',methods=['GET','POST'])
 def user_register():
@@ -619,6 +735,7 @@ def user_register():
 
         session['logged_in'] = True
         session['email'] = email
+        session['api_key'] = None
 
         return redirect('/user/myaccount')
 
@@ -627,6 +744,7 @@ def user_register():
 
 @app.route('/user/login',methods=['GET','POST'])
 def user_login():
+    message = request.args.get('message', '')
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -636,11 +754,13 @@ def user_login():
         if user and check_password_hash(user.password, password):
             session['logged_in'] = True
             session['email'] = email
+            if user.api_key:
+                session['api_key'] = user.api_key
             return redirect(url_for('user_myaccount'))
         else:
             return render_template('user_login.html', error='Invalid email or password')
             
-    return render_template('user_login.html')
+    return render_template('user_login.html',error=message)
 
 
 @app.route('/user/request_api_key',methods=['POST'])
@@ -691,7 +811,116 @@ def user_myaccount():
 def user_logout():
     session.pop('logged_in', None)
     session.pop('email', None)
-    return redirect('/user/login')
+    return redirect('/')
+
+@app.route('/user/download_app', methods=['GET'])
+def download_app():
+    return send_file('static/Fortify.apk', as_attachment=True)
+
+@app.route('/user/portal', methods=['GET', 'POST'])
+def portal():
+    # First check if they are logged in or not 
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('user_login', message="Please log in to access the portal."))
+
+    email = session['email']
+    user = User.query.filter_by(email=email).first()
+
+    # Check if the user has an API key
+    if not user.api_key:
+        return render_template('portal.html', message="[!] API key not found")
+
+    return render_template('portal.html')
+
+
+@app.route('/user/portal/filescan',methods=['GET','POST'])
+def user_portal_file_scan():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('user_login', message="Please log in to access the portal."))
+
+    email = session['email']
+    user = User.query.filter_by(email=email).first()
+    token = user.api_key
+
+    if request.method == 'POST':
+        file = request.files.get('file')
+        
+        if not file:
+            return jsonify({"error": "No file received"}), 400
+
+        if not token:
+            return jsonify({"error": "No token received"}), 400
+
+        # First we find the md5 hash of the file
+        file_contents = file.read()
+        md5_hash = hashlib.md5(file_contents).hexdigest()
+        
+        # Format signature as [filename, hash] tuple
+        filename = file.filename
+        signature = [[filename,md5_hash]]
+
+        user.file_api_calls += 1
+        db.session.commit()
+        
+        # Then we send the signature and token to the backend
+        try:
+            response = requests.post(f'{base_url}/api/v1/malware_detection', json={
+                'token': token,
+                'signatures': signature
+            })
+            response.raise_for_status()
+            return response.json(), 200
+        except requests.exceptions.RequestException as e:
+            return jsonify({"error": f"API request failed: {str(e)}"}), 500
+
+    return render_template('user_portal_file_scan.html')
+
+
+@app.route('/user/portal/urlscan',methods=['GET','POST'])
+def user_portal_url_scan():
+    if 'logged_in' not in session or not session['logged_in']:
+        return redirect(url_for('user_login', message="Please log in to access the portal."))
+
+    email = session['email']
+    user = User.query.filter_by(email=email).first()
+    token = user.api_key
+
+    if request.method == 'POST':
+        url = request.json.get('url')
+        
+        if not url:  # Better empty check
+            return jsonify({"error": "No URL received"}), 400
+
+        # Increment API call counter
+        user.message_api_calls += 1
+        db.session.commit()
+
+        # Basic URL validation and security check
+        # TODO: Replace with actual API call when available
+        if not url.startswith(('https://')):
+            return jsonify({
+                'website_name': url,
+                'status': 'warning',
+                'type': 'insecure',
+                'details': 'URL lacks HTTPS security certificate'
+            }), 200
+            
+        return jsonify({
+            'website_name': url,
+            'status': 'success', 
+            'type': 'secure',
+            'details': 'Website uses HTTPS encryption'
+        }), 200
+        
+    return render_template('user_portal_url_scan.html')
+
+@app.route('/user/portal/ipscan',methods=['GET','POST'])
+def user_portal_ip_scan():
+    return render_template('user_portal_ip_scan.html')
+
+@app.route('/user/portal/report',methods=['GET','POST'])
+def user_portal_report():
+    return render_template('user_portal_report.html')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True,port=5000)

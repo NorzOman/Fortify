@@ -12,13 +12,16 @@
             --border-color: #333333;
             --nav-bg: rgba(26,26,26,0.95);
             --code-bg: #2a2a2a;
+            --high-severity: rgba(255, 69, 58, 0.15);
+            --medium-severity: rgba(255, 214, 10, 0.15); 
+            --low-severity: rgba(50, 215, 75, 0.15);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            will-change: transform;
+            will-change: auto;
         }
 
         body {
@@ -42,7 +45,6 @@
             align-items: center;
             padding: 0 20px;
             border-bottom: 1px solid var(--border-color);
-            transform: translateZ(0);
         }
 
         #adminbar .logo {
@@ -57,7 +59,6 @@
             min-height: 100vh;
             display: flex;
             padding-top: 48px;
-            transform: translateZ(0);
         }
 
         .sidebar {
@@ -67,7 +68,6 @@
             height: calc(100vh - 48px);
             position: fixed;
             border-right: 1px solid var(--border-color);
-            transform: translateZ(0);
         }
 
         .menu {
@@ -102,52 +102,49 @@
 
         .content {
             margin-left: 240px;
-            padding: 25px 40px;
+            padding: 15px 25px;
             flex-grow: 1;
-            transform: translateZ(0);
+            max-width: 800px;
         }
 
         .page-title {
             color: var(--text-color);
-            font-size: 36px;
+            font-size: 24px;
             font-weight: 600;
-            margin: 0 0 30px;
+            margin: 0 0 20px;
             text-align: center;
         }
 
         .welcome-panel {
             background: var(--nav-bg);
             border: 1px solid var(--border-color);
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-            transform: translateZ(0);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
         }
 
         .welcome-panel h2 {
-            font-size: 28px;
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
         .dashboard-cards {
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            transform: translateZ(0);
+            gap: 15px;
         }
 
         .card {
             background: var(--nav-bg);
-            border-radius: 12px;
+            border-radius: 8px;
             border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             transition: transform 0.15s ease;
-            transform: translateZ(0);
         }
 
         .card:hover {
-            transform: translateY(-2px) translateZ(0);
+            transform: translateY(-2px);
         }
 
         .card.operational {
@@ -163,8 +160,8 @@
         }
 
         .card h2 {
-            font-size: 20px;
-            padding: 15px;
+            font-size: 16px;
+            padding: 12px;
             margin: 0;
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -173,20 +170,21 @@
         }
 
         .card-content {
-            padding: 20px;
+            padding: 15px;
             color: var(--text-color);
         }
 
         .card-content p {
-            margin: 12px 0;
+            margin: 8px 0;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 14px;
         }
 
         .status-indicator {
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -204,8 +202,8 @@
             border: none;
             cursor: pointer;
             color: var(--primary-color);
-            font-size: 14px;
-            padding: 8px;
+            font-size: 12px;
+            padding: 6px;
             transition: opacity 0.15s ease;
         }
 
@@ -215,16 +213,16 @@
 
         .alert-list {
             list-style: none;
-            transform: translateZ(0);
+            contain: content;
         }
 
         .alert-list li {
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 8px;
+            margin: 6px 0;
+            border-radius: 6px;
+            font-size: 12px;
             position: relative;
-            padding-left: 35px;
+            padding-left: 25px;
             background: var(--code-bg);
             transition: transform 0.15s ease;
         }
@@ -232,21 +230,25 @@
         .alert-list li:before {
             content: "⚠️";
             position: absolute;
-            left: 12px;
+            left: 8px;
             top: 50%;
             transform: translateY(-50%);
+            font-size: 10px;
         }
 
         .alert-list li[data-severity="high"] {
             border-left: 3px solid #FF453A;
+            background: var(--high-severity);
         }
 
         .alert-list li[data-severity="medium"] {
             border-left: 3px solid #FFD60A;
+            background: var(--medium-severity);
         }
 
         .alert-list li[data-severity="low"] {
             border-left: 3px solid #32D74B;
+            background: var(--low-severity);
         }
 
         .alert-list li:hover {
@@ -311,7 +313,14 @@
     </div>
 
     <script>
+        let lastUpdate = 0;
+        const UPDATE_INTERVAL = 1000; // Throttle updates to once per second
+        let alertsCache = [];
+
         function updateAPIStatus() {
+            const now = Date.now();
+            if (now - lastUpdate < UPDATE_INTERVAL) return;
+            
             fetch('/api/v1/check_health')
                 .then(response => response.json())
                 .then(data => {
@@ -321,12 +330,14 @@
                     document.getElementById('systemStatusText').textContent = data.status;
                     document.getElementById('systemStatus').className = 'status-indicator status-good';
                     card.className = 'card operational';
+                    lastUpdate = Date.now();
                 })
                 .catch(error => {
                     const card = document.getElementById('statusCard');
                     document.getElementById('systemStatusText').textContent = 'Error';
                     document.getElementById('systemStatus').className = 'status-indicator status-warning';
                     card.className = 'card error';
+                    lastUpdate = Date.now();
                 });
         }
         
@@ -346,16 +357,21 @@
         }
 
         function fetchAlerts() {
+            const now = Date.now();
+            if (now - lastUpdate < UPDATE_INTERVAL) return;
+            
             fetch('/api/v1/dev/alerts')
                 .then(response => response.json())
                 .then(data => {
+                    if (JSON.stringify(data.alerts) === JSON.stringify(alertsCache)) return;
+                    
                     const alertsList = document.getElementById('alertsList');
                     const alertsCard = document.getElementById('alertsCard');
                     alertsList.innerHTML = '';
                     
                     if (data.alerts && data.alerts.length > 0) {
                         alertsCard.className = 'card error';
-                        // Reverse the alerts array to show newest first
+                        const fragment = document.createDocumentFragment();
                         data.alerts.reverse().forEach(alert => {
                             const li = document.createElement('li');
                             if (alert.toLowerCase().includes('unauthorized') ||
@@ -368,18 +384,23 @@
                                 li.setAttribute('data-severity', 'low');
                             }
                             li.textContent = alert;
-                            alertsList.appendChild(li);
+                            fragment.appendChild(li);
                         });
+                        alertsList.appendChild(fragment);
+                        alertsCache = data.alerts;
                     } else {
                         alertsCard.className = 'card operational';
                         alertsList.innerHTML = '<li style="color: #32D74B;">No active alerts</li>';
+                        alertsCache = [];
                     }
+                    lastUpdate = Date.now();
                 })
                 .catch(error => {
                     const alertsList = document.getElementById('alertsList');
                     const alertsCard = document.getElementById('alertsCard');
                     alertsCard.className = 'card warning';
                     alertsList.innerHTML = '<li style="color: #FF453A;">Error fetching alerts</li>';
+                    lastUpdate = Date.now();
                 });
         }
 
@@ -389,6 +410,9 @@
         
         // Update API status every 10 seconds
         setInterval(updateAPIStatus, 10000);
+        
+        // Update alerts every 2 seconds
+        setInterval(fetchAlerts, 2000);
     </script>
 </body>
 </html>

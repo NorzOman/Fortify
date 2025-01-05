@@ -1,11 +1,6 @@
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/token_request at 2025-01-02 11:12:38
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/firewall at 2025-01-02 11:12:40
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/firewall at 2025-01-02 11:13:35
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/logs at 2025-01-02 11:13:38
-[ suspicious ] 127.0.0.1 tried to access /dev/login at 2025-01-02 11:13:48
-[ suspicious ] 127.0.0.1 tried to access /dev/login at 2025-01-02 11:13:53
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-02 11:13:53
-[ suspicious ] 127.0.0.1 tried to access /dev/dashboard/token_request at 2025-01-02 11:13:55
-[ suspicious ] 127.0.0.1 tried to access /user/login at 2025-01-02 11:14:07
-[ suspicious ] 127.0.0.1 tried to access /user/login at 2025-01-02 11:14:21
-[ suspicious ] 127.0.0.1 tried to access /dev/login at 2025-01-02 11:14:26
+[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:47
+[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:48
+[ suspicious ] : 127.0.0.1 tried to access /dev/login at 2025-01-05 19:20:54
+[ suspicious ] : 127.0.0.1 tried to access /dev/login at 2025-01-05 19:20:56
+[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:57
+[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/logs at 2025-01-05 19:20:58
