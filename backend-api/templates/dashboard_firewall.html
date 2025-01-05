@@ -296,21 +296,25 @@
                 .then(data => {
                     const blockList = document.getElementById('blockList');
                     blockList.innerHTML = '';
-                    data.blocklist.forEach(ip => {
-                        const tr = document.createElement('tr');
-                        const tdIP = document.createElement('td');
-                        tdIP.className = 'ip-address';
-                        tdIP.textContent = ip.trim();
-                        const tdActions = document.createElement('td');
-                        const deleteButton = document.createElement('button');
-                        deleteButton.className = 'delete-btn';
-                        deleteButton.textContent = '✕';
-                        deleteButton.addEventListener('click', () => deleteIP(ip, 'block'));
-                        tdActions.appendChild(deleteButton);
-                        tr.appendChild(tdIP);
-                        tr.appendChild(tdActions);
-                        blockList.appendChild(tr);
-                    });
+                    if (data.blocklist && data.blocklist.length > 0) {
+                        data.blocklist.forEach(ip => {
+                            if (ip && ip.trim()) {  // Only add row if IP is not empty
+                                const tr = document.createElement('tr');
+                                const tdIP = document.createElement('td');
+                                tdIP.className = 'ip-address';
+                                tdIP.textContent = ip.trim();
+                                const tdActions = document.createElement('td');
+                                const deleteButton = document.createElement('button');
+                                deleteButton.className = 'delete-btn';
+                                deleteButton.textContent = '✕';
+                                deleteButton.addEventListener('click', () => deleteIP(ip, 'block'));
+                                tdActions.appendChild(deleteButton);
+                                tr.appendChild(tdIP);
+                                tr.appendChild(tdActions);
+                                blockList.appendChild(tr);
+                            }
+                        });
+                    }
                 });
         }
     

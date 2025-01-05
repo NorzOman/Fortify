@@ -12,16 +12,15 @@
             --border-color: #333333;
             --nav-bg: rgba(26,26,26,0.95);
             --code-bg: #2a2a2a;
-            --high-severity: rgba(255, 69, 58, 0.15);
-            --medium-severity: rgba(255, 214, 10, 0.15); 
-            --low-severity: rgba(50, 215, 75, 0.15);
+            --high-alert: rgba(255, 69, 58, 0.15);
+            --medium-alert: rgba(255, 214, 10, 0.15); 
+            --low-alert: rgba(50, 215, 75, 0.15);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            will-change: auto;
         }
 
         body {
@@ -102,41 +101,27 @@
 
         .content {
             margin-left: 240px;
-            padding: 15px 25px;
+            padding: 25px 40px;
             flex-grow: 1;
-            max-width: 800px;
         }
 
         .page-title {
             color: var(--text-color);
-            font-size: 24px;
+            font-size: 36px;
             font-weight: 600;
-            margin: 0 0 20px;
+            margin: 0 0 30px;
             text-align: center;
-        }
-
-        .welcome-panel {
-            background: var(--nav-bg);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-        }
-
-        .welcome-panel h2 {
-            font-size: 20px;
-            margin-bottom: 10px;
         }
 
         .dashboard-cards {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .card {
             background: var(--nav-bg);
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
@@ -160,8 +145,8 @@
         }
 
         .card h2 {
-            font-size: 16px;
-            padding: 12px;
+            font-size: 20px;
+            padding: 15px;
             margin: 0;
             border-bottom: 1px solid var(--border-color);
             display: flex;
@@ -170,21 +155,20 @@
         }
 
         .card-content {
-            padding: 15px;
+            padding: 20px;
             color: var(--text-color);
         }
 
         .card-content p {
-            margin: 8px 0;
+            margin: 12px 0;
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 14px;
+            gap: 8px;
         }
 
         .status-indicator {
-            height: 8px;
-            width: 8px;
+            height: 10px;
+            width: 10px;
             border-radius: 50%;
             display: inline-block;
         }
@@ -202,8 +186,8 @@
             border: none;
             cursor: pointer;
             color: var(--primary-color);
-            font-size: 12px;
-            padding: 6px;
+            font-size: 14px;
+            padding: 8px;
             transition: opacity 0.15s ease;
         }
 
@@ -213,16 +197,15 @@
 
         .alert-list {
             list-style: none;
-            contain: content;
         }
 
         .alert-list li {
-            padding: 8px;
-            margin: 6px 0;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 14px;
             position: relative;
-            padding-left: 25px;
+            padding-left: 35px;
             background: var(--code-bg);
             transition: transform 0.15s ease;
         }
@@ -230,25 +213,24 @@
         .alert-list li:before {
             content: "⚠️";
             position: absolute;
-            left: 8px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 10px;
         }
 
         .alert-list li[data-severity="high"] {
             border-left: 3px solid #FF453A;
-            background: var(--high-severity);
+            background: var(--high-alert);
         }
 
         .alert-list li[data-severity="medium"] {
             border-left: 3px solid #FFD60A;
-            background: var(--medium-severity);
+            background: var(--medium-alert);
         }
 
         .alert-list li[data-severity="low"] {
             border-left: 3px solid #32D74B;
-            background: var(--low-severity);
+            background: var(--low-alert);
         }
 
         .alert-list li:hover {
@@ -275,15 +257,13 @@
 
         <div class="content">
             <h1 class="page-title">Dashboard</h1>
-            
-            <div class="welcome-panel">
-                <h2>Welcome to Vault-7!</h2>
-                <p>This is your secure dashboard for managing and monitoring the Vault-7 API system.</p>
-            </div>
 
             <div class="dashboard-cards">
                 <div id="statusCard" class="card">
-                    <h2>API Status</h2>
+                    <h2>
+                        API Status
+                        <button onclick="updateAPIStatus()" class="refresh-btn">↻</button>
+                    </h2>
                     <div class="card-content">
                         <p>
                             <span id="systemStatus" class="status-indicator status-good"></span>
@@ -313,14 +293,7 @@
     </div>
 
     <script>
-        let lastUpdate = 0;
-        const UPDATE_INTERVAL = 1000; // Throttle updates to once per second
-        let alertsCache = [];
-
         function updateAPIStatus() {
-            const now = Date.now();
-            if (now - lastUpdate < UPDATE_INTERVAL) return;
-            
             fetch('/api/v1/check_health')
                 .then(response => response.json())
                 .then(data => {
@@ -330,14 +303,12 @@
                     document.getElementById('systemStatusText').textContent = data.status;
                     document.getElementById('systemStatus').className = 'status-indicator status-good';
                     card.className = 'card operational';
-                    lastUpdate = Date.now();
                 })
                 .catch(error => {
                     const card = document.getElementById('statusCard');
                     document.getElementById('systemStatusText').textContent = 'Error';
                     document.getElementById('systemStatus').className = 'status-indicator status-warning';
                     card.className = 'card error';
-                    lastUpdate = Date.now();
                 });
         }
         
@@ -357,27 +328,21 @@
         }
 
         function fetchAlerts() {
-            const now = Date.now();
-            if (now - lastUpdate < UPDATE_INTERVAL) return;
-            
             fetch('/api/v1/dev/alerts')
                 .then(response => response.json())
                 .then(data => {
-                    if (JSON.stringify(data.alerts) === JSON.stringify(alertsCache)) return;
-                    
                     const alertsList = document.getElementById('alertsList');
                     const alertsCard = document.getElementById('alertsCard');
                     alertsList.innerHTML = '';
-                    
                     if (data.alerts && data.alerts.length > 0) {
                         alertsCard.className = 'card error';
                         const fragment = document.createDocumentFragment();
                         data.alerts.reverse().forEach(alert => {
                             const li = document.createElement('li');
-                            if (alert.toLowerCase().includes('unauthorized') ||
-                                alert.toLowerCase().includes('suspicious')) {
+                            if (alert.toLowerCase().includes('unauthorized') || 
+                                alert.toLowerCase().includes('failed')) {
                                 li.setAttribute('data-severity', 'high');
-                            } else if (alert.toLowerCase().includes('failed') || 
+                            } else if (alert.toLowerCase().includes('suspicious') ||
                                      alert.toLowerCase().includes('blocked')) {
                                 li.setAttribute('data-severity', 'medium');
                             } else {
@@ -387,32 +352,22 @@
                             fragment.appendChild(li);
                         });
                         alertsList.appendChild(fragment);
-                        alertsCache = data.alerts;
                     } else {
                         alertsCard.className = 'card operational';
                         alertsList.innerHTML = '<li style="color: #32D74B;">No active alerts</li>';
-                        alertsCache = [];
                     }
-                    lastUpdate = Date.now();
                 })
                 .catch(error => {
                     const alertsList = document.getElementById('alertsList');
                     const alertsCard = document.getElementById('alertsCard');
                     alertsCard.className = 'card warning';
                     alertsList.innerHTML = '<li style="color: #FF453A;">Error fetching alerts</li>';
-                    lastUpdate = Date.now();
                 });
         }
 
         // Initial updates
         updateAPIStatus();
         fetchAlerts();
-        
-        // Update API status every 10 seconds
-        setInterval(updateAPIStatus, 10000);
-        
-        // Update alerts every 2 seconds
-        setInterval(fetchAlerts, 2000);
     </script>
 </body>
 </html>

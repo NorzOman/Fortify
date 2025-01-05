@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Something Went Wrong</title>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --text-color: #f5f5f7;
+            --border-color: #424245;
+            --accent-color: #0A84FF;
+            --error-color: #FF453A;
+            --success-color: #32D74B;
+            --secondary-bg: #1C1C1E;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            text-align: center;
+            padding: 1.25rem;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.009em;
+        }
+
+        .error-logo {
+            margin: 2rem 0;
+        }
+
+        .error-logo img {
+            width: 180px;
+            height: 150px;
+        }
+
+        .status-box {
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.75rem 0;
+            gap: 0.5rem;
+        }
+
+        .status-line {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .green {
+            background: var(--success-color);
+            box-shadow: 0 0 6px rgba(50, 215, 75, 0.5);
+        }
+
+        .red {
+            background: var(--error-color);
+            box-shadow: 0 0 6px rgba(255, 69, 58, 0.5);
+        }
+
+        .status-text {
+            color: var(--text-color);
+            font-size: 14px;
+        }
+
+        .error-details {
+            margin-top: 1.25rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .error-details p {
+            font-size: 14px;
+            color: var(--text-color);
+            margin-bottom: 0.75rem;
+        }
+
+        .error-code {
+            color: rgba(235, 235, 245, 0.6);
+            font-family: "SF Mono", monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Oops! Something Went Wrong</h1>
+        
+        <div class="error-logo">
+            <img src="{{ url_for('static', filename='500-logo.png') }}" alt="500 Error">
+        </div>
+
+        <div class="error-details">
+            <p>We encountered an unexpected error while processing your request. Our team has been notified and is working on fixing it.</p>
+            <p>Please try again in a few moments.</p>
+            <div class="error-code">Error Code: 500 Internal Server Error</div>
+        </div>
+    </div>
+</body>
+</html>

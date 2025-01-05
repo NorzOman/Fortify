@@ -328,7 +328,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const tokenRequestsList = document.getElementById('tokenRequestsList');
-                    tokenRequestsList.innerHTML = '';  // Clear the previous content
+                    tokenRequestsList.innerHTML = '';
                     
                     for (const email in data.requests) {
                         if (data.requests.hasOwnProperty(email)) {

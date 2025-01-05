@@ -56,7 +56,6 @@ db = SQLAlchemy(app)
 # ---------------------------------------------------------------------------------------------------------------------------
 
 alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
-allowlist_file_path = os.path.join(app.root_path, 'static', 'IP_allowlist.txt')
 blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
 requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
 base_url = 'http://127.0.0.1:5000'
@@ -233,6 +232,11 @@ def after_request(response):
 def page_not_found(e):
     return render_template('404.html'), 404
 
+# Error handler for 500 errors
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('broken.html'), 500
+
 # ---------------------------------------------------------------------------------------------------------------------------
 
 
@@ -244,7 +248,7 @@ def page_not_found(e):
 
 
 # Root route leads to API documentation
-@app.route('/api/v1/dev/docs', methods=['GET'])
+@app.route('/dev/docs', methods=['GET'])
 def docs():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return render_template('403.html'), 403
@@ -923,6 +927,6 @@ def user_portal_report():
     return render_template('user_portal_report.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True,port=5000)
+    app.run(host='0.0.0.0',debug=False,port=5000)
 
 

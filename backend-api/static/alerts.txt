@@ -1,6 +1,0 @@
-[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:47
-[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:48
-[ suspicious ] : 127.0.0.1 tried to access /dev/login at 2025-01-05 19:20:54
-[ suspicious ] : 127.0.0.1 tried to access /dev/login at 2025-01-05 19:20:56
-[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/home at 2025-01-05 19:20:57
-[ suspicious ] : 127.0.0.1 tried to access /dev/dashboard/logs at 2025-01-05 19:20:58
