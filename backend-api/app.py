@@ -704,11 +704,6 @@ def dashboard_token_request():
 
 @app.route('/dev/dashboard/modify_database',methods=['GET','POST'])
 def dashboard_modify_database():
-    if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect('/')
-
-    if request.method == 'g'        
-    
     return render_template('dev_dashboard_modify_database.html')
 
 # ------------------------------------------------------------------------------------------------------------------------------
