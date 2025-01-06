@@ -168,23 +168,22 @@ def is_ip_blocked(ip_address):
 # Function used to check if the signatures are malicious
 def check_malicious_signatures(signatures):
     try:
-        db_path = 'signaturesdb.sqlite'
-        
         # Input validation - ensure signatures contains valid MD5 hashes
         if not all(isinstance(sig, (list, tuple)) and len(sig) == 2 and 
                   isinstance(sig[1], str) and len(sig[1]) == 32 and 
                   all(c in '0123456789abcdefABCDEF' for c in sig[1])
                   for sig in signatures):
-            return json.dumps({"error": "Invalid signature format"})
+            return {"error": "Invalid signature format"}
 
         # Connect to the SQLite database
+        db_path = 'signaturesdb.sqlite'
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
         # Extract hashes and use parameterized query
         hashes = [signature[1] for signature in signatures]
         placeholders = ','.join('?' * len(hashes))
-        query = "SELECT hash, name FROM HashDB WHERE hash IN ({})".format(placeholders)
+        query = f"SELECT hash, name FROM HashDB WHERE hash IN ({placeholders})"
 
         # Execute with parameters to prevent SQL injection
         cursor.execute(query, hashes)
@@ -198,23 +197,24 @@ def check_malicious_signatures(signatures):
             malicious_hashes.append({
                 "file_name": file_name,
                 "hash": hash_value, 
-                "name": name,
+                "name": name
             })
 
         if not malicious_hashes:
-            return json.dumps({"status": "all-safe"}, indent=4)
+            return {"status": "all-safe"}
         
-        return json.dumps(malicious_hashes, indent=4)
+        # Convert to JSON-compatible format
+        return {"malicious_files": malicious_hashes}
 
     except sqlite3.Error as e:
         error_msg = f"Database error while checking signatures: {str(e)}"
         push_system_alert(error_msg, "failed")
-        return json.dumps({"error": "There was an issue on our side, please try again later"})
+        return {"error": "There was an issue on our side, please try again later"}
     
     except Exception as e:
         error_msg = f"Error checking malicious signatures: {str(e)}"
         push_system_alert(error_msg, "failed")
-        return json.dumps({"error": "There was an issue on our side, please try again later"})
+        return {"error": "There was an issue on our side, please try again later"}
 
 # ---------------------------------------------------------------------------------------------------------------------------
 
@@ -423,7 +423,6 @@ def message_detection():
     except Exception as e:
         return jsonify({"error": "Internal server error | Report to admin with error code: #MSGD-001"}), 500
 
-
 # Malware detection route
 @app.route('/api/v1/malware_detection', methods=['POST'])
 def malware_detection():
@@ -451,9 +450,9 @@ def malware_detection():
             signatures = data.get('signatures', [])
             if not signatures:
                 return jsonify({"error": "No signatures provided"}), 400
-                
-            malicious_signatures_json = check_malicious_signatures(signatures)
-            return jsonify(json.loads(malicious_signatures_json)), 200
+            
+            malicious_signatures_result = check_malicious_signatures(signatures)
+            return jsonify(malicious_signatures_result), 200
             
         except Exception as e:
             return jsonify({"error": "Error processing signatures | Report to admin with error code: #SIG-001"}), 500
@@ -640,6 +639,61 @@ def pending_requests():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
+
+@app.route('/api/v1/dev/customhashes', methods=['GET','POST','DELETE'])
+def customhashes():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return jsonify({"error": "Unauthorized access. Please log in."}), 403
+
+    if request.method == 'GET':
+        try:
+            with open(customhashes_file_path, 'r') as file:
+                customhashes_data = json.load(file)
+            return jsonify({"customhashes": customhashes_data}), 200
+        except Exception as e:
+            return jsonify({"error": f"Error reading customhashes: {str(e)}"}), 500
+    
+    elif request.method == 'POST':
+        try:
+            data = request.get_json()
+            hash_value = data.get('hash')
+            name = data.get('name')
+            
+            if not hash_value or not name:
+                return jsonify({"error": "Hash and name are required"}), 400
+                
+            # Open connection to signatures database
+            conn = sqlite3.connect('signaturesdb.sqlite')
+            cursor = conn.cursor()
+            
+            # Insert hash and name into hashDB table
+            cursor.execute('INSERT INTO HashDB (hash, name) VALUES (?, ?)', 
+                         (hash_value, name))
+            
+            conn.commit()
+            conn.close()
+            
+            # Also update the JSON file to keep it in sync
+            with open(customhashes_file_path, 'r') as file:
+                customhashes_data = json.load(file)
+            
+            customhashes_data['hashes'].append({
+                'hash': hash_value,
+                'name': name
+            })
+            
+            with open(customhashes_file_path, 'w') as file:
+                json.dump(customhashes_data, file, indent=4)
+                
+            return jsonify({"success": True, "message": "Hash added successfully"}), 200
+            
+        except sqlite3.Error as e:
+            return jsonify({"error": f"Database error: {str(e)}"}), 500
+        except Exception as e:
+            return jsonify({"error": f"Error adding hash: {str(e)}"}), 500
+
+    elif request.method == 'DELETE':
+        pass
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -917,23 +971,32 @@ def user_portal_file_scan():
                 'signatures': signatures
             })
             response.raise_for_status()
-            
+
             result = response.json()
-            print(result)
-            if result.get('status') == 'all-safe':
-                return jsonify({
+            
+            if 'status' in result and result['status'] == 'all-safe':
+                result = {
                     'file_name': filename,
-                    'hash': signature
-                }), 200
-                
-            # Return malicious hashes array if threats found
-            if isinstance(result, list):
+                    'hash': signature,
+                    'status': 'safe'
+                }
                 return jsonify(result), 200
                 
-            return jsonify({"error": result.get('error', 'Unknown error')}), 500
+            if 'malicious_files' in result:
+                malware_name = result['malicious_files'][0]['name']
+                result = {
+                    'file_name': filename,
+                    'hash': signature, 
+                    'status': 'malicious',
+                    'malware_name': malware_name
+                }
+                print("Result: ",result)
+                return jsonify(result), 200
+                
+            return jsonify({"error": 'Unknown error'}), 500
 
         except requests.exceptions.RequestException as e:
-            return jsonify({"error": "Failed to analyze file. Please try again."}), 500
+            return jsonify({"error": "Failed to analyze file. Please try again. Error: " + str(e)}), 500
 
     return render_template('user_portal_file_scan.html')
 

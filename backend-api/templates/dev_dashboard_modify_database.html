@@ -324,13 +324,13 @@
     <script>
         // Function to fetch and display hashes
         function fetchHashes() {
-            fetch('/dev/dashboard/modify_database')
+            fetch('/api/v1/dev/customhashes')
                 .then(response => response.json())
                 .then(data => {
                     const tableBody = document.getElementById('hashTableBody');
                     tableBody.innerHTML = '';
                     
-                    data.forEach(entry => {
+                    data.customhashes.hashes.forEach(entry => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${entry.hash}</td>
@@ -353,7 +353,7 @@
                 name: document.getElementById('name').value
             };
 
-            fetch('/dev/dashboard/modify_database', {
+            fetch('/api/v1/dev/customhashes', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -8,8 +8,8 @@ import json
 import os
 import time
 
-#BASE_URL = 'https://vault-7.vercel.app'
-BASE_URL ='http://127.0.0.1:5000'
+BASE_URL = 'http://127.0.0.1:5000'
+#BASE_URL ='https://vault-7.onrender.com'
 TOKEN_MESSAGE = ''
 TOKEN_FILE = ''
 
