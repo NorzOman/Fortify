@@ -18,6 +18,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         body {
@@ -152,6 +156,7 @@
             background: linear-gradient(300deg, #ff6b6b, #4ecdc4, #45b7d1, #a06cd5, #f7d794);
             background-size: 300% 300%;
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             animation: cosmic 15s ease infinite;
         }

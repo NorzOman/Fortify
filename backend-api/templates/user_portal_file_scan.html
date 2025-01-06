@@ -24,12 +24,19 @@
             --success-bg: #132a1a;
             --success-border: #166534;
             --success-text: #86efac;
+            --neutral-bg: #1f2937;
+            --neutral-border: #374151;
+            --neutral-text: #d1d5db;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         body {
@@ -256,23 +263,58 @@
             gap: 10px;
         }
 
-        .malware-alert .details {
+        .scan-details {
             margin-top: 15px;
             padding: 15px;
-            background: var(--danger-bg);
-            border: 1px solid var(--danger-border);
+            background: var(--neutral-bg);
+            border: 1px solid var(--neutral-border);
             border-radius: 6px;
         }
 
-        .malware-alert .detail-row {
+        .detail-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--danger-border);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--neutral-border);
         }
 
-        .malware-alert .detail-row:last-child {
+        .detail-row:last-child {
             border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: var(--neutral-text);
+        }
+
+        .detail-value {
+            font-family: monospace;
+            color: var(--text-color);
+            word-break: break-all;
+            max-width: 60%;
+            text-align: right;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .status-clean {
+            background: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid var(--success-border);
+        }
+
+        .status-malicious {
+            background: var(--danger-bg);
+            color: var(--danger-text);
+            border: 1px solid var(--danger-border);
         }
 
         @keyframes fadeIn {
@@ -369,7 +411,7 @@
         <p>Copyright © 2025 Fortify Endpoint Security. All rights reserved.</p>
         <p>Version 1.0</p>
     </footer>
-
+    
     <script>
         // Profile menu toggling
         const toggleProfileMenu = () => {
@@ -406,50 +448,70 @@
         dropZone.addEventListener('drop', (e) => {
             e.preventDefault();
             dropZone.style.borderColor = 'var(--border-color)';
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                if (files[0].size > MAX_FILE_SIZE) {
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                if (file.size > MAX_FILE_SIZE) {
                     alert('File size exceeds 15MB limit');
                     return;
                 }
-                handleFiles([files[0]]); // Only take the first file
+                handleFile(file);
             }
         });
 
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                if (e.target.files[0].size > MAX_FILE_SIZE) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > MAX_FILE_SIZE) {
                     alert('File size exceeds 15MB limit');
                     e.target.value = ''; // Clear the input
                     return;
                 }
-                handleFiles([e.target.files[0]]); // Only take the first file
+                handleFile(file);
             }
         });
 
-        function handleFiles(files) {
-            fileList.innerHTML = ''; // Clear existing files
+        function handleFile(file) {
+            fileList.innerHTML = ''; // Clear existing file
             scanResult.style.display = 'none'; // Hide previous results
-            const file = files[0]; // Only handle one file
             const fileItem = document.createElement('div');
             fileItem.className = 'file-item';
             fileItem.innerHTML = `
                 <i class="fas fa-file file-icon"></i>
                 <span class="file-name">${file.name}</span>
-                <button class="analyze-btn" onclick="analyzeFile(this, '${file.name}')">
+                <button class="analyze-btn" onclick="analyzeFile(this)">
                     Analyze File
                 </button>
             `;
             fileList.appendChild(fileItem);
         }
 
-        function analyzeFile(button, filename) {
+        function analyzeFile(button) {
             button.disabled = true;
             button.textContent = 'Analyzing...';
 
             // Create FormData and append file
             const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
+            const file = fileInput.files[0];
+            
+            // Validate file exists before sending
+            if (!file) {
+                button.textContent = 'Analysis Failed';
+                scanResult.style.display = 'block';
+                scanResult.classList.remove('clean');
+                scanResult.innerHTML = `
+                    <div class="malware-alert">
+                        <h3>
+                            <i class="fas fa-times-circle"></i>
+                            Error
+                        </h3>
+                        <p>No file selected for analysis</p>
+                    </div>
+                `;
+                button.disabled = false;
+                return;
+            }
+
+            formData.append('file', file);
 
             // Send POST request to /user/portal/filescan
             fetch('/user/portal/filescan', {
@@ -471,42 +533,67 @@
                 button.textContent = 'Analysis Complete';
                 scanResult.style.display = 'block';
                 
-                if (data.length > 0) {
+                if (Array.isArray(data) && data.length > 0) {
+                    // Malicious file detected
                     scanResult.classList.remove('clean');
-                    // Create alert boxes for each detected threat
                     scanResult.innerHTML = `
-                        <h3 style="margin-bottom: 20px;">Scan Results</h3>
-                        ${data.map(threat => `
-                            <div class="malware-alert">
-                                <h3>
+                        <h3 style="margin-bottom: 20px;">Analysis Report</h3>
+                        <div class="scan-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Status</span>
+                                <span class="status-indicator status-malicious">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    Malware Detected!
-                                </h3>
-                                <div class="details">
-                                    <div class="detail-row">
-                                        <strong>File Name:</strong>
-                                        <span>${threat.file_name}</span>
-                                    </div>
-                                    <div class="detail-row">
-                                        <strong>Threat Type:</strong>
-                                        <span>${threat.name}</span>
-                                    </div>
-                                    <div class="detail-row">
-                                        <strong>File Hash:</strong>
-                                        <span>${threat.hash}</span>
-                                    </div>
-                                </div>
+                                    Malicious
+                                </span>
                             </div>
-                        `).join('')}
+                            <div class="detail-row">
+                                <span class="detail-label">File Name</span>
+                                <span class="detail-value">${data[0].file_name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">File Hash (MD5)</span>
+                                <span class="detail-value">${data[0].hash}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Threat Type</span>
+                                <span class="detail-value">${data[0].name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Analysis Time</span>
+                                <span class="detail-value">${new Date().toLocaleString()}</span>
+                            </div>
+                        </div>
                     `;
                 } else {
+                    // Clean file
                     scanResult.classList.add('clean');
                     scanResult.innerHTML = `
-                        <h3 style="margin-bottom: 10px;">
-                            <i class="fas fa-check-circle"></i>
-                            File is Clean
-                        </h3>
-                        <p>No threats were detected in this file.</p>
+                        <h3 style="margin-bottom: 20px;">Analysis Report</h3>
+                        <div class="scan-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Status</span>
+                                <span class="status-indicator status-clean">
+                                    <i class="fas fa-shield-check"></i>
+                                    Clean
+                                </span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">File Name</span>
+                                <span class="detail-value">${file.name}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">File Hash (MD5)</span>
+                                <span class="detail-value">${data.hash}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">File Size</span>
+                                <span class="detail-value">${(file.size / 1024).toFixed(2)} KB</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Analysis Time</span>
+                                <span class="detail-value">${new Date().toLocaleString()}</span>
+                            </div>
+                        </div>
                     `;
                 }
             })
@@ -525,6 +612,9 @@
                         <p>Please check if you have a valid API key in your account settings.</p>
                     </div>
                 `;
+            })
+            .finally(() => {
+                button.disabled = false;
             });
         }
     </script>

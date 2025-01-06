@@ -128,34 +128,68 @@
             width: 100%;
             max-width: 100vw;
             overflow-x: hidden;
-            padding-bottom: 60px;
+            padding: 80px 40px;
         }
 
-        .service-row {
+        .services-container {
             display: flex;
-            align-items: center;
-            padding: 40px 30px;
-            max-width: 900px;
-            margin: 15px auto;
             gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .service-card {
+            flex: 1;
             background: var(--box-bg);
             border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-
-        .service-content {
-            flex: 1;
-        }
-
-        .service-preview {
-            flex: 1;
+            padding: 30px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(10, 132, 255, 0.1);
+        }
+
+        .service-card::after {
+            content: attr(data-proceed-text);
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            color: var(--primary-color);
+            font-weight: 500;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+            transform: translateX(-5px);
+        }
+
+        .preview-container {
+            margin: 20px 0;
+            height: 300px;
+            display: flex;
+            align-items: center;
             justify-content: center;
         }
 
         .phone-preview {
-            width: 180px;
-            height: 360px;
+            width: 160px;
+            height: 320px;
             border-radius: 30px;
             border: 8px solid var(--border-color);
             background: var(--bg-color);
@@ -166,8 +200,8 @@
         }
 
         .laptop-preview {
-            width: 400px;
-            height: 250px;
+            width: 320px;
+            height: 200px;
             border-radius: 12px;
             border: 8px solid var(--border-color);
             background: var(--bg-color);
@@ -176,19 +210,17 @@
             background-size: cover;
             background-position: center;
             box-shadow: 0 15px 30px rgba(0,0,0,0.1);
-            transform: rotate(0deg);
-            overflow: hidden;
         }
 
         .laptop-preview::before {
             content: '';
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
             right: 0;
             height: 20px;
             background: var(--border-color);
-            border-radius: 4px 4px 0 0;
+            border-radius: 0 0 4px 4px;
         }
 
         .laptop-base {
@@ -196,37 +228,24 @@
             height: 15px;
             background: var(--border-color);
             margin-left: -10%;
-            border-radius: 0 0 8px 8px;
-            margin-top: 8px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 8px;
+            position: absolute;
+            bottom: -23px;
+            left: 0;
         }
 
-        .service-content h2 {
+        .service-card h2 {
             font-size: 2rem;
             margin-bottom: 15px;
             color: var(--primary-color);
         }
 
-        .service-content p {
+        .service-card p {
             font-size: 1rem;
             margin-bottom: 25px;
             opacity: 0.8;
             line-height: 1.6;
-        }
-
-        .service-btn {
-            display: inline-block;
-            padding: 12px 30px;
-            background: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: transform 0.2s ease;
-        }
-
-        .service-btn:hover {
-            transform: translateY(-2px);
         }
 
         footer {
@@ -237,30 +256,14 @@
             margin-top: 30px;
         }
 
-        @media (max-width: 768px) {
-            .service-row {
-                flex-direction: column;
-                padding: 30px 20px;
-                text-align: center;
-                margin: 10px 20px;
-            }
-
-            .service-row:nth-child(2) {
+        @media (max-width: 1024px) {
+            .services-container {
                 flex-direction: column;
             }
 
-            .phone-preview {
-                width: 160px;
-                height: 320px;
-            }
-
-            .laptop-preview {
-                width: 240px;
-                height: 160px;
-            }
-
-            .service-content h2 {
-                font-size: 1.75rem;
+            .service-card {
+                max-width: 600px;
+                margin: 0 auto;
             }
         }
     </style>
@@ -289,28 +292,24 @@
     </nav>
 
     <main>
-        <div class="service-row">
-            <div class="service-content">
+        <div class="services-container">
+            <a href="/user/app" class="service-card" data-proceed-text="Proceed to download app →">
                 <h2>Fortify Mobile App</h2>
-                <p>Complete mobile security solution featuring real-time malware protection, app scanning, privacy guard, and anti-theft protection. Keep your mobile device secure with our comprehensive antivirus solution.</p>
-                <a href="/user/download_app" class="service-btn" download>Download App</a>
-            </div>
-            <div class="service-preview">
-                <div class="phone-preview"></div>
-            </div>
-        </div>
-
-        <div class="service-row">
-            <div class="service-preview">
-                <div class="laptop-preview">
-                    <div class="laptop-base"></div>
+                <div class="preview-container">
+                    <div class="phone-preview"></div>
                 </div>
-            </div>
-            <div class="service-content">
+                <p>Complete mobile security solution featuring real-time malware protection, app scanning, privacy guard, and anti-theft protection. Keep your mobile device secure with our comprehensive antivirus solution.</p>
+            </a>
+
+            <a href="/user/portal" class="service-card" data-proceed-text="Proceed to web portal →">
                 <h2>Fortify Web Portal</h2>
+                <div class="preview-container">
+                    <div class="laptop-preview">
+                        <div class="laptop-base"></div>
+                    </div>
+                </div>
                 <p>Access our powerful web-based security tools including API key management, file scanning, automated threat detection, and comprehensive security analytics. Perfect for developers and security professionals.</p>
-                <a href="/user/portal" class="service-btn">Launch Portal</a>
-            </div>
+            </a>
         </div>
     </main>
 

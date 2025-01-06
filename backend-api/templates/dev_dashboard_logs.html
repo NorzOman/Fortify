@@ -12,6 +12,12 @@
             --border-color: #333333;
             --nav-bg: rgba(26,26,26,0.95);
             --code-bg: #2a2a2a;
+            --success-color: #32D74B;
+            --error-color: #FF453A;
+            --warning-color: #FFD60A;
+            --success-bg: rgba(50, 215, 75, 0.1);
+            --error-bg: rgba(255, 69, 58, 0.1);
+            --warning-bg: rgba(255, 214, 10, 0.1);
         }
 
         * {
@@ -135,10 +141,6 @@
             border: 1px solid var(--border-color);
         }
 
-        .block-card {
-            border-left: 3px solid #FF453A;
-        }
-
         .card h2 {
             font-size: 20px;
             padding: 15px;
@@ -169,49 +171,38 @@
             opacity: 0.8;
         }
 
-        .ip-list-table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-            height: 100%;
+        .logs-list {
+            list-style: none;
         }
 
-        .ip-list-table th, .ip-list-table td {
+        .logs-list li {
             padding: 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            font-size: 13px;
             border: 1px solid var(--border-color);
-            text-align: left;
-            font-size: 13px;
-        }
-
-        .ip-list-table th {
             background: var(--code-bg);
-            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
-        .ip-list-table tr:hover {
-            background: var(--code-bg);
+        .logs-list li:hover {
+            border-color: var(--primary-color);
         }
 
-        .delete-btn {
-            padding: 8px;
-            cursor: pointer;
-            border: none;
-            border-radius: 6px;
-            background-color: #FF453A;
-            color: white;
-            font-size: 13px;
+        .status-200 {
+            border-left: 3px solid var(--success-color) !important;
+            background: var(--success-bg) !important;
         }
 
-        .delete-btn:hover {
-            opacity: 0.8;
+        .status-400 {
+            border-left: 3px solid var(--error-color) !important;
+            background: var(--error-bg) !important;
         }
 
-        .ip-address {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .status-other {
+            border-left: 3px solid var(--warning-color) !important;
+            background: var(--warning-bg) !important;
         }
-
     </style>
 </head>
 <body>
@@ -224,42 +215,35 @@
         <div class="sidebar">
             <ul class="menu">
                 <li><a href="/dev/dashboard/home">Dashboard</a></li>
-                <li><a href="/dev/dashboard/firewall" class="active">Firewall</a></li>
+                <li><a href="/dev/dashboard/firewall">Firewall</a></li>
                 <li><a href="/dev/dashboard/token_request">Token Requests</a></li>
-                <li><a href="/dev/dashboard/logs">System Logs</a></li>
+                <li><a href="/dev/dashboard/modify_database">Modify Database</a></li>
+                <li><a href="/dev/dashboard/logs" class="active">System Logs</a></li>
                 <li><a href="/dev/logout">Logout</a></li>
             </ul>
         </div>
 
         <div class="content">
-            <h1 class="page-title">Firewall Settings</h1>
+            <h1 class="page-title">System Logs</h1>
             
             <div class="welcome-panel">
-                <h2>IP Access Control</h2>
-                <p>Manage IP addresses that are blocked from accessing the system.</p>
+                <h2>System Activity Logs</h2>
+                <p>View and manage system logs. These logs show all API requests and responses.</p>
             </div>
 
             <div class="dashboard-cards">
-                <div id="blockCard" class="card block-card">
+                <div id="logsCard" class="card">
                     <h2>
-                        IP Block List
+                        System Logs
                         <div>
-                            <button onclick="addIP('block')" class="refresh-btn">➕ Add IP</button>
-                            <button onclick="fetchIPList()" class="refresh-btn">↻ Refresh</button>
+                            <button onclick="clearLogs()" class="refresh-btn">🗑️ Clear</button>
+                            <button onclick="fetchLogs()" class="refresh-btn">↻ Refresh</button>
                         </div>
                     </h2>
                     <div class="card-content">
-                        <table class="ip-list-table">
-                            <thead>
-                                <tr>
-                                    <th>IP Address</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="blockList">
-                                <!-- Blocked IPs will be populated here -->
-                            </tbody>
-                        </table>
+                        <ul id="logsList" class="logs-list">
+                            <!-- Logs will be populated here -->
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -267,84 +251,63 @@
     </div>
 
     <script>
-        function deleteIP(ip, listType) {
-            fetch('/api/v1/dev/blocklist', {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ip_address: ip.trim()
-                })
+        function clearLogs() {
+            fetch('/api/v1/dev/logs', {
+                method: 'DELETE'
             })
-            .then(response => {
-                if (response.ok) {
-                    fetchIPList();
-                } else {
-                    response.json().then(data => alert(data.message || 'Failed to delete IP address'));
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    fetchLogs();
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to delete IP address');
+                const logsList = document.getElementById('logsList');
+                logsList.innerHTML = '<li style="color: #FF453A;">Error clearing logs</li>';
             });
         }
-    
-        function fetchIPList() {
-            fetch('/api/v1/dev/blocklist')
+
+        function fetchLogs() {
+            fetch('/api/v1/dev/logs')
                 .then(response => response.json())
                 .then(data => {
-                    const blockList = document.getElementById('blockList');
-                    blockList.innerHTML = '';
-                    if (data.blocklist && data.blocklist.length > 0) {
-                        data.blocklist.forEach(ip => {
-                            if (ip && ip.trim()) {  // Only add row if IP is not empty
-                                const tr = document.createElement('tr');
-                                const tdIP = document.createElement('td');
-                                tdIP.className = 'ip-address';
-                                tdIP.textContent = ip.trim();
-                                const tdActions = document.createElement('td');
-                                const deleteButton = document.createElement('button');
-                                deleteButton.className = 'delete-btn';
-                                deleteButton.textContent = '✕';
-                                deleteButton.addEventListener('click', () => deleteIP(ip, 'block'));
-                                tdActions.appendChild(deleteButton);
-                                tr.appendChild(tdIP);
-                                tr.appendChild(tdActions);
-                                blockList.appendChild(tr);
+                    const logsList = document.getElementById('logsList');
+                    logsList.innerHTML = '';
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        // Reverse the logs array to show newest first
+                        data.logs.reverse().forEach(log => {
+                            // Ignore any logs that are coming from dev 
+                            if (log.includes('dev')) {
+                                return;
                             }
+                            const li = document.createElement('li');
+                            li.textContent = log;
+                            
+                            // Check status code in the log
+                            if (log.includes('status 200') || log.includes('status 304') || log.includes('status 302')) {
+                                li.classList.add('status-200');
+                            } else if (log.includes('status 404') || log.includes('status 400')) {
+                                li.classList.add('status-400');
+                            } else {
+                                li.classList.add('status-other');
+                            }
+                            
+                            logsList.appendChild(li);
                         });
-                    }
-                });
-        }
-    
-        function addIP(listType) {
-            const ip = prompt("Enter IP address to block");
-            if (ip) {
-                fetch('/api/v1/dev/blocklist', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        ip_address: ip.trim()
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        fetchIPList();
                     } else {
-                        response.json().then(data => alert(data.message || 'Failed to add IP address'));
+                        logsList.innerHTML = '<li>No logs available</li>';
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to add IP address');
+                    const logsList = document.getElementById('logsList');
+                    logsList.innerHTML = '<li style="color: #FF453A;">Error fetching logs</li>';
                 });
-            }
         }
-    
-        fetchIPList();
+
+        // Initial load of logs
+        fetchLogs();
+        
     </script>
 </body>
 </html>

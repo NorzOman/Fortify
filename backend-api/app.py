@@ -43,7 +43,7 @@ import jwt
 app = Flask(__name__)
 
 # App configuration
-app.config['SECRET_KEY'] = 'arshad_is_the_secret'  # todo : os.urandom(32).hex()
+app.config['SECRET_KEY'] = 'arshad_is_the_secret'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -55,9 +55,10 @@ db = SQLAlchemy(app)
 # Setting up paths:
 # ---------------------------------------------------------------------------------------------------------------------------
 
-alerts_file_path = os.path.join(app.root_path, 'static', 'alerts.txt')
-blocklist_file_path = os.path.join(app.root_path, 'static', 'IP_blocklist.txt')
-requests_file_path = os.path.join(app.root_path, 'static', 'requests.json')
+alerts_file_path = os.path.join(app.root_path, 'static/dev', 'alerts.txt')
+blocklist_file_path = os.path.join(app.root_path, 'static/dev', 'IP_blocklist.txt')
+requests_file_path = os.path.join(app.root_path, 'static/dev', 'requests.json')
+customhashes_file_path = os.path.join(app.root_path, 'static/dev', 'customhashes.json')
 base_url = 'http://127.0.0.1:5000'
 
 # ---------------------------------------------------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ base_url = 'http://127.0.0.1:5000'
 
 import logging
 
-logs_file_path = os.path.join(app.root_path, 'static', 'logs.txt')
+logs_file_path = os.path.join(app.root_path, 'static/dev', 'logs.txt')
 logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(message)s - %(asctime)s')
 
 # ---------------------------------------------------------------------------------------------------------------------------
@@ -85,7 +86,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    api_key = db.Column(db.String(120), nullable=True)
+    api_key = db.Column(db.String(512), nullable=True)
     message_api_calls = db.Column(db.Integer, nullable=True, default=0)
     file_api_calls = db.Column(db.Integer, nullable=True, default=0) 
     threats_detected = db.Column(db.Integer, nullable=True, default=0)
@@ -116,19 +117,35 @@ def push_system_alert(message,category):
 
 # Function used to validate the token
 def validate_token(token):
-    if not token:   # If not token, return false
+    try:
+        # Decode the token using the secret key and the specified algorithm
+        decoded_token = jwt.decode(
+            token,
+            app.config['SECRET_KEY'],  # Secret key used to encode the token
+            algorithms=['HS256'],  # Algorithm used in the encoding
+            options={"verify_exp": True, "verify_iss": True}  # Enable expiration and issuer verification
+        )
+        
+        # Check the expiration time (exp) against the current time
+        exp_time = decoded_token.get('exp')
+        if exp_time and datetime.datetime.fromtimestamp(exp_time, datetime.UTC) < datetime.datetime.now(datetime.UTC):
+            return False  # Token has expired
+
+        # Check the issuer (iss) claim
+        expected_issuer = 'fortify-endpoint-security'
+        if decoded_token.get('iss') != expected_issuer:
+            return False  # Invalid issuer
+        
+        # If all checks pass, the token is valid
+        return True
+
+    except jwt.ExpiredSignatureError:
+        # Token has expired
+        return False
+    except jwt.InvalidTokenError:
+        # Token is invalid for some other reason
         return False
 
-    try: # Test if the token is expired , if not return true
-        decoded_token = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-        exp_time = decoded_token.get('exp')
-        if exp_time and exp_time < datetime.datetime.now(datetime.timezone.utc).timestamp():
-            return False
-        return True
-    except jwt.ExpiredSignatureError: # If expired, return false
-        return False
-    except jwt.InvalidTokenError: # If invalid, return false
-        return False
 
 
 # Function used to check if the IP is blocked
@@ -151,7 +168,7 @@ def is_ip_blocked(ip_address):
 # Function used to check if the signatures are malicious
 def check_malicious_signatures(signatures):
     try:
-        db_path = 'signatures1db.sqlite'
+        db_path = 'signaturesdb.sqlite'
         
         # Input validation - ensure signatures contains valid MD5 hashes
         if not all(isinstance(sig, (list, tuple)) and len(sig) == 2 and 
@@ -214,7 +231,7 @@ def log_request_info():
     g.timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
 
     if is_ip_blocked(g.client_ip):
-        return render_template('403.html'), 403
+        return render_template('error_403.html'), 403
 
 
 # After request logging 
@@ -230,12 +247,13 @@ def after_request(response):
 # Error handler for 404 errors
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template('error_404.html'), 404
 
 # Error handler for 500 errors
 @app.errorhandler(500)
 def internal_server_error(e):
-    return render_template('broken.html'), 500
+    push_system_alert(f"{str(e)}", "failed")
+    return render_template('error_broken.html'), 500
 
 # ---------------------------------------------------------------------------------------------------------------------------
 
@@ -251,7 +269,7 @@ def internal_server_error(e):
 @app.route('/dev/docs', methods=['GET'])
 def docs():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return render_template('403.html'), 403
+        return render_template('error_403.html'), 403
     
     return render_template('docs.html')
 
@@ -306,8 +324,8 @@ def get_token_for_message():
         try:
             token = jwt.encode(
                 {
-                    'client_ip': client_ip,
-                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=1)).timestamp()
+                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=1)).timestamp(),
+                    'iss': 'fortify-endpoint-security'
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
@@ -356,8 +374,8 @@ def get_token_for_files():
         try:
             token = jwt.encode(
                 {
-                    'client_ip': client_ip,
-                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp()
+                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp(),
+                    'iss': 'fortify-endpoint-security'
                 },
                 app.config['SECRET_KEY'],
                 algorithm='HS256'
@@ -575,8 +593,8 @@ def pending_requests():
                 # Generate a token with a 30-day expiry
                 token = jwt.encode(
                     {
-                        'email': email,
-                        'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).timestamp()
+                        'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=30)).timestamp(),
+                        'iss': 'fortify-endpoint-security'
                     },
                     app.config['SECRET_KEY'],
                     algorithm='HS256'
@@ -642,8 +660,8 @@ def login():
             session['username'] = 'admin'
             return redirect('/dev/dashboard/home')
         else:
-            return render_template('login.html',error='Incident will be reported')
-    return render_template('login.html')
+            return render_template('dev_login.html',error='Incident will be reported')
+    return render_template('dev_login.html')
 
 # Handle logout
 @app.route('/dev/logout',methods=['GET'])
@@ -652,41 +670,46 @@ def logout():
     session.pop('username', None)
     return redirect('/')
 
-@app.route('/dev/dashboard',methods=['GET'])
-def dashboard():
-    return redirect('/dev/dashboard/home')
-
 # Handle dashboard home
 @app.route('/dev/dashboard/home',methods=['GET'])
 def dashboard_home():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect('/dev/login')
+        return redirect('/')
 
-    return render_template('dashboard_home.html')
+    return render_template('dev_dashboard_home.html')
 
 # Handle dashboard logs
 @app.route('/dev/dashboard/logs',methods=['GET'])
 def dashboard_logs():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect('/dev/login')
+        return redirect('/')
 
-    return render_template('dashboard_logs.html')
+    return render_template('dev_dashboard_logs.html')
 
 # Handle dashboard firewall
 @app.route('/dev/dashboard/firewall',methods=['GET'])
 def dashboard_firewall():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect('/dev/login')
+        return redirect('/')
             
-    return render_template('dashboard_firewall.html')
+    return render_template('dev_dashboard_firewall.html')
 
 # Handle dashboard manage token
 @app.route('/dev/dashboard/token_request',methods=['GET'])
 def dashboard_token_request():
     if not session.get('logged_in') or session.get('username') != 'admin':
-        return redirect('/dev/login')
+        return redirect('/')
             
-    return render_template('dashboard_token_request.html')
+    return render_template('dev_dashboard_token_request.html')
+
+@app.route('/dev/dashboard/modify_database',methods=['GET','POST'])
+def dashboard_modify_database():
+    if not session.get('logged_in') or session.get('username') != 'admin':
+        return redirect('/')
+
+    if request.method == 'g'        
+    
+    return render_template('dev_dashboard_modify_database.html')
 
 # ------------------------------------------------------------------------------------------------------------------------------
 
@@ -694,18 +717,23 @@ def dashboard_token_request():
 # End User Related Routes
 # ------------------------------------------------------------------------------------------------------------------------------
 
+# Root route of the website
 @app.route('/',methods=['GET'])
 def home():
     if 'logged_in' not in session or not session['logged_in']:
         return render_template('home.html',status="not logged in")
+    
     return render_template('home.html',status="logged in")
 
+# Route for showing the services offered
 @app.route('/services',methods=['GET'])
 def services():
     if 'logged_in' not in session or not session['logged_in']:
-        return render_template('services.html',status="not logged in")
-    return render_template('services.html',status="logged in")
+        return render_template('user_services.html',status="not logged in")
+    
+    return render_template('user_services.html',status="logged in")
 
+# Route for registering a new user
 @app.route('/user/register',methods=['GET','POST'])
 def user_register():
     if request.method == 'POST':
@@ -745,7 +773,7 @@ def user_register():
 
     return render_template('user_register.html')
 
-
+# Route for logging in a user
 @app.route('/user/login',methods=['GET','POST'])
 def user_login():
     message = request.args.get('message', '')
@@ -766,41 +794,46 @@ def user_login():
             
     return render_template('user_login.html',error=message)
 
-
+# Route for requesting an API key
 @app.route('/user/request_api_key',methods=['POST'])
 def user_request_api_key():
     if 'logged_in' not in session or not session['logged_in']:
-        return redirect(url_for('user_login'))
+        return jsonify({"error": "Unauthorized access. Please log in."}), 403
 
-    email = session['email']
-    user = User.query.filter_by(email=email).first()
-    user.api_key_requested = True
-    db.session.commit()
+    try:
+        email = session['email']
+        user = User.query.filter_by(email=email).first()
+        user.api_key_requested = True
+        db.session.commit()
 
-    # Get request details
-    ip_address = request.remote_addr
-    user_agent = request.headers.get('User-Agent')
-    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # Get request details
+        ip_address = request.remote_addr
+        user_agent = request.headers.get('User-Agent')
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    # Load existing requests
-    with open(requests_file_path, 'r') as f:
-        requests_data = json.load(f)
+        # Load existing requests
+        with open(requests_file_path, 'r') as f:
+            requests_data = json.load(f)
 
-    # Add new request
-    requests_data[email] = {
-        'email': email,
-        'ip_address': ip_address,
-        'user_agent': user_agent,
-        'timestamp': timestamp
-    }
+        # Add new request
+        requests_data[email] = {
+            'email': email,
+            'ip_address': ip_address,
+            'user_agent': user_agent,
+            'timestamp': timestamp
+        }
 
-    # Save updated requests
-    with open(requests_file_path, 'w') as f:
-        json.dump(requests_data, f, indent=4)
+        # Save updated requests
+        with open(requests_file_path, 'w') as f:
+            json.dump(requests_data, f, indent=4)
+
+    except Exception as e:
+        push_system_alert(f"Error requesting API key: {str(e)}", "failed")
+        return jsonify({"error": "There was an issue processing your request"}), 500
 
     return redirect('/user/myaccount')
 
-    
+# Route for showing the user's account
 @app.route('/user/myaccount',methods=['GET'])
 def user_myaccount():
     if 'logged_in' not in session or not session['logged_in']:
@@ -808,19 +841,26 @@ def user_myaccount():
 
     email = session['email']
     user = User.query.filter_by(email=email).first()
-    return render_template('myaccount.html', user=user)
+    return render_template('user_myaccount.html', user=user)
 
-
+# Route for logging out a user
 @app.route('/user/logout',methods=['GET'])
 def user_logout():
     session.pop('logged_in', None)
     session.pop('email', None)
+    session.pop('api_key', None)
     return redirect('/')
 
+# Route for downloading the app
 @app.route('/user/download_app', methods=['GET'])
 def download_app():
     return send_file('static/Fortify.apk', as_attachment=True)
 
+@app.route('/user/app', methods=['GET'])
+def user_app():
+    return render_template('user_app.html')
+
+# Route for showing the portal
 @app.route('/user/portal', methods=['GET', 'POST'])
 def portal():
     # First check if they are logged in or not 
@@ -832,9 +872,9 @@ def portal():
 
     # Check if the user has an API key
     if not user.api_key:
-        return render_template('portal.html', message="[!] API key not found")
+        return render_template('user_portal.html', message="[!] API key not found")
 
-    return render_template('portal.html')
+    return render_template('user_portal.html')
 
 
 @app.route('/user/portal/filescan',methods=['GET','POST'])
@@ -855,27 +895,50 @@ def user_portal_file_scan():
         if not token:
             return jsonify({"error": "No token received"}), 400
 
-        # First we find the md5 hash of the file
+        # Token validation should check if invalid, not if valid
+        if not validate_token(token):
+            return jsonify({"error": "Invalid token"}), 400
+
+        # Check file size before reading contents
         file_contents = file.read()
-        md5_hash = hashlib.md5(file_contents).hexdigest()
+        if len(file_contents) > 15 * 1024 * 1024:  # 15MB limit
+            return jsonify({"error": "File size exceeds 15MB limit"}), 400
+
+        # Calculate hash after size check
+        signature = hashlib.md5(file_contents).hexdigest()
         
         # Format signature as [filename, hash] tuple
         filename = file.filename
-        signature = [[filename,md5_hash]]
+        signatures = [[filename,signature]]
 
+        # Increment API call counter
         user.file_api_calls += 1
         db.session.commit()
         
-        # Then we send the signature and token to the backend
+        # Send signature and token to backend
         try:
             response = requests.post(f'{base_url}/api/v1/malware_detection', json={
                 'token': token,
-                'signatures': signature
+                'signatures': signatures
             })
             response.raise_for_status()
-            return response.json(), 200
+            
+            result = response.json()
+            print(result)
+            if result.get('status') == 'all-safe':
+                return jsonify({
+                    'file_name': filename,
+                    'hash': signature
+                }), 200
+                
+            # Return malicious hashes array if threats found
+            if isinstance(result, list):
+                return jsonify(result), 200
+                
+            return jsonify({"error": result.get('error', 'Unknown error')}), 500
+
         except requests.exceptions.RequestException as e:
-            return jsonify({"error": f"API request failed: {str(e)}"}), 500
+            return jsonify({"error": "Failed to analyze file. Please try again."}), 500
 
     return render_template('user_portal_file_scan.html')
 
@@ -927,6 +990,6 @@ def user_portal_report():
     return render_template('user_portal_report.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=False,port=5000)
+    app.run(host='0.0.0.0',debug=True,port=5000)
 
 

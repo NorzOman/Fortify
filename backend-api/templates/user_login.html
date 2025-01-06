@@ -18,6 +18,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         body {
@@ -92,6 +96,10 @@
             color: var(--text-color);
             border-radius: 8px;
             transition: border-color 0.2s ease;
+            user-select: text;
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
         }
 
         .form-group input:focus {
