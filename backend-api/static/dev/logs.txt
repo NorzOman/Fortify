@@ -1,118 +1,44 @@
-[LOG] [2025-01-07 15:16:13] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-07 15:16:13,009
-127.0.0.1 - - [07/Jan/2025 15:16:13] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-07 15:16:13,009
-[LOG] [2025-01-07 15:16:13] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-07 15:16:13,023
-127.0.0.1 - - [07/Jan/2025 15:16:13] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-07 15:16:13,023
-[LOG] [2025-01-07 15:16:13] IP 127.0.0.1 tried to access /dev/dashboard/modify_database and received status 200  - 2025-01-07 15:16:13,602
-127.0.0.1 - - [07/Jan/2025 15:16:13] "GET /dev/dashboard/modify_database HTTP/1.1" 200 - - 2025-01-07 15:16:13,603
-[LOG] [2025-01-07 15:16:13] IP 127.0.0.1 tried to access /api/v1/dev/customhashes and received status 200  - 2025-01-07 15:16:13,799
-127.0.0.1 - - [07/Jan/2025 15:16:13] "GET /api/v1/dev/customhashes HTTP/1.1" 200 - - 2025-01-07 15:16:13,800
-[LOG] [2025-01-07 15:16:16] IP 127.0.0.1 tried to access /dev/dashboard/token_request and received status 200  - 2025-01-07 15:16:16,076
-127.0.0.1 - - [07/Jan/2025 15:16:16] "GET /dev/dashboard/token_request HTTP/1.1" 200 - - 2025-01-07 15:16:16,076
-[LOG] [2025-01-07 15:16:16] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:16:16,225
-127.0.0.1 - - [07/Jan/2025 15:16:16] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:16:16,226
-[LOG] [2025-01-07 15:16:16] IP 127.0.0.1 tried to access /user/request_api_key and received status 302  - 2025-01-07 15:16:16,856
-127.0.0.1 - - [07/Jan/2025 15:16:16] "[32mPOST /user/request_api_key HTTP/1.1[0m" 302 - - 2025-01-07 15:16:16,857
-[LOG] [2025-01-07 15:16:16] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-07 15:16:16,875
-127.0.0.1 - - [07/Jan/2025 15:16:16] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-07 15:16:16,876
-[LOG] [2025-01-07 15:16:17] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:17,012
-127.0.0.1 - - [07/Jan/2025 15:16:17] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:17,012
-[LOG] [2025-01-07 15:16:17] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:16:17,948
-127.0.0.1 - - [07/Jan/2025 15:16:17] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:16:17,948
-[LOG] [2025-01-07 15:16:18] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:16:18,919
-127.0.0.1 - - [07/Jan/2025 15:16:18] "POST /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:16:18,920
-[LOG] [2025-01-07 15:16:18] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:16:18,934
-127.0.0.1 - - [07/Jan/2025 15:16:18] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:16:18,934
-[LOG] [2025-01-07 15:16:19] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-07 15:16:19,598
-127.0.0.1 - - [07/Jan/2025 15:16:19] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-07 15:16:19,599
-[LOG] [2025-01-07 15:16:19] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:19,716
-127.0.0.1 - - [07/Jan/2025 15:16:19] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:19,717
-[LOG] [2025-01-07 15:16:25] IP 127.0.0.1 tried to access /user/portal and received status 200  - 2025-01-07 15:16:25,622
-127.0.0.1 - - [07/Jan/2025 15:16:25] "GET /user/portal HTTP/1.1" 200 - - 2025-01-07 15:16:25,622
-[LOG] [2025-01-07 15:16:25] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:25,771
-127.0.0.1 - - [07/Jan/2025 15:16:25] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:25,771
-[LOG] [2025-01-07 15:16:28] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-07 15:16:28,988
-127.0.0.1 - - [07/Jan/2025 15:16:28] "GET / HTTP/1.1" 200 - - 2025-01-07 15:16:28,989
-[LOG] [2025-01-07 15:16:29] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 200  - 2025-01-07 15:16:29,192
-127.0.0.1 - - [07/Jan/2025 15:16:29] "GET /static/phone-window.jpg HTTP/1.1" 200 - - 2025-01-07 15:16:29,194
-[LOG] [2025-01-07 15:16:29] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:29,194
-127.0.0.1 - - [07/Jan/2025 15:16:29] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:29,197
-[LOG] [2025-01-07 15:16:30] IP 127.0.0.1 tried to access /services and received status 200  - 2025-01-07 15:16:30,497
-127.0.0.1 - - [07/Jan/2025 15:16:30] "GET /services HTTP/1.1" 200 - - 2025-01-07 15:16:30,498
-[LOG] [2025-01-07 15:16:30] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:30,663
-[LOG] [2025-01-07 15:16:30] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 200  - 2025-01-07 15:16:30,669
-127.0.0.1 - - [07/Jan/2025 15:16:30] "GET /static/phone-window.jpg HTTP/1.1" 200 - - 2025-01-07 15:16:30,670
-127.0.0.1 - - [07/Jan/2025 15:16:30] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:30,671
-[LOG] [2025-01-07 15:16:30] IP 127.0.0.1 tried to access /static/screen-window.png and received status 304  - 2025-01-07 15:16:30,676
-127.0.0.1 - - [07/Jan/2025 15:16:30] "[36mGET /static/screen-window.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:30,677
-[LOG] [2025-01-07 15:16:30] IP 127.0.0.1 tried to access /user/portal and received status 200  - 2025-01-07 15:16:30,899
-127.0.0.1 - - [07/Jan/2025 15:16:30] "GET /user/portal HTTP/1.1" 200 - - 2025-01-07 15:16:30,900
-[LOG] [2025-01-07 15:16:31] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:31,071
-127.0.0.1 - - [07/Jan/2025 15:16:31] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:31,072
-[LOG] [2025-01-07 15:16:34] IP 127.0.0.1 tried to access /user/portal/report and received status 200  - 2025-01-07 15:16:34,373
-127.0.0.1 - - [07/Jan/2025 15:16:34] "GET /user/portal/report HTTP/1.1" 200 - - 2025-01-07 15:16:34,374
-[LOG] [2025-01-07 15:16:34] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:34,607
-127.0.0.1 - - [07/Jan/2025 15:16:34] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:34,607
-[LOG] [2025-01-07 15:16:38] IP 127.0.0.1 tried to access /user/portal/ipscan and received status 200  - 2025-01-07 15:16:38,071
-127.0.0.1 - - [07/Jan/2025 15:16:38] "GET /user/portal/ipscan HTTP/1.1" 200 - - 2025-01-07 15:16:38,071
-[LOG] [2025-01-07 15:16:38] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:38,251
-127.0.0.1 - - [07/Jan/2025 15:16:38] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:38,251
-[LOG] [2025-01-07 15:16:40] IP 127.0.0.1 tried to access /user/portal/urlscan and received status 200  - 2025-01-07 15:16:40,315
-127.0.0.1 - - [07/Jan/2025 15:16:40] "GET /user/portal/urlscan HTTP/1.1" 200 - - 2025-01-07 15:16:40,315
-[LOG] [2025-01-07 15:16:40] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:40,447
-127.0.0.1 - - [07/Jan/2025 15:16:40] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:40,448
-[LOG] [2025-01-07 15:16:48] IP 127.0.0.1 tried to access /user/portal/urlscan and received status 200  - 2025-01-07 15:16:48,125
-127.0.0.1 - - [07/Jan/2025 15:16:48] "POST /user/portal/urlscan HTTP/1.1" 200 - - 2025-01-07 15:16:48,126
-[LOG] [2025-01-07 15:16:51] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:16:51,629
-127.0.0.1 - - [07/Jan/2025 15:16:51] "GET /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:16:51,630
-[LOG] [2025-01-07 15:16:51] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:16:51,785
-127.0.0.1 - - [07/Jan/2025 15:16:51] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:16:51,786
-[LOG] [2025-01-07 15:16:56] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-07 15:16:56,327
-127.0.0.1 - - [07/Jan/2025 15:16:56] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-07 15:16:56,328
-[LOG] [2025-01-07 15:16:56] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:16:56,329
-127.0.0.1 - - [07/Jan/2025 15:16:56] "POST /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:16:56,330
-[LOG] [2025-01-07 15:17:11] IP 127.0.0.1 tried to access /docs and received status 404  - 2025-01-07 15:17:11,407
-127.0.0.1 - - [07/Jan/2025 15:17:11] "[33mGET /docs HTTP/1.1[0m" 404 - - 2025-01-07 15:17:11,407
-[LOG] [2025-01-07 15:17:11] IP 127.0.0.1 tried to access /favicon.ico and received status 404  - 2025-01-07 15:17:11,595
-127.0.0.1 - - [07/Jan/2025 15:17:11] "[33mGET /favicon.ico HTTP/1.1[0m" 404 - - 2025-01-07 15:17:11,597
-[LOG] [2025-01-07 15:17:13] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-07 15:17:13,271
-127.0.0.1 - - [07/Jan/2025 15:17:13] "GET / HTTP/1.1" 200 - - 2025-01-07 15:17:13,271
-[LOG] [2025-01-07 15:17:13] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 200  - 2025-01-07 15:17:13,404
-[LOG] [2025-01-07 15:17:13] IP 127.0.0.1 tried to access /static/icon.png and received status 200  - 2025-01-07 15:17:13,404
-127.0.0.1 - - [07/Jan/2025 15:17:13] "GET /static/phone-window.jpg HTTP/1.1" 200 - - 2025-01-07 15:17:13,404
-127.0.0.1 - - [07/Jan/2025 15:17:13] "GET /static/icon.png HTTP/1.1" 200 - - 2025-01-07 15:17:13,404
-[LOG] [2025-01-07 15:17:14] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-07 15:17:14,524
-127.0.0.1 - - [07/Jan/2025 15:17:14] "GET /dev/login HTTP/1.1" 200 - - 2025-01-07 15:17:14,524
-[LOG] [2025-01-07 15:17:16] IP 127.0.0.1 tried to access /dev/login and received status 302  - 2025-01-07 15:17:16,505
-127.0.0.1 - - [07/Jan/2025 15:17:16] "[32mPOST /dev/login HTTP/1.1[0m" 302 - - 2025-01-07 15:17:16,506
-[LOG] [2025-01-07 15:17:16] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-07 15:17:16,530
-127.0.0.1 - - [07/Jan/2025 15:17:16] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-07 15:17:16,531
-[LOG] [2025-01-07 15:17:16] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-07 15:17:16,665
-[LOG] [2025-01-07 15:17:16] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-07 15:17:16,666
-127.0.0.1 - - [07/Jan/2025 15:17:16] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-07 15:17:16,667
-127.0.0.1 - - [07/Jan/2025 15:17:16] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-07 15:17:16,667
-[LOG] [2025-01-07 15:17:17] IP 127.0.0.1 tried to access /dev/dashboard/modify_database and received status 200  - 2025-01-07 15:17:17,957
-127.0.0.1 - - [07/Jan/2025 15:17:17] "GET /dev/dashboard/modify_database HTTP/1.1" 200 - - 2025-01-07 15:17:17,957
-[LOG] [2025-01-07 15:17:18] IP 127.0.0.1 tried to access /api/v1/dev/customhashes and received status 200  - 2025-01-07 15:17:18,104
-127.0.0.1 - - [07/Jan/2025 15:17:18] "GET /api/v1/dev/customhashes HTTP/1.1" 200 - - 2025-01-07 15:17:18,106
-[LOG] [2025-01-07 15:17:23] IP 127.0.0.1 tried to access /api/v1/dev/customhashes and received status 200  - 2025-01-07 15:17:23,796
-127.0.0.1 - - [07/Jan/2025 15:17:23] "POST /api/v1/dev/customhashes HTTP/1.1" 200 - - 2025-01-07 15:17:23,796
-[LOG] [2025-01-07 15:17:23] IP 127.0.0.1 tried to access /api/v1/dev/customhashes and received status 200  - 2025-01-07 15:17:23,810
-127.0.0.1 - - [07/Jan/2025 15:17:23] "GET /api/v1/dev/customhashes HTTP/1.1" 200 - - 2025-01-07 15:17:23,811
-[LOG] [2025-01-07 15:17:25] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:17:25,734
-127.0.0.1 - - [07/Jan/2025 15:17:25] "GET /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:17:25,735
-[LOG] [2025-01-07 15:17:25] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:17:25,835
-127.0.0.1 - - [07/Jan/2025 15:17:25] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:17:25,836
-[LOG] [2025-01-07 15:17:28] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-07 15:17:28,310
-127.0.0.1 - - [07/Jan/2025 15:17:28] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-07 15:17:28,311
-[LOG] [2025-01-07 15:17:28] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:17:28,312
-127.0.0.1 - - [07/Jan/2025 15:17:28] "POST /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:17:28,313
-[LOG] [2025-01-07 15:17:42] IP 127.0.0.1 tried to access /dev/logout and received status 302  - 2025-01-07 15:17:42,448
-127.0.0.1 - - [07/Jan/2025 15:17:42] "[32mGET /dev/logout HTTP/1.1[0m" 302 - - 2025-01-07 15:17:42,448
-[LOG] [2025-01-07 15:17:42] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-07 15:17:42,464
-127.0.0.1 - - [07/Jan/2025 15:17:42] "GET / HTTP/1.1" 200 - - 2025-01-07 15:17:42,464
-[LOG] [2025-01-07 15:17:42] IP 127.0.0.1 tried to access /static/icon.png and received status 200  - 2025-01-07 15:17:42,617
-[LOG] [2025-01-07 15:17:42] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 200  - 2025-01-07 15:17:42,618
-127.0.0.1 - - [07/Jan/2025 15:17:42] "GET /static/icon.png HTTP/1.1" 200 - - 2025-01-07 15:17:42,618
-127.0.0.1 - - [07/Jan/2025 15:17:42] "GET /static/phone-window.jpg HTTP/1.1" 200 - - 2025-01-07 15:17:42,618
-[LOG] [2025-01-07 15:17:42] IP 127.0.0.1 tried to access /favicon.ico and received status 404  - 2025-01-07 15:17:42,665
-127.0.0.1 - - [07/Jan/2025 15:17:42] "[33mGET /favicon.ico HTTP/1.1[0m" 404 - - 2025-01-07 15:17:42,666
+[LOG] [2025-01-07 15:30:19] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-07 15:30:19,850
+127.0.0.1 - - [07/Jan/2025 15:30:19] "DELETE /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-07 15:30:19,851
+[LOG] [2025-01-07 15:30:19] IP 127.0.0.1 tried to access /api/v1/dev/logs and received status 200  - 2025-01-07 15:30:19,915
+127.0.0.1 - - [07/Jan/2025 15:30:19] "GET /api/v1/dev/logs HTTP/1.1" 200 - - 2025-01-07 15:30:19,915
+[LOG] [2025-01-07 15:30:21] IP 127.0.0.1 tried to access /dev/dashboard/modify_database and received status 200  - 2025-01-07 15:30:21,106
+127.0.0.1 - - [07/Jan/2025 15:30:21] "GET /dev/dashboard/modify_database HTTP/1.1" 200 - - 2025-01-07 15:30:21,106
+[LOG] [2025-01-07 15:30:21] IP 127.0.0.1 tried to access /api/v1/dev/customhashes and received status 200  - 2025-01-07 15:30:21,380
+127.0.0.1 - - [07/Jan/2025 15:30:21] "GET /api/v1/dev/customhashes HTTP/1.1" 200 - - 2025-01-07 15:30:21,380
+[LOG] [2025-01-07 15:30:21] IP 127.0.0.1 tried to access /dev/dashboard/token_request and received status 200  - 2025-01-07 15:30:21,883
+127.0.0.1 - - [07/Jan/2025 15:30:21] "GET /dev/dashboard/token_request HTTP/1.1" 200 - - 2025-01-07 15:30:21,884
+[LOG] [2025-01-07 15:30:22] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:30:22,070
+127.0.0.1 - - [07/Jan/2025 15:30:22] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:30:22,071
+[LOG] [2025-01-07 15:30:23] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:30:23,828
+127.0.0.1 - - [07/Jan/2025 15:30:23] "POST /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:30:23,828
+[LOG] [2025-01-07 15:30:23] IP 127.0.0.1 tried to access /api/v1/dev/pending_requests and received status 200  - 2025-01-07 15:30:23,857
+127.0.0.1 - - [07/Jan/2025 15:30:23] "GET /api/v1/dev/pending_requests HTTP/1.1" 200 - - 2025-01-07 15:30:23,858
+[LOG] [2025-01-07 15:30:27] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-07 15:30:27,670
+127.0.0.1 - - [07/Jan/2025 15:30:27] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-07 15:30:27,671
+[LOG] [2025-01-07 15:30:27] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:30:27,872
+127.0.0.1 - - [07/Jan/2025 15:30:27] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:30:27,872
+[LOG] [2025-01-07 15:30:29] IP 127.0.0.1 tried to access /user/myaccount and received status 200  - 2025-01-07 15:30:29,398
+127.0.0.1 - - [07/Jan/2025 15:30:29] "GET /user/myaccount HTTP/1.1" 200 - - 2025-01-07 15:30:29,399
+[LOG] [2025-01-07 15:30:29] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:30:29,585
+127.0.0.1 - - [07/Jan/2025 15:30:29] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:30:29,585
+[LOG] [2025-01-07 15:30:31] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-07 15:30:31,552
+127.0.0.1 - - [07/Jan/2025 15:30:31] "GET / HTTP/1.1" 200 - - 2025-01-07 15:30:31,552
+[LOG] [2025-01-07 15:30:31] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 304  - 2025-01-07 15:30:31,807
+127.0.0.1 - - [07/Jan/2025 15:30:31] "[36mGET /static/phone-window.jpg HTTP/1.1[0m" 304 - - 2025-01-07 15:30:31,808
+[LOG] [2025-01-07 15:30:31] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:30:31,811
+127.0.0.1 - - [07/Jan/2025 15:30:31] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:30:31,812
+[LOG] [2025-01-07 15:30:34] IP 127.0.0.1 tried to access /user/portal and received status 200  - 2025-01-07 15:30:34,527
+127.0.0.1 - - [07/Jan/2025 15:30:34] "GET /user/portal HTTP/1.1" 200 - - 2025-01-07 15:30:34,528
+[LOG] [2025-01-07 15:30:34] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:30:34,784
+127.0.0.1 - - [07/Jan/2025 15:30:34] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:30:34,785
+[LOG] [2025-01-07 15:30:35] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:30:35,733
+127.0.0.1 - - [07/Jan/2025 15:30:35] "GET /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:30:35,734
+[LOG] [2025-01-07 15:30:35] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-07 15:30:35,996
+127.0.0.1 - - [07/Jan/2025 15:30:35] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-07 15:30:35,997
+[LOG] [2025-01-07 15:30:43] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-07 15:30:43,353
+127.0.0.1 - - [07/Jan/2025 15:30:43] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-07 15:30:43,354
+[LOG] [2025-01-07 15:30:43] IP 127.0.0.1 tried to access /user/portal/filescan and received status 200  - 2025-01-07 15:30:43,356
+127.0.0.1 - - [07/Jan/2025 15:30:43] "POST /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:30:43,357
+[LOG] [2025-01-07 15:30:52] IP 127.0.0.1 tried to access /user/portal/filescan and received status 302  - 2025-01-07 15:30:52,031
+127.0.0.1 - - [07/Jan/2025 15:30:52] "[32mGET /user/portal/filescan HTTP/1.1[0m" 302 - - 2025-01-07 15:30:52,031
