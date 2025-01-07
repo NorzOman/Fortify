@@ -55,6 +55,10 @@
         {
             "hash": "25ac0eab7882d08549f04aa1615effbb",
             "name": "malicious-video-trojan"
+        },
+        {
+            "hash": "c81e14f091fe1e660924a52a3a015792",
+            "name": "MaliciousPdf"
         }
     ]
 }

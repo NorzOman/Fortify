@@ -82,6 +82,7 @@ logging.basicConfig(filename=logs_file_path, level=logging.INFO, format='%(messa
 
 import sqlite3
 
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
@@ -95,6 +96,7 @@ class User(db.Model):
     def __repr__(self):
         return f"User('{self.email}', '{self.api_key}', '{self.message_api_calls}', '{self.file_api_calls}', '{self.threats_detected}')"
 
+# Create all tables
 with app.app_context():
     db.create_all()
 
@@ -113,7 +115,6 @@ def push_system_alert(message,category):
             f.write(f"[ {category} ] : {message}\n")
     except Exception as e:
         print(f"Failed to write system alert: {str(e)}")
-
 
 # Function used to validate the token
 def validate_token(token):
@@ -146,8 +147,6 @@ def validate_token(token):
         # Token is invalid for some other reason
         return False
 
-
-
 # Function used to check if the IP is blocked
 def is_ip_blocked(ip_address):
     if os.path.exists(blocklist_file_path):
@@ -163,7 +162,6 @@ def is_ip_blocked(ip_address):
     else:
         push_system_alert(f"Blocklist file does not exist", "failed")
         return True
-
 
 # Function used to check if the signatures are malicious
 def check_malicious_signatures(signatures):
@@ -233,7 +231,6 @@ def log_request_info():
     if is_ip_blocked(g.client_ip):
         return render_template('error_403.html'), 403
 
-
 # After request logging 
 @app.after_request
 def after_request(response):
@@ -242,7 +239,6 @@ def after_request(response):
     response.headers['X-Processed-By'] = 'Vault - 7'
     response.headers['X-Endpoint'] = request.endpoint
     return response
-
 
 # Error handler for 404 errors
 @app.errorhandler(404)
@@ -273,7 +269,6 @@ def docs():
     
     return render_template('docs.html')
 
-
 # Route returns client IP with 200 OK message to note API is active
 @app.route('/api/v1/check_health', methods=['GET'])
 def check_health():
@@ -286,7 +281,6 @@ def check_health():
         return jsonify(response_data), 200
     except Exception as e:
         return jsonify({"error": "Internal server error | Report to admin with error code: #HEALTH-001"}), 500
-
 
 # Route returns a token that can be used for SMS phishing detection
 @app.route('/api/v1/get_token_for_message', methods=['POST'])
@@ -339,53 +333,54 @@ def get_token_for_message():
 
 
 # Route returns a token that can be used for malware detection
-@app.route('/api/v1/get_token_for_files', methods=['POST'])
-def get_token_for_files():
-    try:
-        try:
-            data = request.get_json()
-            if 'device_guid' not in data:
-                return jsonify({"error": "Missing device_guid"}), 400    
-        except Exception as e:
-            return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-002"}), 400
+# No need to get token , will be done via api key for dashboard and dbs on mobile for apk
+# @app.route('/api/v1/get_token_for_files', methods=['POST'])
+# def get_token_for_files():
+#     try:
+#         try:
+#             data = request.get_json()
+#             if 'device_guid' not in data:
+#                 return jsonify({"error": "Missing device_guid"}), 400    
+#         except Exception as e:
+#             return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-002"}), 400
 
-        # Get client IP and device GUID
-        try:
-            client_ip = request.remote_addr
-            device_guid = data.get('device_guid')
-        except Exception as e:
-            return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-002"}), 403
+#         # Get client IP and device GUID
+#         try:
+#             client_ip = request.remote_addr
+#             device_guid = data.get('device_guid')
+#         except Exception as e:
+#             return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-002"}), 403
 
-        # Generate encryption key and cipher
-        try:
-            key = hashlib.sha256(client_ip.encode()).digest()[:16]
-            cipher = AES.new(key, AES.MODE_ECB)
-            encrypted_ip = base64.b64decode(device_guid)
-            decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
-        except Exception as e:
-            return jsonify({"error": "Server side issue | Report to admin with error code: #AES-002"}), 500
+#         # Generate encryption key and cipher
+#         try:
+#             key = hashlib.sha256(client_ip.encode()).digest()[:16]
+#             cipher = AES.new(key, AES.MODE_ECB)
+#             encrypted_ip = base64.b64decode(device_guid)
+#             decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
+#         except Exception as e:
+#             return jsonify({"error": "Server side issue | Report to admin with error code: #AES-002"}), 500
 
-        # Validate decrypted IP matches client IP
-        if decrypted_ip != client_ip:
-            push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
-            return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-002"}), 400
+#         # Validate decrypted IP matches client IP
+#         if decrypted_ip != client_ip:
+#             push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
+#             return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-002"}), 400
 
-        # Generate JWT token
-        try:
-            token = jwt.encode(
-                {
-                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp(),
-                    'iss': 'fortify-endpoint-security'
-                },
-                app.config['SECRET_KEY'],
-                algorithm='HS256'
-            )
-            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
-        except Exception as e:
-            return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-002"}), 500
+#         # Generate JWT token
+#         try:
+#             token = jwt.encode(
+#                 {
+#                     'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp(),
+#                     'iss': 'fortify-endpoint-security'
+#                 },
+#                 app.config['SECRET_KEY'],
+#                 algorithm='HS256'
+#             )
+#             return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
+#         except Exception as e:
+#             return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-002"}), 500
 
-    except Exception as e:
-        return jsonify({"error": "Internal server error | Report to admin with error code: #GTFF-001"}), 500
+#     except Exception as e:
+#         return jsonify({"error": "Internal server error | Report to admin with error code: #GTFF-001"}), 500
 
 
 # Message detection route
@@ -461,6 +456,7 @@ def malware_detection():
         return jsonify({"error": "Internal server error | Report to admin with error code: #MALD-001"}), 500
 
 
+
 # [ DASHBOARD ] Alerts route
 @app.route('/api/v1/dev/alerts', methods=['GET', 'DELETE'])
 def alerts():
@@ -487,7 +483,6 @@ def alerts():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
-
 # [ DASHBOARD ] Logs route
 @app.route('/api/v1/dev/logs', methods=['GET', 'DELETE'])
 def logs():
@@ -510,7 +505,6 @@ def logs():
             return jsonify({"success": True, "message": "Logs cleared successfully!"}), 200
         except Exception as e:
             return jsonify({"error": f"An error occurred while clearing the logs: {str(e)}"}), 500
-
 
 # [ DASHBOARD ] Firewall Blocklist route
 @app.route('/api/v1/dev/blocklist', methods=['GET','POST','DELETE'])
@@ -562,7 +556,6 @@ def blocklist():
 
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
-
 
 # [ DASHBOARD ] Token Requests route
 @app.route('/api/v1/dev/pending_requests', methods=['GET', 'POST', 'DELETE'])
@@ -639,7 +632,7 @@ def pending_requests():
     except Exception as e:
         return jsonify({"error": f"Internal server error: {str(e)}"}), 500
 
-
+# [ DASHBOARD ] Custom hashes route
 @app.route('/api/v1/dev/customhashes', methods=['GET','POST','DELETE'])
 def customhashes():
     if not session.get('logged_in') or session.get('username') != 'admin':
@@ -756,6 +749,7 @@ def dashboard_token_request():
             
     return render_template('dev_dashboard_token_request.html')
 
+# Route for modifying the database
 @app.route('/dev/dashboard/modify_database',methods=['GET','POST'])
 def dashboard_modify_database():
     return render_template('dev_dashboard_modify_database.html')
@@ -905,6 +899,7 @@ def user_logout():
 def download_app():
     return send_file('static/Fortify.apk', as_attachment=True)
 
+# Route for showing the app
 @app.route('/user/app', methods=['GET'])
 def user_app():
     return render_template('user_app.html')
@@ -925,7 +920,7 @@ def portal():
 
     return render_template('user_portal.html')
 
-
+# Route for file scanning
 @app.route('/user/portal/filescan',methods=['GET','POST'])
 def user_portal_file_scan():
     if 'logged_in' not in session or not session['logged_in']:
@@ -990,7 +985,6 @@ def user_portal_file_scan():
                     'status': 'malicious',
                     'malware_name': malware_name
                 }
-                print("Result: ",result)
                 return jsonify(result), 200
                 
             return jsonify({"error": 'Unknown error'}), 500
@@ -1000,7 +994,7 @@ def user_portal_file_scan():
 
     return render_template('user_portal_file_scan.html')
 
-
+# Route for URL scanning
 @app.route('/user/portal/urlscan',methods=['GET','POST'])
 def user_portal_url_scan():
     if 'logged_in' not in session or not session['logged_in']:
@@ -1039,13 +1033,16 @@ def user_portal_url_scan():
         
     return render_template('user_portal_url_scan.html')
 
+# Route for IP scanning
 @app.route('/user/portal/ipscan',methods=['GET','POST'])
 def user_portal_ip_scan():
     return render_template('user_portal_ip_scan.html')
 
+# Route for report generation
 @app.route('/user/portal/report',methods=['GET','POST'])
 def user_portal_report():
     return render_template('user_portal_report.html')
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True,port=5000)
