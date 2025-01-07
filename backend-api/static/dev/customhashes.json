@@ -51,6 +51,10 @@
         {
             "hash": "85cfbd81ff6729927c968fbbb2d1d84d",
             "name": "Genric-DoubleLockerRansom"
+        },
+        {
+            "hash": "25ac0eab7882d08549f04aa1615effbb",
+            "name": "malicious-video-trojan"
         }
     ]
 }
