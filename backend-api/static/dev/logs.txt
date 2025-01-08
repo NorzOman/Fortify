@@ -42,3 +42,118 @@
 127.0.0.1 - - [07/Jan/2025 15:30:43] "POST /user/portal/filescan HTTP/1.1" 200 - - 2025-01-07 15:30:43,357
 [LOG] [2025-01-07 15:30:52] IP 127.0.0.1 tried to access /user/portal/filescan and received status 302  - 2025-01-07 15:30:52,031
 127.0.0.1 - - [07/Jan/2025 15:30:52] "[32mGET /user/portal/filescan HTTP/1.1[0m" 302 - - 2025-01-07 15:30:52,031
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.31.170:5000 - 2025-01-08 10:25:52,916
+[33mPress CTRL+C to quit[0m - 2025-01-08 10:25:52,916
+ * Restarting with stat - 2025-01-08 10:25:52,918
+ * Debugger is active! - 2025-01-08 10:25:53,634
+ * Debugger PIN: 143-917-139 - 2025-01-08 10:25:53,648
+[LOG] [2025-01-08 10:26:08] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-08 10:26:08,835
+127.0.0.1 - - [08/Jan/2025 10:26:08] "GET / HTTP/1.1" 200 - - 2025-01-08 10:26:08,836
+[LOG] [2025-01-08 10:26:08] IP 127.0.0.1 tried to access /static/icon.png and received status 200  - 2025-01-08 10:26:08,980
+127.0.0.1 - - [08/Jan/2025 10:26:08] "GET /static/icon.png HTTP/1.1" 200 - - 2025-01-08 10:26:08,981
+[LOG] [2025-01-08 10:26:09] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 200  - 2025-01-08 10:26:09,014
+127.0.0.1 - - [08/Jan/2025 10:26:09] "GET /static/phone-window.jpg HTTP/1.1" 200 - - 2025-01-08 10:26:09,017
+[LOG] [2025-01-08 10:26:12] IP 127.0.0.1 tried to access /dev/login and received status 200  - 2025-01-08 10:26:12,038
+127.0.0.1 - - [08/Jan/2025 10:26:12] "GET /dev/login HTTP/1.1" 200 - - 2025-01-08 10:26:12,038
+[LOG] [2025-01-08 10:26:14] IP 127.0.0.1 tried to access /dev/login and received status 302  - 2025-01-08 10:26:14,490
+127.0.0.1 - - [08/Jan/2025 10:26:14] "[32mPOST /dev/login HTTP/1.1[0m" 302 - - 2025-01-08 10:26:14,492
+[LOG] [2025-01-08 10:26:14] IP 127.0.0.1 tried to access /dev/dashboard/home and received status 200  - 2025-01-08 10:26:14,517
+127.0.0.1 - - [08/Jan/2025 10:26:14] "GET /dev/dashboard/home HTTP/1.1" 200 - - 2025-01-08 10:26:14,517
+[LOG] [2025-01-08 10:26:14] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-08 10:26:14,634
+127.0.0.1 - - [08/Jan/2025 10:26:14] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-08 10:26:14,634
+[LOG] [2025-01-08 10:26:14] IP 127.0.0.1 tried to access /api/v1/dev/alerts and received status 200  - 2025-01-08 10:26:14,635
+127.0.0.1 - - [08/Jan/2025 10:26:14] "GET /api/v1/dev/alerts HTTP/1.1" 200 - - 2025-01-08 10:26:14,636
+[LOG] [2025-01-08 10:26:17] IP 127.0.0.1 tried to access / and received status 200  - 2025-01-08 10:26:17,511
+127.0.0.1 - - [08/Jan/2025 10:26:17] "GET / HTTP/1.1" 200 - - 2025-01-08 10:26:17,511
+[LOG] [2025-01-08 10:26:17] IP 127.0.0.1 tried to access /static/icon.png and received status 304  - 2025-01-08 10:26:17,593
+127.0.0.1 - - [08/Jan/2025 10:26:17] "[36mGET /static/icon.png HTTP/1.1[0m" 304 - - 2025-01-08 10:26:17,594
+[LOG] [2025-01-08 10:26:17] IP 127.0.0.1 tried to access /static/phone-window.jpg and received status 304  - 2025-01-08 10:26:17,597
+127.0.0.1 - - [08/Jan/2025 10:26:17] "[36mGET /static/phone-window.jpg HTTP/1.1[0m" 304 - - 2025-01-08 10:26:17,597
+127.0.0.1 - - [08/Jan/2025 10:26:21] "[35m[1mGET /dev/docs HTTP/1.1[0m" 500 - - 2025-01-08 10:26:21,532
+127.0.0.1 - - [08/Jan/2025 10:26:21] "GET /dev/docs?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 - - 2025-01-08 10:26:21,606
+127.0.0.1 - - [08/Jan/2025 10:26:21] "GET /dev/docs?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 - - 2025-01-08 10:26:21,607
+127.0.0.1 - - [08/Jan/2025 10:26:21] "GET /dev/docs?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 - - 2025-01-08 10:26:21,634
+127.0.0.1 - - [08/Jan/2025 10:26:21] "GET /dev/docs?__debugger__=yes&cmd=resource&f=console.png&s=FXASB7iyahrzniF4Ysxu HTTP/1.1" 200 - - 2025-01-08 10:26:21,643
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-08 10:26:38,948
+ * Restarting with stat - 2025-01-08 10:26:39,163
+ * Debugger is active! - 2025-01-08 10:26:40,076
+ * Debugger PIN: 143-917-139 - 2025-01-08 10:26:40,081
+[LOG] [2025-01-08 10:26:40] IP 127.0.0.1 tried to access /dev/docs and received status 200  - 2025-01-08 10:26:40,116
+127.0.0.1 - - [08/Jan/2025 10:26:40] "GET /dev/docs HTTP/1.1" 200 - - 2025-01-08 10:26:40,117
+[LOG] [2025-01-08 10:26:40] IP 127.0.0.1 tried to access /static/logo.svg and received status 404  - 2025-01-08 10:26:40,184
+127.0.0.1 - - [08/Jan/2025 10:26:40] "[33mGET /static/logo.svg HTTP/1.1[0m" 404 - - 2025-01-08 10:26:40,185
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-08 10:28:44,526
+ * Restarting with stat - 2025-01-08 10:28:44,751
+ * Debugger is active! - 2025-01-08 10:28:45,544
+ * Debugger PIN: 143-917-139 - 2025-01-08 10:28:45,548
+[LOG] [2025-01-08 10:29:22] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-08 10:29:22,683
+127.0.0.1 - - [08/Jan/2025 10:29:22] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-08 10:29:22,684
+[LOG] [2025-01-08 10:29:28] IP 127.0.0.1 tried to access /api/v1/get_token_for_files and received status 200  - 2025-01-08 10:29:28,692
+127.0.0.1 - - [08/Jan/2025 10:29:28] "POST /api/v1/get_token_for_files HTTP/1.1" 200 - - 2025-01-08 10:29:28,692
+[LOG] [2025-01-08 10:29:36] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-08 10:29:36,858
+127.0.0.1 - - [08/Jan/2025 10:29:36] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-08 10:29:36,858
+[LOG] [2025-01-08 10:30:19] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-08 10:30:19,496
+127.0.0.1 - - [08/Jan/2025 10:30:19] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-08 10:30:19,496
+[LOG] [2025-01-08 10:30:25] IP 127.0.0.1 tried to access /api/v1/get_token_for_files and received status 200  - 2025-01-08 10:30:25,505
+127.0.0.1 - - [08/Jan/2025 10:30:25] "POST /api/v1/get_token_for_files HTTP/1.1" 200 - - 2025-01-08 10:30:25,505
+[LOG] [2025-01-08 10:30:33] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-08 10:30:33,630
+127.0.0.1 - - [08/Jan/2025 10:30:33] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-08 10:30:33,630
+[LOG] [2025-01-08 10:34:00] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-08 10:34:00,085
+127.0.0.1 - - [08/Jan/2025 10:34:00] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-08 10:34:00,085
+[LOG] [2025-01-08 10:34:06] IP 127.0.0.1 tried to access /api/v1/get_token_for_files and received status 200  - 2025-01-08 10:34:06,093
+127.0.0.1 - - [08/Jan/2025 10:34:06] "POST /api/v1/get_token_for_files HTTP/1.1" 200 - - 2025-01-08 10:34:06,094
+[LOG] [2025-01-08 10:34:14] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-08 10:34:14,218
+127.0.0.1 - - [08/Jan/2025 10:34:14] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-08 10:34:14,219
+[LOG] [2025-01-08 10:34:48] IP 127.0.0.1 tried to access /api/v1/check_health and received status 200  - 2025-01-08 10:34:48,441
+127.0.0.1 - - [08/Jan/2025 10:34:48] "GET /api/v1/check_health HTTP/1.1" 200 - - 2025-01-08 10:34:48,441
+[LOG] [2025-01-08 10:34:54] IP 127.0.0.1 tried to access /api/v1/get_token_for_files and received status 200  - 2025-01-08 10:34:54,451
+127.0.0.1 - - [08/Jan/2025 10:34:54] "POST /api/v1/get_token_for_files HTTP/1.1" 200 - - 2025-01-08 10:34:54,452
+[LOG] [2025-01-08 10:35:02] IP 127.0.0.1 tried to access /api/v1/malware_detection and received status 200  - 2025-01-08 10:35:02,543
+127.0.0.1 - - [08/Jan/2025 10:35:02] "POST /api/v1/malware_detection HTTP/1.1" 200 - - 2025-01-08 10:35:02,543
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-08 10:37:08,515
+ * Restarting with stat - 2025-01-08 10:37:08,709
+ * Debugger is active! - 2025-01-08 10:37:09,488
+ * Debugger PIN: 143-917-139 - 2025-01-08 10:37:09,492
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-08 10:37:37,239
+ * Restarting with stat - 2025-01-08 10:37:37,437
+ * Debugger is active! - 2025-01-08 10:37:38,366
+ * Debugger PIN: 143-917-139 - 2025-01-08 10:37:38,370
+[LOG] [2025-01-08 10:37:47] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 10:37:47,470
+127.0.0.1 - - [08/Jan/2025 10:37:47] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 10:37:47,471
+[LOG] [2025-01-08 10:37:53] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 10:37:53,682
+127.0.0.1 - - [08/Jan/2025 10:37:53] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 10:37:53,683
+[LOG] [2025-01-08 10:58:40] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 10:58:40,330
+127.0.0.1 - - [08/Jan/2025 10:58:40] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 10:58:40,331
+[LOG] [2025-01-08 10:59:41] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 10:59:41,828
+127.0.0.1 - - [08/Jan/2025 10:59:41] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 10:59:41,828
+[LOG] [2025-01-08 11:01:34] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:01:34,949
+127.0.0.1 - - [08/Jan/2025 11:01:34] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:01:34,952
+[LOG] [2025-01-08 11:02:53] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:02:53,820
+127.0.0.1 - - [08/Jan/2025 11:02:53] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:02:53,821
+[LOG] [2025-01-08 11:04:00] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:04:00,385
+127.0.0.1 - - [08/Jan/2025 11:04:00] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:04:00,387
+[LOG] [2025-01-08 11:05:04] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:05:04,406
+127.0.0.1 - - [08/Jan/2025 11:05:04] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:05:04,406
+[LOG] [2025-01-08 11:06:09] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:06:09,772
+127.0.0.1 - - [08/Jan/2025 11:06:09] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:06:09,773
+[LOG] [2025-01-08 11:07:14] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:07:14,831
+127.0.0.1 - - [08/Jan/2025 11:07:14] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:07:14,831
+[LOG] [2025-01-08 11:07:50] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:07:50,701
+127.0.0.1 - - [08/Jan/2025 11:07:50] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:07:50,701
+[LOG] [2025-01-08 11:11:06] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:11:06,844
+127.0.0.1 - - [08/Jan/2025 11:11:06] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:11:06,844
+[LOG] [2025-01-08 11:11:46] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:11:46,462
+127.0.0.1 - - [08/Jan/2025 11:11:46] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:11:46,463
+[LOG] [2025-01-08 11:13:27] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:13:27,671
+127.0.0.1 - - [08/Jan/2025 11:13:27] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:13:27,671
+[LOG] [2025-01-08 11:16:38] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 200  - 2025-01-08 11:16:38,353
+127.0.0.1 - - [08/Jan/2025 11:16:38] "GET /dev/mobile_app_docs HTTP/1.1" 200 - - 2025-01-08 11:16:38,353
+[LOG] [2025-01-08 11:16:58] IP 127.0.0.1 tried to access /dev/mobile_app_docs and received status 403  - 2025-01-08 11:16:58,196
+127.0.0.1 - - [08/Jan/2025 11:16:58] "[31m[1mGET /dev/mobile_app_docs HTTP/1.1[0m" 403 - - 2025-01-08 11:16:58,197
+ * Detected change in '/home/mint/Desktop/Vault-7/backend-api/app.py', reloading - 2025-01-08 11:17:39,067
+ * Restarting with stat - 2025-01-08 11:17:40,333
+ * Debugger is active! - 2025-01-08 11:17:42,246
+ * Debugger PIN: 143-917-139 - 2025-01-08 11:17:42,256

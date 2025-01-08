@@ -214,6 +214,9 @@ def check_malicious_signatures(signatures):
         push_system_alert(error_msg, "failed")
         return {"error": "There was an issue on our side, please try again later"}
 
+#Expected signature format:
+
+
 # ---------------------------------------------------------------------------------------------------------------------------
 
 
@@ -267,7 +270,7 @@ def docs():
     if not session.get('logged_in') or session.get('username') != 'admin':
         return render_template('error_403.html'), 403
     
-    return render_template('docs.html')
+    return render_template('dev_docs.html')
 
 # Route returns client IP with 200 OK message to note API is active
 @app.route('/api/v1/check_health', methods=['GET'])
@@ -333,54 +336,53 @@ def get_token_for_message():
 
 
 # Route returns a token that can be used for malware detection
-# No need to get token , will be done via api key for dashboard and dbs on mobile for apk
-# @app.route('/api/v1/get_token_for_files', methods=['POST'])
-# def get_token_for_files():
-#     try:
-#         try:
-#             data = request.get_json()
-#             if 'device_guid' not in data:
-#                 return jsonify({"error": "Missing device_guid"}), 400    
-#         except Exception as e:
-#             return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-002"}), 400
+@app.route('/api/v1/get_token_for_files', methods=['POST'])
+def get_token_for_files():
+    try:
+        try:
+            data = request.get_json()
+            if 'device_guid' not in data:
+                return jsonify({"error": "Missing device_guid"}), 400    
+        except Exception as e:
+            return jsonify({"error": "Invalid request data | Report to admin with error code: #DATA-002"}), 400
 
-#         # Get client IP and device GUID
-#         try:
-#             client_ip = request.remote_addr
-#             device_guid = data.get('device_guid')
-#         except Exception as e:
-#             return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-002"}), 403
+        # Get client IP and device GUID
+        try:
+            client_ip = request.remote_addr
+            device_guid = data.get('device_guid')
+        except Exception as e:
+            return jsonify({"error": "Error processing your IP address | Report to admin with error code: #IP-002"}), 403
 
-#         # Generate encryption key and cipher
-#         try:
-#             key = hashlib.sha256(client_ip.encode()).digest()[:16]
-#             cipher = AES.new(key, AES.MODE_ECB)
-#             encrypted_ip = base64.b64decode(device_guid)
-#             decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
-#         except Exception as e:
-#             return jsonify({"error": "Server side issue | Report to admin with error code: #AES-002"}), 500
+        # Generate encryption key and cipher
+        try:
+            key = hashlib.sha256(client_ip.encode()).digest()[:16]
+            cipher = AES.new(key, AES.MODE_ECB)
+            encrypted_ip = base64.b64decode(device_guid)
+            decrypted_ip = unpad(cipher.decrypt(encrypted_ip), AES.block_size).decode('utf-8')
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #AES-002"}), 500
 
-#         # Validate decrypted IP matches client IP
-#         if decrypted_ip != client_ip:
-#             push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
-#             return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-002"}), 400
+        # Validate decrypted IP matches client IP
+        if decrypted_ip != client_ip:
+            push_system_alert(f"Malicious token attempt from IP: {client_ip}", "suspicious")
+            return jsonify({"error": "Malicious attempt to get token | If you think this is a mistake, report to admin with error code: #MAL-002"}), 400
 
-#         # Generate JWT token
-#         try:
-#             token = jwt.encode(
-#                 {
-#                     'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp(),
-#                     'iss': 'fortify-endpoint-security'
-#                 },
-#                 app.config['SECRET_KEY'],
-#                 algorithm='HS256'
-#             )
-#             return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
-#         except Exception as e:
-#             return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-002"}), 500
+        # Generate JWT token
+        try:
+            token = jwt.encode(
+                {
+                    'exp': (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(minutes=5)).timestamp(),
+                    'iss': 'fortify-endpoint-security'
+                },
+                app.config['SECRET_KEY'],
+                algorithm='HS256'
+            )
+            return jsonify({"message": "Valid attempt to get token detected", "token": token}), 200
+        except Exception as e:
+            return jsonify({"error": "Server side issue | Report to admin with error code: #JWT-002"}), 500
 
-#     except Exception as e:
-#         return jsonify({"error": "Internal server error | Report to admin with error code: #GTFF-001"}), 500
+    except Exception as e:
+        return jsonify({"error": "Internal server error | Report to admin with error code: #GTFF-001"}), 500
 
 
 # Message detection route

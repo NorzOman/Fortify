@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mobile App API Documentation</title>
+    <style>
+        :root {
+            --primary-color: #58a6ff;
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --nav-bg: rgba(13,17,23,0.95);
+            --code-bg: #161b22;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.4;
+            font-size: 16px;
+            padding: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 42px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: #e6edf3;
+        }
+
+        h2 {
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: #e6edf3;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 24px;
+            margin: 30px 0 20px;
+            color: #e6edf3;
+        }
+
+        h4 {
+            font-size: 20px;
+            margin: 25px 0 15px;
+            color: #e6edf3;
+        }
+
+        .section {
+            background: #161b22;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            font-size: 14px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        code {
+            background: var(--code-bg);
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            border: 1px solid var(--border-color);
+        }
+
+        .endpoint {
+            margin: 40px 0;
+            background: #1c2128;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .response {
+            background: #1c2128;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .code-block {
+            margin: 25px 0;
+        }
+
+        .code-block h5 {
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mobile App API Documentation</h1>
+
+    <div class="section">
+        <h2>Base URL</h2>
+        <code>http://localhost:5000</code>
+    </div>
+
+    <div class="section">
+        <h2>Malware Detection Flow</h2>
+
+        <div class="endpoint">
+            <h3>1. Get Client IP</h3>
+            <p>First, get your own IP address from the check health endpoint:</p>
+
+            <h4>Request:</h4>
+            <pre>GET /api/v1/check_health</pre>
+
+            <h4>Response:</h4>
+            <div class="response">
+                <pre>{
+    "status": "Server is running OK",
+    "client_ip": "127.0.0.1"
+}</pre>
+            </div>
+
+            <h4>Code Examples:</h4>
+            
+            <div class="code-block">
+                <h5>Curl Code</h5>
+                <pre>curl -X GET http://localhost:5000/api/v1/check_health</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Python Code</h5>
+                <pre>import requests
+
+url = "http://localhost:5000/api/v1/check_health"
+response = requests.get(url)
+print(response.json())</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Java Code</h5>
+                <pre>URL url = new URL("http://localhost:5000/api/v1/check_health");
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("GET");
+BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+String line;
+StringBuilder result = new StringBuilder();
+while ((line = rd.readLine()) != null) {
+    result.append(line);
+}
+rd.close();</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Kotlin Code</h5>
+                <pre>val url = "http://localhost:5000/api/v1/check_health"
+val response = URL(url).readText()
+println(response)</pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>2. Generate Device GUID</h3>
+            <p>AES encrypt the client IP address using itself as part of the secret key to generate a device GUID.</p>
+
+            <div class="code-block">
+                <h5>Python Code</h5>
+                <pre>key = hashlib.sha256(client_ip.encode()).digest()[:16]
+cipher = AES.new(key, AES.MODE_ECB)
+padded_ip = pad(client_ip.encode(), AES.block_size)
+encrypted_ip = cipher.encrypt(padded_ip)
+device_guid = base64.b64encode(encrypted_ip).decode('utf-8')</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Java Code</h5>
+                <pre>byte[] key = MessageDigest.getInstance("SHA-256")
+    .digest(clientIp.getBytes(StandardCharsets.UTF_8));
+key = Arrays.copyOf(key, 16);
+SecretKey secretKey = new SecretKeySpec(key, "AES");
+Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+byte[] encryptedIp = cipher.doFinal(clientIp.getBytes());
+String deviceGuid = Base64.getEncoder().encodeToString(encryptedIp);</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Kotlin Code</h5>
+                <pre>val key = MessageDigest.getInstance("SHA-256")
+    .digest(clientIp.toByteArray())
+    .copyOf(16)
+val secretKey = SecretKeySpec(key, "AES")
+val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+val encryptedIp = cipher.doFinal(clientIp.toByteArray())
+val deviceGuid = Base64.getEncoder().encodeToString(encryptedIp)</pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>3. Get Authentication Token</h3>
+            <h4>Request:</h4>
+            <pre>POST /api/v1/get_token_for_files
+Content-Type: application/json
+
+{
+    "device_guid": "your_device_guid_here"
+}</pre>
+
+            <h4>Response:</h4>
+            <div class="response">
+                <pre>{
+    "message": "Valid attempt to get token detected", 
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</pre>
+            </div>
+
+            <h4>Code Examples:</h4>
+            
+            <div class="code-block">
+                <h5>Curl Code</h5>
+                <pre>curl -X POST http://localhost:5000/api/v1/get_token_for_files \
+  -H "Content-Type: application/json" \
+  -d '{"device_guid":"your_device_guid_here"}'</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Python Code</h5>
+                <pre>import requests
+import json
+
+url = "http://localhost:5000/api/v1/get_token_for_files"
+headers = {'Content-Type': 'application/json'}
+data = {
+    "device_guid": "your_device_guid_here"
+}
+response = requests.post(url, headers=headers, data=json.dumps(data))</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Java Code</h5>
+                <pre>URL url = new URL("http://localhost:5000/api/v1/get_token_for_files");
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("POST");
+conn.setRequestProperty("Content-Type", "application/json");
+conn.setDoOutput(true);
+
+String data = "{\"device_guid\":\"your_device_guid_here\"}";
+try(OutputStream os = conn.getOutputStream()) {
+    byte[] input = data.getBytes("utf-8");
+    os.write(input, 0, input.length);
+}
+
+try(BufferedReader br = new BufferedReader(
+    new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+    StringBuilder response = new StringBuilder();
+    String responseLine = null;
+    while ((responseLine = br.readLine()) != null) {
+        response.append(responseLine.trim());
+    }
+}</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Kotlin Code</h5>
+                <pre>val url = URL("http://localhost:5000/api/v1/get_token_for_files")
+val conn = url.openConnection() as HttpURLConnection
+conn.requestMethod = "POST"
+conn.setRequestProperty("Content-Type", "application/json")
+conn.doOutput = true
+
+val data = "{\"device_guid\":\"your_device_guid_here\"}"
+conn.outputStream.use { os ->
+    val input = data.toByteArray(Charsets.UTF_8)
+    os.write(input, 0, input.length)
+}
+
+val response = conn.inputStream.bufferedReader().use { br ->
+    br.readText()
+}</pre>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <h3>4. Malware Detection</h3>
+            <p>Use the token to send file signatures for malware detection. The token is valid for 5 minutes and can be used for approximately 100 file signature blocks at once.</p>
+
+            <h4>Request:</h4>
+            <pre>{
+    "token": "your_token_here",
+    "signatures": [
+        ["malware.exe", "e4d909c290d0fb1ca068ffaddf22cbd0"],
+        ["ransomware.dll", "a87ff679a2f3e71d9181a67b7542122c"],
+        ["yk.exe", "d1d417235616e4a05096319bb4875f57"]
+    ]
+}</pre>
+
+            <h4>Code Examples:</h4>
+            
+            <div class="code-block">
+                <h5>Curl Code</h5>
+                <pre>curl -X POST http://localhost:5000/api/v1/malware_detection \
+  -H "Content-Type: application/json" \
+  -d '{"token":"your_token_here","signatures":[["malware.exe","e4d909c290d0fb1ca068ffaddf22cbd0"],["ransomware.dll","a87ff679a2f3e71d9181a67b7542122c"],["yk.exe","d1d417235616e4a05096319bb4875f57"]]}'</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Python Code</h5>
+                <pre>import requests
+import json
+
+url = "http://localhost:5000/api/v1/malware_detection"
+headers = {'Content-Type': 'application/json'}
+data = {
+    "token": "your_token_here",
+    "signatures": [
+        ["malware.exe", "e4d909c290d0fb1ca068ffaddf22cbd0"],
+        ["ransomware.dll", "a87ff679a2f3e71d9181a67b7542122c"],
+        ["yk.exe", "d1d417235616e4a05096319bb4875f57"]
+    ]
+}
+response = requests.post(url, headers=headers, data=json.dumps(data))</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Java Code</h5>
+                <pre>URL url = new URL("http://localhost:5000/api/v1/malware_detection");
+HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+conn.setRequestMethod("POST");
+conn.setRequestProperty("Content-Type", "application/json");
+conn.setDoOutput(true);
+
+String json = "{\"token\":\"your_token_here\",\"signatures\":[[\"malware.exe\",\"e4d909c290d0fb1ca068ffaddf22cbd0\"],[\"ransomware.dll\",\"a87ff679a2f3e71d9181a67b7542122c\"],[\"yk.exe\",\"d1d417235616e4a05096319bb4875f57\"]]}";
+
+try(OutputStream os = conn.getOutputStream()) {
+    byte[] input = json.getBytes("utf-8");
+    os.write(input, 0, input.length);
+}
+
+try(BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "utf-8"))) {
+    StringBuilder response = new StringBuilder();
+    String responseLine = null;
+    while ((responseLine = br.readLine()) != null) {
+        response.append(responseLine.trim());
+    }
+}</pre>
+            </div>
+
+            <div class="code-block">
+                <h5>Kotlin Code</h5>
+                <pre>val url = "http://localhost:5000/api/v1/malware_detection"
+val json = """
+{
+    "token": "your_token_here",
+    "signatures": [
+        ["malware.exe", "e4d909c290d0fb1ca068ffaddf22cbd0"],
+        ["ransomware.dll", "a87ff679a2f3e71d9181a67b7542122c"],
+        ["yk.exe", "d1d417235616e4a05096319bb4875f57"]
+    ]
+}
+""".trimIndent()
+
+val client = OkHttpClient()
+val requestBody = json.toRequestBody("application/json".toMediaType())
+val request = Request.Builder()
+    .url(url)
+    .post(requestBody)
+    .build()
+val response = client.newCall(request).execute()</pre>
+            </div>
+
+            <h4>Possible Responses:</h4>
+            <div class="response">
+                <p>When all signatures are safe:</p>
+                <pre>{
+    "status": "all-safe"
+}</pre>
+            </div>
+
+            <div class="response">
+                <p>When malicious signatures are detected:</p>
+                <pre>{
+    "malicious_files": [
+        {
+            "file_name": "dropper.exe",
+            "hash": "85cfbd81ff6729927c968fbbb2d1d84d",
+            "name": "Genric-DoubleLockerRansom"
+        },
+        {
+            "file_name": "cryptominer.exe",
+            "hash": "25ac0eab7882d08549f04aa1615effbb",
+            "name": "malicious-video-trojan"
+        },
+        {
+            "file_name": "malicious_pdf.pdf",
+            "hash": "c81e14f091fe1e660924a52a3a015792",
+            "name": "MaliciousPdf"
+        }
+    ]
+}</pre>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

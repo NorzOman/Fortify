@@ -157,24 +157,23 @@ def simulate_send_signature_detect():
     time.sleep(2)
     print("\n\n")
 
-    signatures = []
+    # Predefined list of file names and their MD5 signatures
+    signatures = [
+        ("malware.exe", "e4d909c290d0fb1ca068ffaddf22cbd0"),
+        ("ransomware.dll", "a87ff679a2f3e71d9181a67b7542122c"),
+        ("trojan.sys", "c4ca4238a0b923820dcc509a6f75849b"),
+        ("keylogger.exe", "c81e728d9d4c2f636f067f89cc14862c")
+    ]
     
-    while True:
-        file_name = input("[-] Enter file name (or type 'asdone' to stop): ").strip()
-        if file_name.lower() == 'asdone':
-            break
-        signature = input(f"[-] Enter the signature for file '{file_name}': ").strip()
-        signatures.append((file_name, signature))  # Append name and signature as a tuple
-    
-    # Print the collected signatures for review
-    print("\n[-] Collected Signatures:")
+    # Print the signatures being sent
+    print("\n[-] Sending the following signatures:")
     for name, sig in signatures:
         print(f"File Name: {name}, Signature: {sig}")
     
     # Prepare the data for the POST request
     headers = {'Content-Type': 'application/json'}
     data = {
-        "signatures": signatures,  # List of tuples (name, signature)
+        "signatures": signatures,
         "token": TOKEN_FILE
     }
     
@@ -183,15 +182,25 @@ def simulate_send_signature_detect():
     response = requests.post(url, headers=headers, data=json.dumps(data))
     time.sleep(1)
     
-    print(response.text)
+    print(f"\n[-] Response: {response.text}")
 
     buffer = input(" [-] Press enter to continue....")
+
+
+# Format of the request it is sending:
+# {
+#     "signatures": [
+#         ("malware.exe", "e4d909c290d0fb1ca068ffaddf22cbd0"),
+#         ("ransomware.dll", "a87ff679a2f3e71d9181a67b7542122c")
+#     ],
+#     "token": "your_token_here"
+# }
 
 
 def main():
     choice = 0
     while(choice != 7):
-        os.system("cls")
+        os.system("clear")
         print("\n ~~Main Menu~~\n")
         print(" 1. Simulate heatlh check \n ")
         print(" 2. Simulate getting token for message with GUID \n")
