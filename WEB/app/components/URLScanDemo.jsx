@@ -1,0 +1,119 @@
+"use client";
+import React, { useState, useEffect } from "react";
+
+export function URLScanDemo() {
+  const [url, setUrl] = useState("");
+  const [token, setToken] = useState("");
+  const [scanResult, setScanResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch authentication token on component mount
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const response = await fetch("https://vault-7-rebooted.vercel.app/get_token");
+        const data = await response.json();
+        console.log("Fetched Token:", data); // Debugging
+        setToken(data.token);
+      } catch (error) {
+        console.error("Error fetching token:", error);
+      }
+    };
+    fetchToken();
+  }, []);
+
+  // Handle URL scan request
+  const handleScan = async () => {
+    if (!token) {
+      alert("Token is not yet fetched");
+      return;
+    }
+    if (!url) {
+      alert("Please enter a URL");
+      return;
+    }
+
+    setLoading(true);
+    setScanResult(null);
+
+    const payload = {
+      token: token,
+      url: url, // Make sure this matches the API's expected key
+    };
+
+    console.log("Sending Request:", payload); // Debugging
+
+    try {
+      const response = await fetch("https://vault-7-rebooted.vercel.app/url_scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log("Scan Result:", data); // Debugging
+
+      setTimeout(() => {
+        setScanResult(data.result);
+        setLoading(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Error scanning URL:", error);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto  border border-dashed bg-white dark:bg-black border-neutral-200 dark:border-neutral-800 rounded-3xl p-5">
+      <h2 className="text-2xl font-bold text-center mb-4">URL Scanner</h2>
+      <div className="flex items-center gap-4">
+        <input
+          type="text"
+          placeholder="Enter URL (e.g., https://example.com)"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          className="flex-1 p-2 border rounded-md"
+        />
+        <button
+          onClick={handleScan}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md"
+        >
+          Scan
+        </button>
+      </div>
+
+      {/* Show Loading Animation */}
+      {loading && (
+        <div className="mt-4 text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-500 mx-auto"></div>
+          <p className="text-gray-500 mt-2">Scanning...</p>
+        </div>
+      )}
+
+      {/* Display Scan Result */}
+      {!loading && scanResult && (
+        <div className="mt-6 p-4 border rounded-md bg-gray-100 dark:bg-gray-800">
+          <h3 className="text-xl font-bold">Scan Result</h3>
+          <p><strong>Domain:</strong> {scanResult.domain}</p>
+          <p><strong>Risk Level:</strong> 
+            <span className={scanResult.risk_level === "SAFE" ? "text-green-500" : "text-red-500"}>
+              {scanResult.risk_level}
+            </span>
+          </p>
+          <p><strong>Risk Rating:</strong> {scanResult.risk_rating}</p>
+          <p><strong>Country:</strong> {scanResult.domain_info?.country || "N/A"}</p>
+          <p><strong>Registrar:</strong> {scanResult.domain_info?.registrar || "N/A"}</p>
+          <p><strong>Registrar URL:</strong> 
+            <a href={scanResult.domain_info?.registrar_url} target="_blank" rel="noopener noreferrer" className="text-blue-500">
+              {scanResult.domain_info?.registrar_url}
+            </a>
+          </p>
+          <p><strong>Organization:</strong> {scanResult.domain_info?.org || "N/A"}</p>
+          <p><strong>Creation Date:</strong> {scanResult.domain_info?.creation_date?.join(", ") || "N/A"}</p>
+          <p><strong>Emails:</strong> {scanResult.domain_info?.emails?.join(", ") || "N/A"}</p>
+          <p><strong>Path:</strong> {scanResult.path || "No path specified"}</p>
+        </div>
+      )}
+    </div>
+  );
+}
