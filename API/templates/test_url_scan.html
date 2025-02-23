@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault - 7 [2.0]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            background-color: #1c1c1e;
+            color: #ffffff;
+            font-family: 'Ubuntu Mono', monospace;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
+            background-color: #2c2c2e;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #48484a 0%, #3a3a3c 100%);
+            color: white;
+            padding: 1rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+            color: #ffffff;
+            min-height: 100px;
+            height: 100%;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .col-md-6 {
+            display: flex;
+            flex-direction: column;
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 1.25rem;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid #333;
+            font-family: 'Courier New', monospace;
+        }
+        #token-response {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #333;
+            text-shadow: 0 0 5px rgba(0,255,0,0.5);
+        }
+        .alert {
+            background-color: #2c2c2e;
+            border-color: #48484a;
+            color: #ffffff;
+        }
+        .alert-warning {
+            background-color: #3a3a3c;
+            border-color: #48484a;
+        }
+        .alert-info {
+            background-color: #2c2c2e;
+            border-color: #48484a;
+        }
+        .alert-danger {
+            background-color: #3a1c24;
+            border-color: #842029;
+        }
+        .form-control {
+            background-color: #2c2c2e;
+            border-color: #48484a;
+            color: #ffffff;
+        }
+        .form-control:focus {
+            background-color: #3a3a3c;
+            border-color: #0a84ff;
+            color: #ffffff;
+            box-shadow: none;
+        }
+        .btn-primary {
+            background-color: #0a84ff;
+            border-color: #0a84ff;
+        }
+        .btn-primary:hover {
+            background-color: #007aff;
+            border-color: #007aff;
+        }
+        .btn-secondary {
+            background-color: #48484a;
+            border-color: #48484a;
+        }
+        .btn-secondary:hover {
+            background-color: #3a3a3c;
+            border-color: #3a3a3c;
+        }
+        .domain-info {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #48484a;
+            border-radius: 4px;
+            background-color: #2c2c2e;
+        }
+        .domain-info h4 {
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        .info-item {
+            display: flex;
+            margin-bottom: 5px;
+        }
+        .info-label {
+            font-weight: bold;
+            min-width: 120px;
+            color: #8e8e93;
+        }
+        .info-value {
+            color: #ffffff;
+        }
+        .risk-level {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .risk-level.safe {
+            background-color: #1a3b2a;
+            color: #30d158;
+        }
+        .risk-level.dangerous {
+            background-color: #3a1c24;
+            color: #ff453a;
+        }
+        footer {
+            margin-top: 2rem;
+            padding: 1rem 0;
+            background-color: #2c2c2e;
+            text-align: center;
+            border-top: 1px solid #48484a;
+            color: #ffffff;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h4 {
+                font-size: 1.2rem;
+            }
+            .card-header h5 {
+                font-size: 1.1rem;
+            }
+            .btn {
+                font-size: 0.9rem;
+                padding: 0.4rem 0.8rem;
+            }
+            pre {
+                font-size: 0.8rem;
+            }
+            .alert {
+                font-size: 0.9rem;
+            }
+        }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+            h4 {
+                font-size: 1.1rem;
+            }
+            .card-header h5 {
+                font-size: 1rem;
+            }
+            .btn {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+            pre {
+                font-size: 0.75rem;
+                padding: 0.5rem !important;
+            }
+            .form-control {
+                font-size: 0.9rem;
+            }
+            .alert small {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Back Button -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <a href="/test" class="btn btn-secondary">&larr; Back</a>
+            </div>
+        </div>
+
+        <!-- Main Title -->
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <h1>Vault - 7 [2.0]</h1>
+                <h4 class="text-muted">URL Scan Testing Interface</h4>
+            </div>
+        </div>
+
+        <!-- Get Token Row -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Token Response</h5>
+                    </div>
+                    <div class="card-body">
+                        <button class="btn btn-primary mb-3" id="get-token-btn">Get Token</button>
+                        <pre id="token-response" class="mb-0"></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Input -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Authentication</h5>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="form-group mb-0">
+                            <label for="token" class="mb-1">Authentication Token:</label>
+                            <input type="text" class="form-control" id="token" placeholder="Enter your token">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- URL Input Section -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">URL Scan</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info mb-3">
+                            <small>Example malicious URL: http://malicious-example.com</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="url">URL to Scan:</label>
+                            <input type="text" class="form-control" id="url" placeholder="Enter URL to scan">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request and Response Section -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Request Preview</h5>
+                    </div>
+                    <div class="card-body">
+                        <pre id="json-display" class="mb-0"></pre>
+                        <button class="btn btn-primary mt-3" id="send-request">Send Request</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Response</h5>
+                    </div>
+                    <div class="card-body" id="response-container">
+                        <div id="formatted-response"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Vault - 7 [2.0]. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        function updateJSON() {
+            let jsonObj = {
+                token: $('#token').val() || "",
+                url: $('#url').val() || ""
+            };
+            
+            let jsonString = JSON.stringify(jsonObj, null, 4);
+            $('#json-display').text(jsonString === '{}' ? '' : jsonString);
+        }
+
+        function formatResponse(response) {
+            if (!response || !response.result) return '<div class="alert alert-danger">Invalid response format</div>';
+
+            const result = response.result;
+            const riskLevelClass = result.risk_level === "SAFE" ? "safe" : "dangerous";
+
+            let html = `
+                <div class="risk-level ${riskLevelClass.toLowerCase()}">
+                    Risk Level: ${result.risk_level}
+                </div>
+                <div class="domain-info">
+                    <h4>Domain Information</h4>
+                    <div class="info-item">
+                        <span class="info-label">Domain:</span>
+                        <span class="info-value">${result.domain || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Path:</span>
+                        <span class="info-value">${result.path || 'N/A'}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Risk Rating:</span>
+                        <span class="info-value">${result.risk_rating}/10</span>
+                    </div>
+                </div>`;
+
+            if (result.domain_info) {
+                html += `
+                    <div class="domain-info">
+                        <h4>Additional Details</h4>
+                        <div class="info-item">
+                            <span class="info-label">Country:</span>
+                            <span class="info-value">${result.domain_info.country || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Created:</span>
+                            <span class="info-value">${result.domain_info.creation_date || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Organization:</span>
+                            <span class="info-value">${result.domain_info.organization || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Registrar:</span>
+                            <span class="info-value">${result.domain_info.registrar || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">DNSSEC:</span>
+                            <span class="info-value">${result.domain_info.dnssec || 'N/A'}</span>
+                        </div>
+                    </div>`;
+            }
+
+            if (result.issues && result.issues.length > 0) {
+                html += `
+                    <div class="domain-info">
+                        <h4>Issues Found</h4>
+                        <ul>
+                            ${result.issues.map(issue => `<li>${issue}</li>`).join('')}
+                        </ul>
+                    </div>`;
+            }
+
+            return html;
+        }
+
+        $(document).ready(function() {
+            // Initialize empty JSON display
+            updateJSON();
+
+            // Get Token Button Handler
+            $('#get-token-btn').click(function() {
+                let baseUrl = window.location.origin;
+                $.get(baseUrl + '/get_token', function(data) {
+                    $('#token-response').text(JSON.stringify(data, null, 4));
+                    // Auto-fill the token input with the received token
+                    if (data && data.token) {
+                        $('#token').val(data.token);
+                        updateJSON(); // Update the JSON preview
+                    }
+                }).fail(function(xhr, status, error) {
+                    $('#token-response').text('Error: ' + error);
+                });
+            });
+
+            // Send Request Button Handler
+            $('#send-request').click(function() {
+                try {
+                    let jsonText = $('#json-display').text();
+                    if (!jsonText) {
+                        $('#formatted-response').html('<div class="alert alert-danger">Error: No request data available</div>');
+                        return;
+                    }
+
+                    let requestData = JSON.parse(jsonText);
+                    
+                    if (!requestData.token) {
+                        $('#formatted-response').html('<div class="alert alert-danger">Error: Token is required</div>');
+                        return;
+                    }
+
+                    if (!requestData.url) {
+                        $('#formatted-response').html('<div class="alert alert-danger">Error: URL is required</div>');
+                        return;
+                    }
+
+                    $.ajax({
+                        url: '/url_scan',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(requestData),
+                        success: function(response) {
+                            $('#formatted-response').html(formatResponse(response));
+                        },
+                        error: function(xhr, status, error) {
+                            $('#formatted-response').html('<div class="alert alert-danger">Something failed internally</div>');
+                        }
+                    });
+                } catch (e) {
+                    $('#formatted-response').html('<div class="alert alert-danger">Something failed internally</div>');
+                }
+            });
+
+            $(document).on('input', 'input', function() {
+                updateJSON();
+            });
+        });
+    </script>
+</body>
+</html>
