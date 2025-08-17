@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Common Colors -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green">#45cc88</color>
+
+    <!-- Light Theme Colors -->
+    <color name="light_primary">#FFFFFF</color>
+    <color name="light_secondary">#D0D0D0</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="dark_primary">#2b313f</color>
+    <color name="dark_secondary">#4b515d</color>
+
+
+</resources>
