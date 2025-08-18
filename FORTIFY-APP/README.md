@@ -88,11 +88,6 @@ Connect the app to the backend using REST API calls. Implement an **asynchronous
     Body:
     {
       "message": "Your account has been compromised. Click here to reset password.",
-      "metadata": {
-        "source": "sms",
-        "sender": "unknown",
-        "timestamp": "2025-08-17T12:34:56Z"
-      }
     }
     ```
 
