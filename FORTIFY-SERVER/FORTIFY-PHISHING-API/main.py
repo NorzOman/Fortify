@@ -11,6 +11,11 @@ def predict_phishing(input_message):
     prediction = model.predict(input_vector)
     return prediction[0]
 
+@app.route('/')
+def home():
+    return jsonify({'MESSEGE': 'Welcome to the Phishing Detection API!'}), 200
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     data = request.get_json()  # Get the JSON data from the request
@@ -23,10 +28,6 @@ def predict():
         return jsonify({'error': 'No message provided'}), 400  # Handle missing message
 
 if __name__ == '__main__':
-    try:
-        print(flask.__version__)
-    except Exception as e:
-        print(f"Flask not found {e}")
     app.run(debug=False,host='0.0.0.0',port='5001')
 
 
