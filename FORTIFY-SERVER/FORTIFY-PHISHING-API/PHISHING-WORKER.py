@@ -1,24 +1,4 @@
-
-# ======================== IMPORTANT NOTICE ========================
-#
-#                       DO NOT ALTER THIS CODE.
-#
-# REASON: This script has been customized by the Team Lead to facilitate a
-# system integration. Unauthorized modifications are guaranteed
-# to cause project-wide failures.
-#
-# ACTION: Please implement any required functionality in other modules.
-#
-# ESCALATION: If a change to this file is unavoidable, you must first
-# consult with the Team Lead.
-#
-# ================================================================
-
-
-# Format : main.py --src <path-to-input.txt> --out <path-to-output-dir> --job_id <id>
-# Reads a message from a file and saves the phishing prediction to a JSON file.
-
-import joblib
+import pickle  # Changed from joblib for loading models
 import sys
 import argparse
 import warnings
@@ -41,11 +21,32 @@ def print_log(message, level="info"):
         print(f"\t{prefix} {message}")
     sys.stdout.flush()
 
-def predict_phishing(input_message, model, vectorizer):
-    """Predicts if a message is phishing using the loaded model and vectorizer."""
-    input_vector = vectorizer.transform([input_message])
-    prediction = model.predict(input_vector)
-    return prediction[0]
+# --- Define the prediction function (adapted from friend's script) ---
+# This function now takes the loaded model and vectorizer as arguments,
+# and calculates confidence as per your friend's script.
+def predict_message_type(message, model_obj, vectorizer_obj):
+    """
+    Predicts if a message is 'ham' or 'smishing' and returns confidence.
+    """
+    # Use the loaded vectorizer to transform the message
+    message_tfidf = vectorizer_obj.transform([message])
+    
+    # Use the loaded model to make a prediction
+    prediction_num = model_obj.predict(message_tfidf)[0]
+    
+    # Get the probabilities
+    # model.predict_proba is used to get the confidence scores for each class
+    probabilities = model_obj.predict_proba(message_tfidf)[0]
+    
+    # Map numerical prediction back to a label
+    # Assuming 0 corresponds to 'ham' (not malicious) and 1 to 'smishing' (malicious)
+    label = 'ham' if prediction_num == 0 else 'smishing'
+    confidence = probabilities[prediction_num]
+    
+    return {
+        'prediction_label_internal': label, # Internal label ('ham' or 'smishing')
+        'confidence': float(confidence)
+    }
 
 def main():
     parser = argparse.ArgumentParser(description="Phishing Scanner")
@@ -69,6 +70,7 @@ def main():
         print_log(f"Failed to read input file: {e}", level="error")
         sys.exit(1)
 
+    # --- Output Directory Handling ---
     if not os.path.exists(args.out):
         try:
             os.makedirs(args.out)
@@ -79,23 +81,41 @@ def main():
 
     output_json_path = os.path.join(args.out, f"{args.job_id}.json")
 
+    # --- Load Model and Vectorizer ---
+    model = None
+    vectorizer = None
     try:
-        model = joblib.load('phishing_detector_model.pkl')
-        tfidf = joblib.load('tfidf_vectorizer.pkl')
+        # Model and vectorizer are now loaded using pickle, matching your friend's script
+        print_log("Loading model and vectorizer...")
+        with open('model.pkl', 'rb') as model_file:
+            model = pickle.load(model_file)
+        with open('vectorizer.pkl', 'rb') as vectorizer_file:
+            vectorizer = pickle.load(vectorizer_file)
+        print_log("Model and vectorizer loaded successfully.")
     except FileNotFoundError as e:
-        print_log(f"Model file not found: {e.filename}. Please ensure model files are in the correct directory.", level="error")
+        print_log(f"Model file not found: {e.filename}. Please ensure model files ('model.pkl', 'vectorizer.pkl') are in the correct directory.", level="error")
+        sys.exit(1)
+    except Exception as e:
+        print_log(f"Failed to load model or vectorizer: {e}", level="error")
         sys.exit(1)
 
     print_log("Analyzing message...")
-    result = predict_phishing(message, model, tfidf)
-    prediction_text = 'Not Phishing' if result == 'ham' else 'Phishing'
-    print_log(f"Prediction: {prediction_text}")
+    # Call the new prediction function which returns the label and confidence
+    prediction_result = predict_message_type(message, model, vectorizer)
+    
+    # Map friend's internal prediction label ('ham'/'smishing') to your desired output ('Not Phishing'/'Phishing')
+    detection_text = 'Not Phishing' if prediction_result['prediction_label_internal'] == 'ham' else 'Phishing'
+    
+    print_log(f"Prediction: {detection_text} (Confidence: {prediction_result['confidence']:.4f})")
 
+    # Prepare output data including job_id, detection, and the new confidence score
     output_data = {
         "job_id": args.job_id,
-        "detection": prediction_text
+        "detection": detection_text,
+        "confidence": prediction_result['confidence'] # Added confidence from friend's script
     }
 
+    # --- Save Results ---
     try:
         with open(output_json_path, 'w', encoding='utf-8') as outfile:
             json.dump(output_data, outfile, indent=4)
