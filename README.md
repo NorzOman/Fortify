@@ -34,8 +34,8 @@ To get the backend up and running, follow these essential steps:
 
 ### **Testing Functionality**
 
-*   **Message Scan:** Try initiating a **message scan** request. You should observe the output directly in your terminal. For real-time status updates, you can also send a GET request to the appropriate endpoint.
+*   **Message Scan:** Try initiating a **message scan** request. You should observe the output directly in your terminal. For real-time status updates, you can also send a GET request to the appropriate endpoint available on the frontend section.
 
-*   **Malware Scan:** When you begin a **malware scan**, it might initially appear to be stuck. Please be aware that **malware scans take a significant amount of time** as they are diligently processing in the background. For quicker results during testing, we highly recommend using a relatively small application. Alternatively, you can utilize our provided sample APK for testing: [link-to-sample-apk]
+*   **Malware Scan:** When you begin a **malware scan**, it might initially appear to be stuck. Please be aware that **malware scans take a significant amount of time** as they are diligently processing in the background. For quicker results during testing, we highly recommend using a relatively small application. Alternatively, you can utilize our provided sample APK for testing present in the Test-Samples folder. 
 
 Try it out and explore the robust capabilities of Fortify!
