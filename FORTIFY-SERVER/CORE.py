@@ -11,8 +11,7 @@ init()
 
 # --- Configuration ---
 # Set the absolute path to your JADX executable here. This is required for the malware scanner.
-JADX_EXECUTABLE_PATH = "/usr/local/bin/jadx" 
-
+JADX_EXECUTABLE_PATH = "D:\\jadx\\bin\\jadx.bat"
 
 def print_log(message, level="info"):
     """Prints a log message with the core's standard format."""
@@ -83,12 +82,12 @@ if __name__ == '__main__':
         print_log("Spawning services:")
         print_log(" |")
         print_log(" +-- Spawning backend server (SERVER.py)...")
-        server_process = subprocess.Popen(['python3', SERVER_PY_PATH], cwd=BASE_DIR)
+        server_process = subprocess.Popen([sys.executable, SERVER_PY_PATH], cwd=BASE_DIR)
         time.sleep(3)
 
         print_log(" |")
         print_log(" +-- Spawning frontend server (TEST.py)...")
-        test_process = subprocess.Popen(['python3', TEST_PY_PATH], cwd=TEST_WEBSITE_DIR)
+        test_process = subprocess.Popen([sys.executable, TEST_PY_PATH], cwd=TEST_WEBSITE_DIR)
         time.sleep(2)
         print_log(" |")
 
@@ -111,10 +110,10 @@ if __name__ == '__main__':
                 print_log(f"New job detected: ID={job_id}. Assigning to '{job_type}' worker...", level="warning")
 
                 if job_type == 'Malware':
-                    command = ['python3', MALWARE_WORKER_PATH, '--src', input_path, '--out', OUTPUT_DIR, '--jadx_path', JADX_EXECUTABLE_PATH, '--job_id', str(job_id)]
+                    command = [sys.executable, MALWARE_WORKER_PATH, '--src', input_path, '--out', OUTPUT_DIR, '--jadx_path', JADX_EXECUTABLE_PATH, '--job_id', str(job_id)]
                     worker_cwd = MALWARE_WORKER_DIR # <--- FIX: Set CWD for this worker
                 elif job_type == 'Phishing':
-                    command = ['python3', PHISHING_WORKER_PATH, '--src', input_path, '--out', OUTPUT_DIR, '--job_id', str(job_id)]
+                    command = [sys.executable, PHISHING_WORKER_PATH, '--src', input_path, '--out', OUTPUT_DIR, '--job_id', str(job_id)]
                     worker_cwd = PHISHING_WORKER_DIR # <--- FIX: Set CWD for this worker
 
                 # --- Execute Worker ---

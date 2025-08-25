@@ -1,0 +1,20 @@
+{
+  "summary": {
+    "total_detections": 2,
+    "total_files_scanned": 138
+  },
+  "detections": [
+    {
+      "file": "sandbox\\resources\\AndroidManifest.xml",
+      "line": 18,
+      "label": "Manifest: Application is debuggable (aids analysis and tampering)",
+      "match": "android:debuggable=\"true\""
+    },
+    {
+      "file": "sandbox\\resources\\AndroidManifest.xml",
+      "line": 19,
+      "label": "Manifest: Application allows backup (potential for data exfiltration via ADB)",
+      "match": "android:allowBackup=\"true\""
+    }
+  ]
+}

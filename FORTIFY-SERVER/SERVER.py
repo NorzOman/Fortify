@@ -6,11 +6,17 @@ import logging
 from flask import Flask, request, jsonify
 from colorama import Fore, Style, init
 
+import jwt
+import datetime
+
 # Initialize color for logs
 init()
 
 # --- App Setup ---
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'your-very-secret-key-that-no-one-knows'
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOADS_FOLDER = os.path.join(BASE_DIR, 'INPUTS')
 MALWARE_FOLDER = os.path.join(UPLOADS_FOLDER, 'MALWARE')
@@ -65,6 +71,26 @@ def close_db(conn, cursor):
         conn.close()
 
 # --- API Routes ---
+
+@app.route('/getToken', methods=['POST'])
+def get_token():
+    """Generates a JWT token for a given username."""
+    data = request.get_json()
+    if not data or 'username' not in data:
+        return jsonify({"error": "Username is required"}), 400
+    
+    username = data['username']
+    
+    # Create the token
+    token = jwt.encode({
+        'user': username,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24) # Token expires in 24 hours
+    }, app.config['SECRET_KEY'], algorithm="HS256")
+    
+    print_log(f"Token generated for user: {username}")
+    return jsonify({'token': token})
+
+
 @app.route('/scanApk', methods=['POST'])
 def addApp():
     """Handles APK file uploads for malware scanning."""

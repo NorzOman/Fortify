@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alert_description">Alerta</string>
+    <string name="combobox_description">Cuadro combinado</string>
+    <string name="header_description">Encabezado</string>
+    <string name="image_description">Imagen</string>
+    <string name="imagebutton_description">Botón, imagen</string>
+    <string name="link_description">Enlace</string>
+    <string name="menu_description">Menú</string>
+    <string name="menubar_description">Barra de menú</string>
+    <string name="menuitem_description">Elemento del menú</string>
+    <string name="progressbar_description">Barra de progreso</string>
+    <string name="radiogroup_description">Grupo de botones de radio</string>
+    <string name="rn_tab_description">Pestaña</string>
+    <string name="scrollbar_description">Barra de desplazamiento</string>
+    <string name="spinbutton_description">Botón de selección</string>
+    <string name="state_busy_description">ocupado</string>
+    <string name="state_collapsed_description">contraído</string>
+    <string name="state_expanded_description">ampliado</string>
+    <string name="state_mixed_description">mezclado</string>
+    <string name="state_off_description">desactivado</string>
+    <string name="state_on_description">activado</string>
+    <string name="state_unselected_description">sin seleccionar</string>
+    <string name="summary_description">Resumen</string>
+    <string name="tablist_description">Lista de pestañas</string>
+    <string name="timer_description">Temporizador</string>
+    <string name="toolbar_description">Barra de herramientas</string>
+</resources>
