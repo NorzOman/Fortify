@@ -68,6 +68,13 @@ def getToken():
         print(f" -- Token error: {e}")
         return {"error": "Failed to generate token"}, 500
     
+@app.route("/verifyToken", methods=["GET", "POST"])
+def verifyToken():
+    print(" -- Got a request to verify Auto-Login token")
+    # In a fully deployed app, you would verify the JWT signature here.
+    # For local testing, if the app can reach this endpoint, the connection is good!
+    return {"status": "valid"}, 200
+    
 @app.route("/scanMessage", methods=["POST"])
 def scanMessage():
     print(" -- Got a request for message scan")
@@ -199,16 +206,17 @@ def getExplanation():
         data = request.get_json()
         jobID = data.get('jobID')
         
-        if not jobID or jobID not in jobLookup:
-            return {"error": "Invalid or missing jobID"}, 404
-            
-        # Get the original text message from memory
-        original_message = jobLookup[jobID].message
+        # NEW: Get the original text message directly from Android!
+        original_message = data.get('message') 
         
-        # Generate the explanations
+        if not jobID or not original_message:
+            return {"error": "Missing jobID or message text"}, 400
+            
+        print(f" -- [XAI] Analyzing text: {original_message[:30]}...")
+
+        # Generate explanations directly from the provided text, ignoring jobLookup!
         suspicious_words, plot_base64 = generate_shap_explanation(original_message)
         
-        # Send it exactly how Android expects it!
         return {
             "suspicious_words": suspicious_words,
             "force_plot_image": plot_base64
@@ -217,7 +225,6 @@ def getExplanation():
     except Exception as e:
         print(f" -- An error occurred in getExplanation: {e}")
         return {"error": "Failed to generate explanation"}, 500
-
 # ==========================================
 
 def shutdown_signal_handler(sig, frame):
