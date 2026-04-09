@@ -44,7 +44,8 @@ class MessageDetailsActivity : AppCompatActivity() {
 
         // 3. Fetch SHAP Data from Server
         if (jobId.isNotEmpty() && result == "Phishing") {
-            fetchExplainableAIData(jobId)
+            // UPDATED: Now passing the messageBody to the function!
+            fetchExplainableAIData(jobId, messageBody)
         } else {
             // Hide the SHAP loading bar if it's a safe message
             findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.GONE
@@ -52,15 +53,19 @@ class MessageDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun fetchExplainableAIData(jobId: String) {
+    // UPDATED: Function now requires the message string
+    private fun fetchExplainableAIData(jobId: String, messageBody: String) {
         val prefs = getSharedPreferences("FortifyPrefs", Context.MODE_PRIVATE)
         val serverUrl = prefs.getString("serverUrl", "")
         val jwtToken = prefs.getString("jwtToken", "")
 
-        val jsonObject = JSONObject().apply { put("jobID", jobId) }
+        // UPDATED: Sending BOTH the jobID and the original message to make the server stateless!
+        val jsonObject = JSONObject().apply {
+            put("jobID", jobId)
+            put("message", messageBody)
+        }
         val requestBody = jsonObject.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
-        // You will need to tell your friends to create this route!
         val request = Request.Builder()
             .url("$serverUrl/getExplanation")
             .header("Authorization", "Bearer $jwtToken")
@@ -94,6 +99,8 @@ class MessageDetailsActivity : AppCompatActivity() {
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
+                } else {
+                    handler.post { Toast.makeText(applicationContext, "Server error: couldn't fetch explanation", Toast.LENGTH_SHORT).show() }
                 }
             }
         })
@@ -105,6 +112,8 @@ class MessageDetailsActivity : AppCompatActivity() {
 
         // Add Red Chips for each suspicious word
         val chipGroup = findViewById<ChipGroup>(R.id.suspiciousWordsGroup)
+        chipGroup.removeAllViews() // Clear any existing chips just in case
+
         for (word in suspiciousWords) {
             val chip = Chip(this)
             chip.text = word
@@ -115,9 +124,13 @@ class MessageDetailsActivity : AppCompatActivity() {
 
         // Decode Base64 string to Bitmap and show it
         if (forcePlotBase64.isNotEmpty()) {
-            val decodedString: ByteArray = Base64.decode(forcePlotBase64, Base64.DEFAULT)
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-            findViewById<ImageView>(R.id.forcePlotImageView).setImageBitmap(decodedByte)
+            try {
+                val decodedString: ByteArray = Base64.decode(forcePlotBase64, Base64.DEFAULT)
+                val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+                findViewById<ImageView>(R.id.forcePlotImageView).setImageBitmap(decodedByte)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
         }
     }
 }

@@ -24,6 +24,9 @@ interface MessageDao {
     // Inserts a new message
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(message: MessageEntity)
+
+    @Query("DELETE FROM scanned_messages WHERE jobId IN (:jobIds)")
+    suspend fun deleteMessagesByJobIds(jobIds: List<String>)
 }
 
 // 3. THE DATABASE MANAGER
