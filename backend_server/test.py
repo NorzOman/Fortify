@@ -12,7 +12,7 @@ def createJob() -> bool:
     global jobID
     print(" -- Creating a new job")
     response = requests.post(url + "/scanMessage", json={
-        "message": "Hey, just checking in — are we still on for the meeting tomorrow at 3 PM? Let me know if you need to reschedule."
+        "message": "Verify your account at http://mytestlink.com"
     })
     if response.status_code != 200:
         print(" -- Job creation test failed")

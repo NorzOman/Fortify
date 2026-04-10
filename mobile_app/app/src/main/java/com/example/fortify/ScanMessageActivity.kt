@@ -1,4 +1,4 @@
-package com.example.fortify // Or your package name
+package com.example.fortify
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -24,7 +24,6 @@ import java.io.IOException
 
 class ScanMessageActivity : AppCompatActivity() {
 
-    // --- UI Views ---
     private lateinit var messageEditText: EditText
     private lateinit var scanMessageButton: Button
     private lateinit var resultCard: MaterialCardView
@@ -33,17 +32,16 @@ class ScanMessageActivity : AppCompatActivity() {
     private lateinit var statusTitleTextView: TextView
     private lateinit var statusTextView: TextView
 
-    // --- Other variables ---
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var client: OkHttpClient
     private val handler = Handler(Looper.getMainLooper())
     private var pollingRunnable: Runnable? = null
+    private val JSON_MEDIA_TYPE = "application/json; charset=utf-8".toMediaTypeOrNull()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scan_message)
 
-        // Bind views and initialize components
         bindViews()
         client = OkHttpClient()
         sharedPreferences = getSharedPreferences("FortifyPrefs", Context.MODE_PRIVATE)
@@ -53,13 +51,12 @@ class ScanMessageActivity : AppCompatActivity() {
             if (message.isNotEmpty()) {
                 scanMessage(message)
             } else {
-                Toast.makeText(this, "Please enter a message to scan.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter a message.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun bindViews() {
-        // --- These are the NEW IDs from your redesigned layout ---
         messageEditText = findViewById(R.id.messageEditText)
         scanMessageButton = findViewById(R.id.scanMessageButton)
         resultCard = findViewById(R.id.resultCard)
@@ -85,48 +82,43 @@ class ScanMessageActivity : AppCompatActivity() {
 
     private fun scanMessage(message: String) {
         setUiState(true)
+        Log.d("Fortify", "SCAN: Sending text: $message")
 
-        // Get server details
         val serverUrl = sharedPreferences.getString("serverUrl", "")
         val jwtToken = sharedPreferences.getString("jwtToken", "")
 
-        val requestBody = FormBody.Builder()
-            .add("message", message)
-            .build()
+        val json = JSONObject().apply { put("message", message) }
+        val body = json.toString().toRequestBody(JSON_MEDIA_TYPE)
 
         val request = Request.Builder()
             .url("$serverUrl/scanMessage")
             .header("Authorization", "Bearer $jwtToken")
-            .post(requestBody)
+            .post(body)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     setUiState(false)
-                    Toast.makeText(applicationContext, "Upload failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    Log.e("Fortify", "SCAN FAILED: ${e.message}")
+                    Toast.makeText(applicationContext, "Network Error. Check IP/Cleartext.", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onResponse(call: Call, response: Response) {
                 val responseBody = response.body?.string()
+                Log.d("Fortify", "SCAN RESPONSE: $responseBody")
                 if (response.isSuccessful && responseBody != null) {
                     try {
-                        val jsonObject = JSONObject(responseBody)
-                        val jobId = jsonObject.getString("jobID")
-                        runOnUiThread {
-                            startPolling(jobId)
-                        }
+                        val jobId = JSONObject(responseBody).getString("jobID")
+                        runOnUiThread { startPolling(jobId) }
                     } catch (e: Exception) {
-                        runOnUiThread {
-                            setUiState(false)
-                            Toast.makeText(applicationContext, "Failed to parse job ID.", Toast.LENGTH_SHORT).show()
-                        }
+                        runOnUiThread { setUiState(false) }
                     }
                 } else {
                     runOnUiThread {
                         setUiState(false)
-                        Toast.makeText(applicationContext, "Server error on upload: ${response.message}", Toast.LENGTH_SHORT).show()
+                        Log.e("Fortify", "SERVER ERROR: ${response.code}")
                     }
                 }
             }
@@ -134,63 +126,113 @@ class ScanMessageActivity : AppCompatActivity() {
     }
 
     private fun startPolling(jobId: String) {
+        Log.d("Fortify", "POLLING: Started for $jobId")
         val serverUrl = sharedPreferences.getString("serverUrl", "")
         val jwtToken = sharedPreferences.getString("jwtToken", "")
 
         pollingRunnable = object : Runnable {
             override fun run() {
+                val jsonBody = JSONObject().apply { put("jobID", jobId) }
+                val body = jsonBody.toString().toRequestBody(JSON_MEDIA_TYPE)
+
                 val request = Request.Builder()
-                    .url("$serverUrl/scanStatus?jobID=$jobId")
+                    .url("$serverUrl/scanStatus")
                     .header("Authorization", "Bearer $jwtToken")
+                    .post(body)
                     .build()
 
                 client.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        Log.e("PollingError", "Failed to get status: ${e.message}")
+                        Log.e("Fortify", "POLL FAILED: ${e.message}")
                     }
 
                     override fun onResponse(call: Call, response: Response) {
                         val responseBody = response.body?.string()
+                        Log.d("Fortify", "POLL RESPONSE: $responseBody")
                         if (response.isSuccessful && responseBody != null) {
                             try {
                                 val json = JSONObject(responseBody)
-                                val details = json.getJSONObject("details")
-                                val status = details.getString("STATUS")
+                                val status = json.optString("status", "0")
 
-                                if (status.equals("Done", ignoreCase = true)) {
+                                if (status == "1") {
+                                    Log.d("Fortify", "POLL DONE: Moving to results...")
                                     handler.removeCallbacks(pollingRunnable!!)
-                                    val detectionResult = details.getString("DETECTION")
-                                    runOnUiThread {
-                                        displayResults(detectionResult)
-                                    }
+                                    fetchFinalResults(jobId)
+                                } else {
+                                    // RE-POST THE DELAY HERE ONLY IF NOT DONE
+                                    handler.postDelayed(pollingRunnable!!, 3000)
                                 }
                             } catch (e: Exception) {
-                                Log.e("PollingParseError", "Failed to parse status response.")
+                                Log.e("Fortify", "POLL PARSE ERROR")
                             }
                         }
                     }
                 })
-                handler.postDelayed(this, 5000) // Poll every 5 seconds
             }
         }
         handler.post(pollingRunnable!!)
     }
 
+    private fun fetchFinalResults(jobId: String) {
+        Log.d("Fortify", "RESULTS: Fetching final detection...")
+        val serverUrl = sharedPreferences.getString("serverUrl", "")
+        val jwtToken = sharedPreferences.getString("jwtToken", "")
+
+        val json = JSONObject().apply { put("jobID", jobId) }
+        val body = json.toString().toRequestBody(JSON_MEDIA_TYPE)
+
+        val request = Request.Builder()
+            .url("$serverUrl/getScanDetails")
+            .header("Authorization", "Bearer $jwtToken")
+            .post(body)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread { setUiState(false) }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val responseBody = response.body?.string()
+                Log.d("Fortify", "FINAL RESPONSE: $responseBody")
+                if (response.isSuccessful && responseBody != null) {
+                    try {
+                        val jsonResponse = JSONObject(responseBody)
+                        val detection = jsonResponse.getString("detection")
+                        runOnUiThread { displayResults(detection) }
+                    } catch (e: Exception) {
+                        Log.e("Fortify", "FINAL PARSE ERROR")
+                        runOnUiThread { setUiState(false) }
+                    }
+                }
+            }
+        })
+    }
+
     private fun displayResults(result: String) {
+        // --- THIS MUST SHOW IF YOU REACH THIS POINT ---
+        Toast.makeText(this, "RAW DATA: $result", Toast.LENGTH_LONG).show()
+
         pollingProgressBar.visibility = View.GONE
         statusTitleTextView.visibility = View.VISIBLE
         statusTextView.visibility = View.VISIBLE
         scanMessageButton.isEnabled = true
         messageEditText.isEnabled = true
 
-        val isPhishing = result.contains("Phishing", ignoreCase = true) && !result.startsWith("Not", ignoreCase = true)
+        statusTextView.text = result.uppercase()
 
-        if (isPhishing) {
-            statusTextView.text = result
-            resultCardLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.result_malicious))
-        } else {
-            statusTextView.text = "Not phishing"
-            resultCardLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.result_clean))
+        when {
+            result.equals("Phishing", ignoreCase = true) -> {
+                resultCardLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.result_malicious))
+            }
+            result.equals("Suspicious", ignoreCase = true) -> {
+                // If it hits here, it turns Orange!
+                resultCardLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.result_suspicious))
+            }
+            else -> {
+                statusTextView.text = "SAFE"
+                resultCardLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.result_clean))
+            }
         }
     }
 
@@ -199,4 +241,3 @@ class ScanMessageActivity : AppCompatActivity() {
         pollingRunnable?.let { handler.removeCallbacks(it) }
     }
 }
-

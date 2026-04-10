@@ -18,6 +18,16 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/detailStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="STATUS"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/white" />
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,8 +90,23 @@
                 android:id="@+id/forcePlotImageView"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="fitCenter" />
+                android:layout_marginTop="12dp"
+                android:background="#1AFFFFFF"
+                android:scaleType="centerInside"
+                android:contentDescription="Click to enlarge"
+                android:foreground="?attr/selectableItemBackground" />
+
+            <TextView
+                android:id="@+id/safeMessageTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="This message is verified as Safe. No forensic analysis required."
+                android:textColor="#B3FFFFFF"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
 
         </LinearLayout>
     </LinearLayout>

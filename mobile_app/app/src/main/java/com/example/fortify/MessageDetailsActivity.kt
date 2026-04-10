@@ -1,7 +1,10 @@
 package com.example.fortify
 
+import android.app.Dialog
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
@@ -36,30 +39,50 @@ class MessageDetailsActivity : AppCompatActivity() {
         val jobId = intent.getStringExtra("JOB_ID") ?: ""
         val sender = intent.getStringExtra("SENDER") ?: ""
         val messageBody = intent.getStringExtra("MESSAGE_BODY") ?: ""
-        val result = intent.getStringExtra("RESULT") ?: ""
+        val result = intent.getStringExtra("RESULT") ?: "Safe"
 
         // 2. Populate basic UI
-        findViewById<TextView>(R.id.detailSenderText).text = "From: $sender ($result)"
+        findViewById<TextView>(R.id.detailSenderText).text = "From: $sender"
         findViewById<TextView>(R.id.detailMessageBody).text = messageBody
 
-        // 3. Fetch SHAP Data from Server
-        if (jobId.isNotEmpty() && result == "Phishing") {
-            // UPDATED: Now passing the messageBody to the function!
+        val statusLabel = findViewById<TextView>(R.id.detailStatusText)
+        statusLabel.text = result.uppercase()
+
+        // Apply 3-way color logic to the status label
+        when {
+            result.equals("Phishing", ignoreCase = true) -> {
+                statusLabel.setTextColor(Color.parseColor("#D32F2F")) // Red
+            }
+            result.equals("Suspicious", ignoreCase = true) -> {
+                statusLabel.setTextColor(Color.parseColor("#FF8F00")) // Orange
+            }
+            else -> {
+                statusLabel.setTextColor(Color.parseColor("#388E3C")) // Green
+            }
+        }
+
+        // 3. Logic for Forensics/XAI Report
+        val isMalicious = result.equals("Phishing", ignoreCase = true) ||
+                result.equals("Suspicious", ignoreCase = true)
+
+        if (jobId.isNotEmpty() && isMalicious) {
+            findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.safeMessageTextView).visibility = View.GONE
             fetchExplainableAIData(jobId, messageBody)
         } else {
-            // Hide the SHAP loading bar if it's a safe message
             findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.GONE
-            Toast.makeText(this, "Message is Safe. No forensic analysis needed.", Toast.LENGTH_SHORT).show()
+            findViewById<LinearLayout>(R.id.shapContentLayout).visibility = View.GONE
+            val safeTextView = findViewById<TextView>(R.id.safeMessageTextView)
+            safeTextView.visibility = View.VISIBLE
+            safeTextView.text = "This message is verified as Safe.\nNo forensic analysis required."
         }
     }
 
-    // UPDATED: Function now requires the message string
     private fun fetchExplainableAIData(jobId: String, messageBody: String) {
         val prefs = getSharedPreferences("FortifyPrefs", Context.MODE_PRIVATE)
         val serverUrl = prefs.getString("serverUrl", "")
         val jwtToken = prefs.getString("jwtToken", "")
 
-        // UPDATED: Sending BOTH the jobID and the original message to make the server stateless!
         val jsonObject = JSONObject().apply {
             put("jobID", jobId)
             put("message", messageBody)
@@ -74,7 +97,10 @@ class MessageDetailsActivity : AppCompatActivity() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                handler.post { Toast.makeText(applicationContext, "Failed to load XAI data", Toast.LENGTH_SHORT).show() }
+                handler.post {
+                    findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.GONE
+                    Toast.makeText(applicationContext, "XAI Load Failed", Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -82,25 +108,17 @@ class MessageDetailsActivity : AppCompatActivity() {
                 if (response.isSuccessful && responseBody != null) {
                     try {
                         val json = JSONObject(responseBody)
-
-                        // Parse the array of words
                         val wordsArray = json.getJSONArray("suspicious_words")
                         val wordsList = mutableListOf<String>()
                         for (i in 0 until wordsArray.length()) {
                             wordsList.add(wordsArray.getString(i))
                         }
-
-                        // Parse the Base64 image
                         val forcePlotBase64 = json.getString("force_plot_image")
 
-                        handler.post {
-                            displayXAI(wordsList, forcePlotBase64)
-                        }
+                        handler.post { displayXAI(wordsList, forcePlotBase64) }
                     } catch (e: Exception) {
-                        e.printStackTrace()
+                        handler.post { findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.GONE }
                     }
-                } else {
-                    handler.post { Toast.makeText(applicationContext, "Server error: couldn't fetch explanation", Toast.LENGTH_SHORT).show() }
                 }
             }
         })
@@ -110,27 +128,52 @@ class MessageDetailsActivity : AppCompatActivity() {
         findViewById<ProgressBar>(R.id.shapProgressBar).visibility = View.GONE
         findViewById<LinearLayout>(R.id.shapContentLayout).visibility = View.VISIBLE
 
-        // Add Red Chips for each suspicious word
+        // Add Red Chips for keywords
         val chipGroup = findViewById<ChipGroup>(R.id.suspiciousWordsGroup)
-        chipGroup.removeAllViews() // Clear any existing chips just in case
-
+        chipGroup.removeAllViews()
         for (word in suspiciousWords) {
             val chip = Chip(this)
             chip.text = word
-            chip.setTextColor(android.graphics.Color.WHITE)
+            chip.setTextColor(Color.WHITE)
             chip.setChipBackgroundColorResource(android.R.color.holo_red_dark)
             chipGroup.addView(chip)
         }
 
-        // Decode Base64 string to Bitmap and show it
+        // Decode and enable Click-to-Zoom
         if (forcePlotBase64.isNotEmpty()) {
             try {
                 val decodedString: ByteArray = Base64.decode(forcePlotBase64, Base64.DEFAULT)
-                val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-                findViewById<ImageView>(R.id.forcePlotImageView).setImageBitmap(decodedByte)
-            } catch (e: IllegalArgumentException) {
+                val bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
+
+                val plotImageView = findViewById<ImageView>(R.id.forcePlotImageView)
+                plotImageView.setImageBitmap(bitmap)
+
+                // Set click listener for the popup
+                plotImageView.setOnClickListener {
+                    showFullPlotPopup(bitmap)
+                }
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
+    }
+
+    private fun showFullPlotPopup(bitmap: Bitmap) {
+        // Create a full-screen dialog
+        val dialog = Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
+        dialog.setContentView(R.layout.dialog_full_plot)
+
+        val fullImageView = dialog.findViewById<ImageView>(R.id.fullPlotImageView)
+        fullImageView.setImageBitmap(bitmap)
+
+        // --- UPDATED LOGIC ---
+        // 1. Remove the OnClickListener that was calling dialog.dismiss()
+        // 2. Disable dismissal when clicking outside the image (the "scrim" area)
+        dialog.setCanceledOnTouchOutside(false)
+
+        // 3. Ensure back-button behavior is allowed (this is true by default, but let's be explicit)
+        dialog.setCancelable(true)
+
+        dialog.show()
     }
 }

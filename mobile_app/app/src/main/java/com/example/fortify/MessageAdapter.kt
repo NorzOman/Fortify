@@ -28,10 +28,10 @@ class MessageAdapter(
         init {
             cardView.setOnClickListener {
                 if (isSelectionMode) {
-                    toggleSelection(adapterPosition)
+                    toggleSelection(bindingAdapterPosition)
                 } else {
                     val context = itemView.context
-                    val item = messageList[adapterPosition]
+                    val item = messageList[bindingAdapterPosition]
                     val intent = Intent(context, MessageDetailsActivity::class.java).apply {
                         putExtra("JOB_ID", item.jobId)
                         putExtra("SENDER", item.sender)
@@ -45,7 +45,7 @@ class MessageAdapter(
             cardView.setOnLongClickListener {
                 if (!isSelectionMode) {
                     isSelectionMode = true
-                    toggleSelection(adapterPosition)
+                    toggleSelection(bindingAdapterPosition)
                 }
                 true
             }
@@ -91,12 +91,9 @@ class MessageAdapter(
         clearSelection()
     }
 
-    // --- NEW HELPER FOR THE TOGGLE BUTTON ---
     fun areAllSelected(): Boolean {
         return messageList.isNotEmpty() && selectedJobIds.size == messageList.size
     }
-
-    // ----------------------------------------
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -108,21 +105,43 @@ class MessageAdapter(
         val item = messageList[position]
         holder.senderText.text = "From: ${item.sender}"
         holder.bodyText.text = item.messageBody
-        holder.resultText.text = item.result
+        holder.resultText.text = item.result.uppercase() // Force uppercase for cleaner UI
 
-        when (item.result) {
-            "Phishing" -> holder.resultText.setTextColor(Color.parseColor("#D32F2F"))
-            "Safe" -> holder.resultText.setTextColor(Color.parseColor("#388E3C"))
-            else -> holder.resultText.setTextColor(Color.parseColor("#757575"))
+        // --- Logic for 3-Way Result Colors ---
+        when {
+            item.result.equals("Phishing", ignoreCase = true) -> {
+                holder.resultText.setTextColor(Color.parseColor("#D32F2F")) // Strong Red
+            }
+            item.result.equals("Suspicious", ignoreCase = true) -> {
+                holder.resultText.setTextColor(Color.parseColor("#FF8F00")) // Amber/Orange
+            }
+            item.result.equals("Safe", ignoreCase = true) -> {
+                holder.resultText.setTextColor(Color.parseColor("#388E3C")) // Forest Green
+            }
+            else -> {
+                holder.resultText.setTextColor(Color.parseColor("#757575")) // Default Gray
+            }
         }
 
+        // --- Logic for Card Backgrounds ---
         if (selectedJobIds.contains(item.jobId)) {
+            // Priority: Show Selection Color if item is selected
             holder.cardView.setCardBackgroundColor(Color.parseColor("#B0BEC5"))
         } else {
-            when (item.result) {
-                "Phishing" -> holder.cardView.setCardBackgroundColor(Color.parseColor("#FFEBEE"))
-                "Safe" -> holder.cardView.setCardBackgroundColor(Color.parseColor("#E8F5E9"))
-                else -> holder.cardView.setCardBackgroundColor(Color.parseColor("#F5F5F5"))
+            // Otherwise, set background based on the detection result
+            when {
+                item.result.equals("Phishing", ignoreCase = true) -> {
+                    holder.cardView.setCardBackgroundColor(Color.parseColor("#EF9A9A")) // Light Red
+                }
+                item.result.equals("Suspicious", ignoreCase = true) -> {
+                    holder.cardView.setCardBackgroundColor(Color.parseColor("#FFF3E0")) // Very Light Orange
+                }
+                item.result.equals("Safe", ignoreCase = true) -> {
+                    holder.cardView.setCardBackgroundColor(Color.parseColor("#E8F5E9")) // Light Green
+                }
+                else -> {
+                    holder.cardView.setCardBackgroundColor(Color.parseColor("#F5F5F5")) // Off-White
+                }
             }
         }
     }

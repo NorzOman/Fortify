@@ -1,23 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Dark Theme Palette -->
     <color name="app_background">#121212</color>
     <color name="card_background">#1E1E1E</color>
     <color name="button_background">#3A3A3A</color>
 
-    <!-- Text Colors -->
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B3FFFFFF</color>
 
-    <!-- Splash Screen Background -->
     <color name="splash_background">#121212</color>
 
-    <!-- Result Colors -->
-    <color name="result_clean">#00C853</color>      <!-- A nice, clear green -->
-    <color name="result_malicious">#D50000</color> <!-- A strong, clear red -->
-
-    <!-- Default Colors (can be kept or removed) -->
-    <color name="black">#FF000000</color>
+    <color name="result_clean">#4CAF50</color>      <color name="result_suspicious">#FF9800</color> <color name="result_malicious">#F44336</color>  <color name="bg_safe">#1B2E1C</color>       <color name="bg_suspicious">#2E261B</color> <color name="bg_phishing">#EF9A9A</color>   <color name="bg_selected">#37474F</color>   <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
-

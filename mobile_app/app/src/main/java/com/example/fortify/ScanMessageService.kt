@@ -17,7 +17,7 @@ import org.json.JSONObject
 import java.io.IOException
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import kotlinx.coroutines.* // <--- NEW: Imported Coroutines
+import kotlinx.coroutines.*
 
 class ScanMessageService : Service() {
 
@@ -25,7 +25,7 @@ class ScanMessageService : Service() {
     private lateinit var client: OkHttpClient
     private val handler = Handler(Looper.getMainLooper())
 
-    // --- NEW: Create a background scope for Database operations ---
+    // SupervisorJob ensures that one failure doesn't cancel the whole scope
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onCreate() {
@@ -51,16 +51,12 @@ class ScanMessageService : Service() {
         val jwtToken = sharedPreferences.getString("jwtToken", "")
 
         if (serverUrl.isNullOrEmpty() || jwtToken.isNullOrEmpty()) {
-            Log.e("ScanService", "Server URL or Token not set. Cannot scan.")
+            Log.e("ScanService", "Server URL or Token not set.")
             stopSelf()
             return
         }
 
-        // Create a JSON object instead of a Form Body
-        val jsonObject = JSONObject()
-        jsonObject.put("message", message)
-
-        // Define it explicitly as application/json
+        val jsonObject = JSONObject().apply { put("message", message) }
         val requestBody = jsonObject.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
@@ -71,47 +67,38 @@ class ScanMessageService : Service() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("ScanService", "Network failure on initial scan: ${e.message}")
+                Log.e("ScanService", "Initial scan network failure: ${e.message}")
                 stopSelf()
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                if (response.isSuccessful && responseBody != null) {
-                    try {
-                        val jsonObject = JSONObject(responseBody)
-                        val jobId = jsonObject.getString("jobID")
-
-                        // Pass the original message down to the polling function
-                        startPolling(jobId, senderNumber, message)
-
-                    } catch (e: Exception) {
-                        Log.e("ScanService", "Failed to parse job ID from response.")
+                response.use {
+                    val responseBody = it.body?.string()
+                    if (it.isSuccessful && responseBody != null) {
+                        try {
+                            val jobId = JSONObject(responseBody).getString("jobID")
+                            startPolling(jobId, senderNumber, message)
+                        } catch (e: Exception) {
+                            Log.e("ScanService", "Failed to parse job ID.")
+                            stopSelf()
+                        }
+                    } else {
                         stopSelf()
                     }
-                } else {
-                    Log.e("ScanService", "Server error on initial scan: ${response.message}")
-                    stopSelf()
                 }
             }
         })
     }
 
-    // Polling function updated to match the new server integer status format
     private fun startPolling(jobId: String, senderNumber: String, message: String) {
         val serverUrl = sharedPreferences.getString("serverUrl", "")
         val jwtToken = sharedPreferences.getString("jwtToken", "")
 
         lateinit var pollingRunnable: Runnable
         pollingRunnable = Runnable {
-            // 1. Create a JSON object with the jobID
-            val jsonObject = JSONObject()
-            jsonObject.put("jobID", jobId)
-
-            // 2. Convert it to a JSON RequestBody
+            val jsonObject = JSONObject().apply { put("jobID", jobId) }
             val requestBody = jsonObject.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
-            // 3. Send a POST request to the clean URL
             val request = Request.Builder()
                 .url("$serverUrl/scanStatus")
                 .header("Authorization", "Bearer $jwtToken")
@@ -120,43 +107,27 @@ class ScanMessageService : Service() {
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.e("ScanServicePolling", "Polling failed for job $jobId: ${e.message}")
                     handler.postDelayed(pollingRunnable, 5000)
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val responseBody = response.body?.string()
-                    if (response.isSuccessful && responseBody != null) {
-                        try {
-                            val json = JSONObject(responseBody)
+                    response.use {
+                        val responseBody = it.body?.string()
+                        if (it.isSuccessful && responseBody != null) {
+                            try {
+                                val json = JSONObject(responseBody)
+                                val status = json.optInt("status", 0)
 
-                            // Check the new integer-based status from the server
-                            if (json.has("status")) {
-                                val status = json.getInt("status")
-
-                                if (status == 1) {
-                                    // Status 1 means DONE! Now we ask for the final results.
-                                    fetchScanDetails(jobId, senderNumber, message)
-                                    return // Exit the polling loop
-                                } else if (status == -1) {
-                                    Log.e("ScanService", "Server encountered an error processing the text.")
-                                    stopSelf()
-                                    return
+                                when (status) {
+                                    1 -> fetchScanDetails(jobId, senderNumber, message)
+                                    -1 -> stopSelf()
+                                    else -> handler.postDelayed(pollingRunnable, 5000)
                                 }
+                            } catch (e: Exception) {
+                                handler.postDelayed(pollingRunnable, 5000)
                             }
-                            // If status is 0, we just wait 5 seconds and poll again
-                            handler.postDelayed(pollingRunnable, 5000)
-                        } catch (e: Exception) {
-                            Log.e("ScanServiceParse", "Failed to parse polling response for job $jobId")
-                            handler.postDelayed(pollingRunnable, 5000)
-                        }
-                    } else {
-                        // --- THE GHOST KILLER LOGIC ---
-                        if (response.code == 404) {
-                            Log.e("ScanService", "Server says job doesn't exist (404). Stopping service.")
-                            stopSelf() // Kills the Android background loop!
                         } else {
-                            handler.postDelayed(pollingRunnable, 5000)
+                            if (it.code == 404) stopSelf() else handler.postDelayed(pollingRunnable, 5000)
                         }
                     }
                 }
@@ -165,110 +136,105 @@ class ScanMessageService : Service() {
         handler.post(pollingRunnable)
     }
 
-    // --- NEW FUNCTION TO GET THE ACTUAL RESULT ---
     private fun fetchScanDetails(jobId: String, senderNumber: String, message: String) {
         val serverUrl = sharedPreferences.getString("serverUrl", "")
         val jwtToken = sharedPreferences.getString("jwtToken", "")
 
-        val jsonObject = JSONObject()
-        jsonObject.put("jobID", jobId)
+        val jsonObject = JSONObject().apply { put("jobID", jobId) }
         val requestBody = jsonObject.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
         val request = Request.Builder()
-            .url("$serverUrl/getScanDetails") // Hit the new route!
+            .url("$serverUrl/getScanDetails")
             .header("Authorization", "Bearer $jwtToken")
             .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                stopSelf()
-            }
+            override fun onFailure(call: Call, e: IOException) { stopSelf() }
 
             override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                if (response.isSuccessful && responseBody != null) {
-                    try {
-                        val json = JSONObject(responseBody)
-                        val detectionResult = json.getString("detection")
+                response.use {
+                    val responseBody = it.body?.string()
+                    if (it.isSuccessful && responseBody != null) {
+                        try {
+                            val json = JSONObject(responseBody)
+                            val finalVerdict = json.getString("detection") // "Phishing", "Suspicious", or "Safe"
 
-                        val isPhishing = detectionResult.equals("Phishing", ignoreCase = true)
-                        val finalVerdict = if (isPhishing) "Phishing" else "Safe"
-
-                        // --- NEW: SAVE TO ROOM DATABASE ---
-                        serviceScope.launch {
-                            try {
-                                val db = AppDatabase.getDatabase(applicationContext)
-                                db.messageDao().insertMessage(
-                                    MessageEntity(
-                                        jobId = jobId,
-                                        sender = senderNumber,
-                                        messageBody = message,
-                                        result = finalVerdict
+                            // Use GlobalScope or stay within serviceScope but handle stopSelf carefully
+                            serviceScope.launch {
+                                try {
+                                    val db = AppDatabase.getDatabase(applicationContext)
+                                    db.messageDao().insertMessage(
+                                        MessageEntity(
+                                            jobId = jobId,
+                                            sender = senderNumber,
+                                            messageBody = message,
+                                            result = finalVerdict
+                                        )
                                     )
-                                )
-                            } catch (e: Exception) {
-                                Log.e("ScanService", "Error saving to Room Database", e)
+                                    Log.d("ScanService", "Success: Saved $finalVerdict to DB")
+
+                                    // Broadcast update to the UI feed
+                                    val broadcastIntent = Intent("com.fortify.LIVE_UPDATE").apply {
+                                        putExtra("JOB_ID", jobId)
+                                        putExtra("SENDER", senderNumber)
+                                        putExtra("BODY", message)
+                                        putExtra("RESULT", finalVerdict)
+                                    }
+                                    sendBroadcast(broadcastIntent)
+
+                                    // Notification for non-safe messages
+                                    if (!finalVerdict.equals("Safe", ignoreCase = true)) {
+                                        handler.post { showPhishingNotification(senderNumber, finalVerdict) }
+                                    }
+                                } catch (e: Exception) {
+                                    Log.e("ScanService", "Database Error", e)
+                                } finally {
+                                    // CRITICAL: Only stop service AFTER the coroutine work is done
+                                    withContext(Dispatchers.Main) { stopSelf() }
+                                }
                             }
+                        } catch (e: Exception) {
+                            Log.e("ScanService", "Result parsing error.")
+                            stopSelf()
                         }
-
-                        // 1. Show Notification if malicious
-                        if (isPhishing) {
-                            handler.post { showPhishingNotification(senderNumber) }
-                        }
-
-                        // 2. Broadcast to HomeActivity Live Feed
-                        val broadcastIntent = Intent("com.fortify.LIVE_UPDATE").apply {
-                            putExtra("JOB_ID", jobId) // <--- ADD THIS LINE
-                            putExtra("SENDER", senderNumber)
-                            putExtra("BODY", message)
-                            putExtra("RESULT", finalVerdict)
-                        }
-                        sendBroadcast(broadcastIntent)
-
-                    } catch (e: Exception) {
-                        Log.e("ScanService", "Failed to parse final details.")
+                    } else {
+                        stopSelf()
                     }
                 }
-                stopSelf() // Always stop the background service when finished
             }
         })
     }
 
-    private fun showPhishingNotification(senderNumber: String) {
+    private fun showPhishingNotification(senderNumber: String, verdict: String) {
         val channelId = "PHISHING_ALERT_CHANNEL"
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId, "Phishing Alerts", NotificationManager.IMPORTANCE_HIGH
-            ).apply {
-                description = "Notifications for detected phishing attempts."
-            }
+            val name = "Phishing Alerts"
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(channelId, name, importance)
             notificationManager.createNotificationChannel(channel)
         }
 
-        val notificationText = "A suspicious message was received from: $senderNumber"
+        val title = if (verdict.equals("Phishing", ignoreCase = true)) "PHISHING ALERT!" else "SUSPICIOUS MESSAGE!"
+        val text = "Received from: $senderNumber"
 
         val notification = NotificationCompat.Builder(this, channelId)
-            // Ensure this icon exists in your drawable folder!
             .setSmallIcon(R.drawable.ic_notification_shield)
-            .setContentTitle("Phishing Attempt Detected!")
-            .setContentText(notificationText)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(notificationText))
+            .setContentTitle(title)
+            .setContentText(text)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true)
             .build()
 
         notificationManager.notify(System.currentTimeMillis().toInt(), notification)
     }
 
-    // --- NEW: Clean up the Coroutines when the service dies ---
     override fun onDestroy() {
         super.onDestroy()
-        serviceScope.cancel()
+        serviceScope.cancel() // Cleanup all pending coroutines
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 }

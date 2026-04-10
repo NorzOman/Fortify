@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import io
 import base64
 import numpy as np
+import re
 
 # -- intialize stuffs
 app = Flask(__name__)
@@ -134,9 +135,15 @@ def message_worker():
             out = predict_message_type(j.message[:512], classifier)
             j.status = 1
             j.confidence = out[0]['score']
+            
+            # 1. Initial detection based on AI model
             j.detection = "Safe" if out[0]['label'] == "LABEL_0" else "Phishing"
-            if j.detection != "Phishing" and ("http" in j.message or "https" in j.message):
+            
+            # 2. SUSPICIOUS LOGIC: If AI says Safe, but we find a link, override to Suspicious
+            # FIX: We use .lower() to catch HTTP, Http, hTtP, etc.
+            if j.detection != "Phishing" and ("http" in j.message.lower()):
                 j.detection = "Suspicious"
+                
             queryJobsDB("updateJobDetails", j)
         except Exception as e:
             print(f" -- An error occurred in message_worker: {e}")
@@ -145,57 +152,64 @@ def message_worker():
             j.confidence = 0
             queryJobsDB("updateJobDetails", j)
 
+
 def generate_shap_explanation(text_message):
     try:
-        # 1. TRUNCATION: Analyzing long text on a CPU is the #1 cause of 'Killed' errors.
-        # We limit to the first 400 characters where phishing triggers are usually densest.
+        # 1. THE FAST-TRACK: Check for links immediately
+        # This regex finds http, https, and common domain patterns
+        links = re.findall(r'(https?://[^\s]+)', text_message.lower())
+        
+        # If we find links, we prepare the 'Suspicious' keywords directly
+        manual_keywords = []
+        if links:
+            print(f" -- [XAI] Link detected: {links[0]}. Prioritizing link forensics.")
+            manual_keywords.append("URL_FOUND")
+            if "https" in links[0]:
+                manual_keywords.append("https://")
+            else:
+                manual_keywords.append("http:// (insecure)")
+
+        # 2. RUN SHAP (We still run it to generate the plot image)
         truncated_text = text_message[:400] 
-        print(f" -- [XAI] Generating optimized SHAP analysis for: {truncated_text[:30]}...")
-        
-        # 2. INITIALIZE EXPLAINER
         explainer = shap.Explainer(classifier)
-        
-        # 3. SPEED BOOST: max_evals=100
-        # By default, SHAP runs hundreds of permutations. 100 is the 'Sweet Spot' 
-        # for a t3.micro to finish quickly without crashing the RAM.
         shap_values = explainer([truncated_text], max_evals=100)
         
-        # 4. DATA EXTRACTION
         tokens = shap_values.data[0]
         values = shap_values.values[0] 
         class_idx = 1 if len(values.shape) > 1 and values.shape[1] > 1 else 0
         scores = values[:, class_idx] if len(values.shape) > 1 else values
         
-        # 5. FILTER SUSPICIOUS WORDS
-        words_with_scores = []
+        # 3. EXTRACT AI KEYWORDS
+        ai_keywords = []
         for word, score in zip(tokens, scores):
             clean_word = word.strip().replace("#", "")
-            if len(clean_word) > 2 and score > 0.05: 
-                words_with_scores.append((clean_word, score))
+            if len(clean_word) > 2 and score > 0.02: 
+                ai_keywords.append(clean_word)
         
-        words_with_scores.sort(key=lambda x: x[1], reverse=True)
-        suspicious_words = [w[0] for w in words_with_scores[:5]]
+        # 4. COMBINE: Manual Keywords + Top AI Keywords
+        # This ensures the 'http' chips always show up first!
+        final_suspicious_words = manual_keywords + ai_keywords
+        final_suspicious_words = list(dict.fromkeys(final_suspicious_words))[:5] # Remove duplicates
         
-        # 6. MEMORY-EFFICIENT PLOTTING
-        # Smaller figure size and lower DPI (100) keeps the RAM usage low.
+        # 5. GENERATE PLOT
         plt.figure(figsize=(8, 4)) 
+        # If AI found nothing (all 0s), SHAP will plot a flat line.
+        # This is actually correct because it shows the AI was 'fooled'.
         shap.plots.bar(shap_values[0][:, class_idx], show=False, max_display=10)
         
         buf = io.BytesIO()
         plt.tight_layout()
         plt.savefig(buf, format='png', bbox_inches='tight', dpi=100)
-        
-        # CRITICAL: plt.close() releases the RAM back to Ubuntu immediately.
-        # Without this, the 'Killed' error eventually returns.
         plt.close() 
         
         buf.seek(0)
         image_base64 = base64.b64encode(buf.read()).decode('utf-8')
         
-        print(" -- [XAI] Optimized analysis complete!")
-        return suspicious_words, image_base64
+        return final_suspicious_words, image_base64
         
     except Exception as e:
+        print(f" -- [XAI ERROR]: {e}")
+        return ["ANALYSIS_ERROR"], ""
         print(f" -- [XAI ERROR] Optimization failed: {e}")
         return [], ""
     
