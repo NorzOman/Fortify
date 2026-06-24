@@ -1,4 +1,4 @@
-# How to Run the Fortify Server
+# How to Run the Fortify Server part2
 
 1. **Navigate to the backend folder**
 
